@@ -20,9 +20,9 @@ main implementation: multiplayer should be a client server model
 
 ## midterm goal:
 
-AI - we have decision tree created
+AI - AI can do inputs
 
-Multiplayer - connect to a host client
+Multiplayer - connect to a host clien (client and server can communicate)
 
 maps - 1st map platforms and sidewall collision
 
@@ -30,13 +30,28 @@ rope implementation - rope physics slack
 
 rope implementation - rope physics momentum (stop character from moving)
 
-camera movement - follow the mid point between 2 players
+camera movement - movement up and down follows players
 
 player movement - jump left, right, up
+
+collision detection - AABB  
 
 ## Finals goal: 
 
 AI - 2 AIs can climb together
 
-Multiplayer - at least 2 players can connect to the game and beable to play together.
+Multiplayer - at least 2 players can connect to the game and be able to play together.
 
+completed map - with moving tracking platforms, hazards (spikes)
+
+Items- collectable coins
+
+
+
+### Stretch goal
+
+1. Leaderboard across different instance of game
+
+2. wall jumping and/ or fish head collision
+
+3. possible enemines if above 1 or 2 are not accepted

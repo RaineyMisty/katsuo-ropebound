@@ -50,9 +50,9 @@ player movement - jump left, right, up, moving left and right from farther dista
 
 ## Finals goal: 
 
-AI - 2 AIs can climb together - 15%
+AI - two AI can play together and seem to be manuver to at least 3 platforms - 15%
 
-Multiplayer - at least 2 players can connect to the game and be able to play together. - 15%
+Multiplayer - at least 2 players can connect to the game and be able to play together, with the ability to coordinate with the other outloud and complete at least 3 platforms. - 20%
 
 completed map - with moving tracking platforms, hazards (spikes) - 15%
 
@@ -60,7 +60,7 @@ Item- collectable coins - 10%
 
 movement - able to jump and walk on platforms - 15%
 
-finish - players finishing the first map achieve a completetion screen - 10%
+finish - players finishing the first map achieve a completetion screen - 5%
 
 ### Stretch goal
 

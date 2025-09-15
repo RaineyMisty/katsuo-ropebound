@@ -48,9 +48,7 @@ Item- collectable coins - 10%
 
 movement - able to jump and walk on platforms - 15%
 
-collision - able to collide with walls and platforms - 10 %
-
-
+finish - players finishing the first map achieve a completetion screen - 10%
 
 ### Stretch goal
 

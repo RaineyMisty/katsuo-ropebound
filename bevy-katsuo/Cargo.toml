@@ -1,7 +1,15 @@
 [package]
 name = "bevy-katsuo"
+authors = "Ket-Hwa Cheng <MorningDuringNight KEC344>, "
 version = "0.1.0"
 edition = "2024"
+
+[profile.dev]
+opt-level = 1
+
+# Apply all optimiations to dependencies in dev builds
+[profile.dev.package."*"]
+opt-level = 3
 
 [dependencies]
 

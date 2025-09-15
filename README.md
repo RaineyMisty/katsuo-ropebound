@@ -38,13 +38,17 @@ collision detection - AABB
 
 ## Finals goal: 
 
-AI - 2 AIs can climb together
+AI - 2 AIs can climb together - 15%
 
-Multiplayer - at least 2 players can connect to the game and be able to play together.
+Multiplayer - at least 2 players can connect to the game and be able to play together. - 15%
 
-completed map - with moving tracking platforms, hazards (spikes)
+completed map - with moving tracking platforms, hazards (spikes) - 15%
 
-Items- collectable coins
+Item- collectable coins - 10%
+
+movement - able to jump and walk on platforms - 15%
+
+collision - able to collide with walls and platforms - 10 %
 
 
 

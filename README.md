@@ -4,7 +4,7 @@ CS1666 game design game: Katsuo
 First manager is Ket-Hwa Cheng (MorningDuringNight KEC344)
 
 Advanced topic group AI: Ket-Hwa (github: MorningDuringNight Pitt: KEC344), 
-                         Tingxu (github: RaineyMisty Pitt: ), 
+                         Tingxu (github: RaineyMisty Pitt: tic128), 
                          Xiaotin (github: XtWang299 Pitt: ), 
                          Zhuoyan (github: qhynSamuel Pitt: )
 
@@ -56,7 +56,7 @@ Multiplayer - at least 2 players can connect to the game and be able to play tog
 
 completed map - with moving tracking platforms, hazards (spikes) - 15%
 
-Item- collectable coins - 10%
+Item- collectable coins which are used generally as a training AI purposes - 10%
 
 movement - able to jump and walk on platforms - 15%
 

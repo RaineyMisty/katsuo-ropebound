@@ -21,8 +21,9 @@ The game is a 2d platformer where 2 players are chained together and must make i
 Such things that you may encounter are moving platforms, spikes, large distances which require more effort, and even trampolines that may aid your ascent. 
 
 ## Advanced topic AI: 
-main implementation: AI created should be a deep learning model focused as a cooperative player for platforming, using a behavior tree to solve jumping with 2 or more players. 
-### check with team which learning we are doing
+main implementation: AI created should be a Q learning model focused as a cooperative player for platforming, using a behavior tree to solve jumping. We are using a Q learning model since it is a state based learning algorithm which we can trim branches that do not meet specifications. How we will reward the AI is by adding coins to the map as both a reward to the players and a reward for the bot. These coins are completely optional otherwise. 
+
+
 
 ## Advanced topic Multiplayer:
 main implementation: multiplayer should be a client server model

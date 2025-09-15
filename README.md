@@ -31,22 +31,22 @@ server should have the same codebase which would be running/ simmulating the gam
 
 information that will be sent should be player positions, and getting that information flowing for communication between the clients and the server. The server should communicate with client to give other player position and be able to display on the screens where the other player has been moved.
 
-Lag compensation: will be nessicary with a possible 100ms for client to compute values as true.
+Lag compensation: will be necessary with a possible 100ms for client to compute values as true.
 ## midterm goal:
 
-AI - AI can do inputs
+AI - AI can move character it controls left, right, up, jump right, left jump. Meaning that at least the implementation for AI to interact with an enviorment is plausable and that while the decision tree itself may not be functional, it means that it can interact with the game world without learning yet.
 
-Multiplayer - connect to a host clien (client and server can communicate)
+Multiplayer - connect to a host client and both client and server can send and receive packages on both ends. 
 
-maps - 1st map platforms and sidewall collision
+maps - 1st map platforms, moving platform, sidewall collision. Players can land on or hit the side of each of these objects and it should have hit detection such that players will not go through these objects.
 
-rope implementation - rope physics slack
+rope implementation - rope physics slack, The rope implementation displays similar real world rope physics in terms of visual aesthetics, meaning the rope will be tight when farther away and grow loose when near.  
 
-rope implementation - rope physics momentum (stop character from moving)
+rope implementation - rope prevents players from moving a set distance apart from each other, this is based off the scharacter position relative to each other.
 
-camera movement - movement up and down follows players
+camera movement - A 2d camera 
 
-player movement - jump left, right, up
+player movement - jump left, right, up, moving left and right from farther distances will have added momentum for greater velocity.
 
 collision detection - AABB  
 

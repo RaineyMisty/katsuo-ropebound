@@ -9,7 +9,7 @@ Advanced topic group AI: Ket-Hwa (github: MorningDuringNight Pitt: KEC344),
                          Zhuoyan (github: qhynSamuel Pitt: )
 
 Advanced topic group multiplayer: Jagger (github: Jagger-Hershey Pitt: ),
-                                  Alli (github: AlliBatell Pitt: ),
+                                  Alli (github: AlliBatell Pitt: ALB594),
                                   Sean (github: Sean-Shmulevich Pitt: szs23)
 
 ## game premise:

@@ -1,11 +1,16 @@
 # Sherpa
 CS1666 game design game: Katsuo
 
-First manager is Ket-Hwa Cheng (MorningDuringNight)
+First manager is Ket-Hwa Cheng (MorningDuringNight KEC344)
 
-Advanced topic group AI: Ket-Hwa, Tingxu, Xiaoting, Zhuoyan
+Advanced topic group AI: Ket-Hwa (github: MorningDuringNight Pitt: KEC344), 
+                         Tingxu (github: RaineyMisty Pitt: ), 
+                         Xiaotin (github: XtWang299 Pitt: ), 
+                         Zhuoyan (github: qhynSamuel Pitt: )
 
-Advanced topic group multiplayer: Jagger, Alli, Sean
+Advanced topic group multiplayer: Jagger (github: Jagger-Hershey Pitt: ),
+                                  Alli (github: AlliBatell Pitt: ),
+                                  Sean (github: Sean-Shmulevich Pitt: szs23)
 
 ## game premise:
 

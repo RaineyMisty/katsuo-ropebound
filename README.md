@@ -20,6 +20,13 @@ The game is a 2d platformer where 2 players are chained together and must make i
 
 Such things that you may encounter are moving platforms, spikes, large distances which require more effort, and even trampolines that may aid your ascent. 
 
+<img width="1816" height="1656" alt="image" src="https://github.com/user-attachments/assets/37e76089-c64b-4bda-ba48-b0f3b335bc07" />
+
+<img width="124" height="127" alt="image" src="https://github.com/user-attachments/assets/3d582d10-5948-4b25-a33e-1673e10fc0c4" />
+
+<img width="162" height="120" alt="image" src="https://github.com/user-attachments/assets/06c7c7c6-2263-4f06-9ee6-7f125cee44ec" />
+
+
 ## Advanced topic AI: 
 main implementation: AI created should be a Q learning model focused as a cooperative player for platforming, using a behavior tree to solve jumping. We are using a Q learning model since it is a state based learning algorithm which we can trim branches that do not meet specifications. How we will reward the AI is by adding coins to the map as both a reward to the players and a reward for the bot. These coins are completely optional otherwise. 
 

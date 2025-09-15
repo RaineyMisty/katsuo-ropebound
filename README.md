@@ -16,6 +16,10 @@ Advanced topic group multiplayer: Jagger (github: Jagger-Hershey Pitt: ),
 
 It is a 2D pixel-art platformer where cooperation is necessary. Players control several characters bound by a rope, to conquer the majestic and treacherous slopes of a mysterious mountain, you must master the art of collaborative climbing to reach the top.
 
+The game is a 2d platformer where 2 players are chained together and must make it to the top of the mountain, and must collaborate to make it to the top. The player can at most move left, right, jump, jump left, and jump right and try their best to jump on platforms to ascend the mountain. But be aware there are obstacle that might or might not hinder your progress towards your goal.
+
+Such things that you may encounter are moving platforms, spikes, large distances which require more effort, and even trampolines that may aid your ascent. 
+
 ## Advanced topic AI: 
 main implementation: AI created should be a deep learning model focused as a cooperative player for platforming, using a behavior tree to solve jumping with 2 or more players. 
 ### check with team which learning we are doing

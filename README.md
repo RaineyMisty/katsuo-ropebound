@@ -64,11 +64,11 @@ player movement - jump left, right, up, moving left and right from farther dista
 
 ## Finals goal: 
 
-AI - two AI can play together and seem to be maneuver to at least 3 platforms - 15%
+AI - two AI can play together and are able to be maneuver to at least 3 platforms from the ground on their own - 15%
 
 Multiplayer - at least 2 players can connect to the game and be able to play together, with the ability to coordinate with the other outloud and complete at least 3 platforms. - 20%
 
-completed map - with moving platforms, hazards (spikes), as well as  - 15%
+completed map - with moving platforms, hazards (spikes or trampoline) and standard platforms until reaching the top of the map.  - 15%
 
 Item- collectable coins which are used generally as a training AI purposes - 10%
 

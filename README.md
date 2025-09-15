@@ -46,7 +46,7 @@ rope implementation - rope prevents players from moving a set distance apart fro
 
 camera movement - A 2d camera that shows the general location of where characters on the screen and tracks as they move up and down on the screen, in a general location.
 
-player movement - jump left, right, up, moving left and right from farther distances will have added momentum for greater velocity.
+player movement - jump left, right, up, moving left and right from farther distances will have added momentum for greater velocity if direction has been constant.
 
 ## Finals goal: 
 

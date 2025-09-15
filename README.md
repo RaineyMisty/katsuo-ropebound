@@ -18,6 +18,11 @@ main implementation: AI created should be a deep learning model focused as a coo
 ## Advanced topic Multiplayer:
 main implementation: multiplayer should be a client server model
 
+server should have the same codebase which would be running/ simmulating the game. 
+
+information that will be sent should be player positions, and getting that information flowing for communication between the clients and the server. The server should communicate with client to give other player position and be able to display on the screens where the other player has been moved.
+
+Lag compensation: will be nessicary with a possible 100ms for client to compute values as true.
 ## midterm goal:
 
 AI - AI can do inputs

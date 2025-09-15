@@ -23,7 +23,7 @@ Such things that you may encounter are moving platforms, spikes, large distances
 ## Advanced topic AI: 
 main implementation: AI created should be a Q learning model focused as a cooperative player for platforming, using a behavior tree to solve jumping. We are using a Q learning model since it is a state based learning algorithm which we can trim branches that do not meet specifications. How we will reward the AI is by adding coins to the map as both a reward to the players and a reward for the bot. These coins are completely optional otherwise. 
 
-
+Q type learning while slow can provide a rather comprehnsive learning algorithm option with it's use as 2 players, thereby allowing the AI to learn independently and treat the other AI as just background variables.
 
 ## Advanced topic Multiplayer:
 main implementation: multiplayer should be a client server model
@@ -32,7 +32,13 @@ server should have the same codebase which would be running/ simmulating the gam
 
 information that will be sent should be player positions, and getting that information flowing for communication between the clients and the server. The server should communicate with client to give other player position and be able to display on the screens where the other player has been moved.
 
-Lag compensation: will be necessary with a possible 100ms for client to compute values as true.
+Lag compensation: 
+packet loss can disrupt synchronization between client and server. Our strategy depends on the duration of loss:
+
+Short (<200ms) – Prediction: Client predicts movement/actions locally, server later corrects small errors. Keeps gameplay responsive.
+
+Medium (200ms–1s) – Extrapolation / Freeze: temporary freezes to avoid rubberbanding.
+Long (>1s) – Resync or Timeout: Prediction fails, client is disconnected/ghosted until stable.
 ## midterm goal:
 
 AI - AI can move character it controls left, right, up, jump right, left jump. Meaning that at least the implementation for AI to interact with an enviorment is plausable and that while the decision tree itself may not be functional, it means that it can interact with the game world without learning yet.

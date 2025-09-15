@@ -44,11 +44,9 @@ rope implementation - rope physics slack, The rope implementation displays simil
 
 rope implementation - rope prevents players from moving a set distance apart from each other, this is based off the scharacter position relative to each other.
 
-camera movement - A 2d camera 
+camera movement - A 2d camera that shows the general location of where characters on the screen and tracks as they move up and down on the screen, in a general location.
 
 player movement - jump left, right, up, moving left and right from farther distances will have added momentum for greater velocity.
-
-collision detection - AABB  
 
 ## Finals goal: 
 

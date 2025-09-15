@@ -5,7 +5,7 @@ First manager is Ket-Hwa Cheng (MorningDuringNight KEC344)
 
 Advanced topic group AI: Ket-Hwa (github: MorningDuringNight Pitt: KEC344), 
                          Tingxu (github: RaineyMisty Pitt: tic128), 
-                         Xiaotin (github: XtWang299 Pitt: ), 
+                         Xiaoting (github: XtWang299 Pitt: ), 
                          Zhuoyan (github: qhynSamuel Pitt: )
 
 Advanced topic group multiplayer: Jagger (github: Jagger-Hershey Pitt: ),
@@ -51,7 +51,7 @@ rope implementation - rope physics slack, The rope implementation displays simil
 
 rope implementation - rope prevents players from moving a set distance apart from each other, this is based off the scharacter position relative to each other.
 
-camera movement - A 2d camera that shows the general location of where characters on the screen and tracks as they move up and down on the screen, in a general location.
+camera movement - A 2d camera that shows the general location of where characters on the screen and tracks as they move up and down on the screen, in a general location. There is no Left and right tracking
 
 player movement - jump left, right, up, moving left and right from farther distances will have added momentum for greater velocity if direction has been constant.
 

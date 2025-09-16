@@ -64,22 +64,20 @@ player movement - jump left, right, up, moving left and right from farther dista
 
 ## Finals goal: 
 
-AI - two AI can play together and are able to be maneuver to at least 3 platforms from the ground on their own - 15%
+AI - two AI can play together and are able to be maneuver to at least 3 platforms from the ground on their own proving partial training- 20%
 
 Multiplayer - at least 2 players can connect to the game and be able to play together, with the ability to coordinate with the other outloud and complete at least 3 platforms. - 20%
 
-completed map - with moving platforms, hazards (spikes or trampoline) and standard platforms until reaching the top of the map.  - 15%
+completed map - with moving platforms, hazards (spikes or trampoline) and standard platforms until reaching the top of the map. Spike implementation will cause instant game over, trampoline will give a jump boost to the player upon contact with the trampoline, and standard platforms are standing grounds. The amount of these platforms with or without any hazards will be 30 platforms.  - 15%
 
-Item- collectable coins which are used generally as a training AI purposes - 10%
+movement - able to jump and walk on platforms as well as jump off the other player character and wall jump once off walls. This allows for greater range of motion for the characters and interesting possible ways to climb up. The wall climbing mechanics would be a quick attach to a wall and jump up off towards the other side. - 15%
 
-movement - able to jump and walk on platforms - 15%
+One time ability- The players each get one time ability to put down a platform next to a wall which they can stand on. This platform exists for 10 real life seconds and will disapear once time has ellapsed. - 5%
 
 finish - players finishing the first map achieve a completetion screen - 5%
 
 ### Stretch goal
 
-1. Leaderboard across different instance of game
+1. We will have a leaderboard that saves the top 10 ten highest scores a player has scored, as well as if they achieved the score with ai or a different player. Allowing for a quick refrence for highest point climbed to.
 
-2. wall jumping and/ or fish head collision
-
-3. possible enemines if above 1 or 2 are not accepted
+2. we will have an enemy that starts from the top of the screen and falls straight down, targeting to hit player, these enemies will track where player characters are located and fall directly down like a thamp from mario, but not come back up.

@@ -65,9 +65,9 @@ player movement - jump left, right, up, moving left and right from farther dista
 
 AI - two AI can play together and are able to be maneuver to at least 1 platforms from the ground on their own proving partial training - 5%
 
-AI - two AI can play together and are able to be maneuver to at least 2 platforms from the ground on their own proving partial training - 5%
+AI - two AI can play together and are able to be maneuver to at least 2 platforms from the ground on their own proving partial training - 7%
 
-AI - two AI can play together and are able to be maneuver to at least 3 platforms from the ground on their own proving partial training - 10%
+AI - two AI can play together and are able to be maneuver to at least 3 platforms from the ground on their own proving partial training - 8%
 
 Multiplayer - at least 2 players can connect to the game and be able to play together, with the ability to coordinate with the other outloud and complete the map. - 20%
 
@@ -79,7 +79,7 @@ movement - able to jump and walk on platforms - 5%
 
 movement - jump off the other player character - 5%
 
-movement -wall jump once off walls - 5%
+movement - wall jump once off walls - 5%
 
 One time ability- The players each get one time ability to put down a platform next to a wall which they can stand on. This platform exists for 10 real life seconds and will disapear once time has ellapsed. - 5%
 

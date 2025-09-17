@@ -5,8 +5,8 @@ First manager is Ket-Hwa Cheng (MorningDuringNight KEC344)
 
 Advanced topic group AI: Ket-Hwa (github: MorningDuringNight Pitt: KEC344), 
                          Tingxu (github: RaineyMisty Pitt: tic128), 
-                         Xiaoting (github: XtWang299 Pitt: ), 
-                         Zhuoyan (github: qhynSamuel Pitt: )
+                         Xiaoting (github: XtWang299 Pitt: xiw323), 
+                         Zhuoyan (github: qhynSamuel Pitt: zhc158)
 
 Advanced topic group multiplayer: Jagger (github: Jagger-Hershey Pitt: JCH168),
                                   Alli (github: AlliBatell Pitt: ALB594),
@@ -63,21 +63,23 @@ player movement - jump left, right, up, moving left and right from farther dista
 
 ## Finals goal: 
 
-AI - two AI can play together and are able to be maneuver to at least 1 platforms from the ground on their own proving partial training- 5%
+AI - two AI can play together and are able to be maneuver to at least 1 platforms from the ground on their own proving partial training - 5%
 
-AI - two AI can play together and are able to be maneuver to at least 2 platforms from the ground on their own proving partial training- 5%
+AI - two AI can play together and are able to be maneuver to at least 2 platforms from the ground on their own proving partial training - 5%
 
-AI - two AI can play together and are able to be maneuver to at least 3 platforms from the ground on their own proving partial training- 10%
+AI - two AI can play together and are able to be maneuver to at least 3 platforms from the ground on their own proving partial training - 10%
 
 Multiplayer - at least 2 players can connect to the game and be able to play together, with the ability to coordinate with the other outloud and complete the map. - 20%
 
-completed map - with moving platforms, hazards (spikes or trampoline) and standard platforms until reaching the top of the map. Spike implementation will cause instant game over, trampoline will give a jump boost to the player upon contact with the trampoline, and standard platforms are standing grounds. -10%
+completed map - with moving platforms, hazards (spikes or trampoline) and standard platforms until reaching the top of the map. Spike implementation will cause instant game over, trampoline will give a jump boost to the player upon contact with the trampoline, and standard platforms are standing grounds. - 10%
 
 completed map - The amount of these platforms with or without any hazards will be 30 platforms.  - 5%
 
 movement - able to jump and walk on platforms - 5%
 
-movement - jump off the other player character and wall jump once off walls. This allows for greater range of motion for the characters and interesting possible ways to climb up. The wall climbing mechanics would be a quick attach to a wall and jump up off towards the other side. - 10%
+movement - jump off the other player character - 5%
+
+movement -wall jump once off walls - 5%
 
 One time ability- The players each get one time ability to put down a platform next to a wall which they can stand on. This platform exists for 10 real life seconds and will disapear once time has ellapsed. - 5%
 

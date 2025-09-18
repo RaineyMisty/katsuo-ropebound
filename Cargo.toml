@@ -1,6 +1,6 @@
 [package]
 name = "bevy-katsuo"
-authors = "Ket-Hwa Cheng <MorningDuringNight KEC344>, "
+authors = "Ket-Hwa Cheng (github: MorningDuringNight), Tingxu (github: RaineyMisty )Xiaoting (github: XtWang299), Zhuoyan (github: qhynSamuel), Jagger (github: Jagger-Hershey), Alli (github: AlliBatell), Sean (github: Sean-Shmulevich)"
 version = "0.1.0"
 edition = "2024"
 

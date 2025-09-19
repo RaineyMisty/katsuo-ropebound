@@ -29,7 +29,11 @@ pub struct PlayerBundle {
 impl PlayerBundle {
     pub fn new(controls: PlayerControls, texture: Handle<Image>) -> Self {
         Self {
-            sprite: Sprite::from_image(texture),
+            sprite: Sprite {
+                image: texture,
+                custom_size: Some(Vec2::new(32.0, 32.0)),
+                ..Default::default()
+            },
             player: Player { controls },
             velocity: Velocity::default(),
         }

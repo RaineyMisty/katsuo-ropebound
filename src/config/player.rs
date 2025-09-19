@@ -7,3 +7,8 @@ use bevy::prelude::*;
 
 pub const PLAYER_SIZE: Vec2 = Vec2::new(64.0, 64.0);
 pub const PLAYER_INITIAL_POSITION: Vec3 = Vec3::new(0.0, 0.0, 0.0);
+
+#[derive(Resource, Clone, Copy)]
+pub struct PlayerSpawnPoint {
+    pub position: Vec3,
+}

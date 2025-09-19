@@ -6,10 +6,12 @@
 use bevy::prelude::*;
 use bevy::time::Fixed;
 use crate::player::PlayerPlugin;
+use crate::config::*;
 
 pub fn run() {
     App::new()
         .insert_resource(Time::<Fixed>::from_hz(60.0))
+        .insert_resource(PlayerSpawnPoint { position: PLAYER_INITIAL_POSITION })
         .add_plugins(DefaultPlugins)
         .add_plugins(PlayerPlugin)
         .add_systems(Startup, setup_camera)

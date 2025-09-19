@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use crate::config::player::*
+use crate::config::player::*;
 
 #[derive(Component, Clone)]
 pub struct Player {

@@ -23,8 +23,6 @@ pub struct Velocity {
 pub struct PlayerBundle {
     pub player: Player,
     pub velocity: Velocity,
-    #[bundle]
-    pub sprite: SpriteBundle,
 }
 
 impl PlayerBundle {
@@ -32,11 +30,6 @@ impl PlayerBundle {
         Self {
             player: Player { controls },
             velocity: Velocity::default(),
-            sprite: SpriteBundle {
-                texture,
-                transform: Transform::from_scale(Vec3::splat(0.5)),
-                ..Default::default()
-            },
         }
     }
 }

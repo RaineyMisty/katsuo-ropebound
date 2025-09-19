@@ -4,7 +4,6 @@
 // Description: <Player plugin>
 
 use bevy::prelude::*;
-use bevy::sprite::MaterialMesh2dBundle;
 
 use crate::player::bundle::{PlayerBundle, PlayerControls};
 
@@ -17,12 +16,12 @@ impl Plugin for PlayerPlugin {
 }
 
 fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let texture = asset_server.load("player.png");
+    let texture = asset_server.load("spriteguy.png");
     let controls = PlayerControls {
-        up: KeyCode::W,
-        down: KeyCode::S,
-        left: KeyCode::A,
-        right: KeyCode::D,
+        up: KeyCode::KeyW,
+        down: KeyCode::KeyS,
+        left: KeyCode::KeyA,
+        right: KeyCode::KeyD,
     };
     commands.spawn(PlayerBundle::new(controls, texture));
 }

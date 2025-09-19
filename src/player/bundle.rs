@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use crate::config::PLAYER_SIZE;
+use crate::config::player::*
 
 #[derive(Component, Clone)]
 pub struct Player {
@@ -25,10 +25,11 @@ pub struct PlayerBundle {
     pub sprite: Sprite,
     pub player: Player,
     pub velocity: Velocity,
+    pub transform: Transform,
 }
 
 impl PlayerBundle {
-    pub fn new(controls: PlayerControls, texture: Handle<Image>) -> Self {
+    pub fn new(controls: PlayerControls, texture: Handle<Image>, transform: Transform) -> Self {
         Self {
             sprite: Sprite {
                 image: texture,
@@ -37,6 +38,7 @@ impl PlayerBundle {
             },
             player: Player { controls },
             velocity: Velocity::default(),
+            transform: transform,
         }
     }
 }

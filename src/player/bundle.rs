@@ -21,6 +21,7 @@ pub struct Velocity {
 
 #[derive(Bundle)]
 pub struct PlayerBundle {
+    pub sprite: Sprite,
     pub player: Player,
     pub velocity: Velocity,
 }
@@ -28,6 +29,7 @@ pub struct PlayerBundle {
 impl PlayerBundle {
     pub fn new(controls: PlayerControls, texture: Handle<Image>) -> Self {
         Self {
+            sprite: Sprite::from_image(texture),
             player: Player { controls },
             velocity: Velocity::default(),
         }

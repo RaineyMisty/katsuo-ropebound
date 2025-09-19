@@ -20,3 +20,9 @@ fn setup_camera(mut commands: Commands) {
         Camera::default(),
     ));
 }
+
+fn setup_player(mut commands: Commands) {
+    commands.spawn((
+        Player,
+    ));
+}

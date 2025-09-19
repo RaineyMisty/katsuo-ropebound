@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2025 Tingxu Chen
-// Author: Tingxu Chen <you@example.com>
+// Author: Tingxu Chen <tic128@pitt.edu>
 // Description: <Create App and setup camera>
 
 use bevy::prelude::*;

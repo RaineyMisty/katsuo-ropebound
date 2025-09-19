@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use crate::config::PLAYER_SIZE;
 
 #[derive(Component, Clone)]
 pub struct Player {
@@ -31,7 +32,7 @@ impl PlayerBundle {
         Self {
             sprite: Sprite {
                 image: texture,
-                custom_size: Some(Vec2::new(32.0, 32.0)),
+                custom_size: Some(PLAYER_SIZE),
                 ..Default::default()
             },
             player: Player { controls },

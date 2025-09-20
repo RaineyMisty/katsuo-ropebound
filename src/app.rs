@@ -13,6 +13,7 @@ pub fn run() {
     App::new()
         .insert_resource(Time::<Fixed>::from_hz(60.0))
         .insert_resource(PlayerSpawnPoint { position: PLAYER_INITIAL_POSITION })
+        .insert_resource(PlayerSpawnVelocity { velocity: PLAYER_INITIAL_VELOCITY })
         .add_plugins(DefaultPlugins)
         .add_plugins(PlayerPlugin)
         .add_plugins(PhysicsPlugin)

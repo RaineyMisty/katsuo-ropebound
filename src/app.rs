@@ -6,6 +6,7 @@
 use bevy::prelude::*;
 use bevy::time::Fixed;
 use crate::player::PlayerPlugin;
+use crate::systems::physics::PhysicsPlugin;
 use crate::config::*;
 
 pub fn run() {
@@ -14,6 +15,7 @@ pub fn run() {
         .insert_resource(PlayerSpawnPoint { position: PLAYER_INITIAL_POSITION })
         .add_plugins(DefaultPlugins)
         .add_plugins(PlayerPlugin)
+        .add_plugins(PhysicsPlugin)
         .add_systems(Startup, setup_camera)
         .run();
 }

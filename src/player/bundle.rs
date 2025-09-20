@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 use crate::config::player::*;
+use crate::components::motion::Velocity;
 
 #[derive(Component, Clone)]
 pub struct Player {
@@ -12,12 +13,6 @@ pub struct PlayerControls {
     pub down: KeyCode,
     pub left: KeyCode,
     pub right: KeyCode,
-}
-
-#[derive(Component, Default)]
-pub struct Velocity {
-    pub x: f32,
-    pub y: f32,
 }
 
 #[derive(Bundle)]

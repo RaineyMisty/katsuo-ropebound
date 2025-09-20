@@ -24,7 +24,7 @@ pub struct PlayerBundle {
 }
 
 impl PlayerBundle {
-    pub fn new(controls: PlayerControls, texture: Handle<Image>, transform: Transform) -> Self {
+    pub fn new(controls: PlayerControls, texture: Handle<Image>, transform: Transform , velocity: Velocity) -> Self {
         Self {
             sprite: Sprite {
                 image: texture,
@@ -32,7 +32,7 @@ impl PlayerBundle {
                 ..Default::default()
             },
             player: Player { controls },
-            velocity: Velocity::default(),
+            velocity: velocity,
             transform: transform,
         }
     }

@@ -7,6 +7,9 @@ use bevy::prelude::*;
 
 use crate::player::bundle::{PlayerBundle, PlayerControls};
 use crate::config::PlayerSpawnPoint;
+use crate::config::PlayerSpawnVelocity;
+
+use crate::components::motion::Velocity;
 
 pub struct PlayerPlugin;
 
@@ -16,7 +19,7 @@ impl Plugin for PlayerPlugin {
     }
 }
 
-fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>, spawn_point: Res<PlayerSpawnPoint>) {
+fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>, spawn_point: Res<PlayerSpawnPoint>, spawn_velocity: Res<PlayerSpawnVelocity>) {
     let transform = Transform::from_translation(spawn_point.position);
     let texture = asset_server.load("spriteguy.png");
     let controls = PlayerControls {
@@ -25,5 +28,6 @@ fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>, spawn_po
         left: KeyCode::KeyA,
         right: KeyCode::KeyD,
     };
-    commands.spawn(PlayerBundle::new(controls, texture, transform));
+    let velocity = Velocity(spawn_velocity.velocity);
+    commands.spawn(PlayerBundle::new(controls, texture, transform, velocity));
 }

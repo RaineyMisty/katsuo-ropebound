@@ -40,7 +40,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         PopupTimer(Timer::from_seconds(4., TimerMode::Once)),
     ));
 
-    info!("Hello world!");
+    //info!("Hello world!");
 }
 
 fn show_popup(time: Res<Time>, mut popup: Query<(&mut PopupTimer, &mut Transform)>) {
@@ -48,7 +48,7 @@ fn show_popup(time: Res<Time>, mut popup: Query<(&mut PopupTimer, &mut Transform
         timer.tick(time.delta());
         if timer.just_finished() {
             transform.translation.z = 2.;
-            info!("Should be Linux!");
+            //info!("Should be Linux!");
         }
     }
 }

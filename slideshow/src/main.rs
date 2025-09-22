@@ -24,7 +24,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn(Camera2d);
     commands.spawn(Sprite::from_image(asset_server.load("sprites/Picture720-Ket-Hwa.png")));
     commands.spawn((
-        Sprite::from_image(asset_server.load("sprites/testchar.png")),
+        Sprite::from_image(asset_server.load("sprites/AAAaaa.png")),
         Transform {
             translation: Vec3::new(0., 0., -1.),
             ..default()
@@ -32,7 +32,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         PopupTimer(Timer::from_seconds(2., TimerMode::Once)),
     ));
     commands.spawn((
-        Sprite::from_image(asset_server.load("sprites/testchar.png")),
+        Sprite::from_image(asset_server.load("sprites/safeimagekit-ZhuoyanCen.png")),
         Transform {
             translation: Vec3::new(0., 0., -2.),
             ..default()

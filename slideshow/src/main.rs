@@ -63,6 +63,14 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         },
         PopupTimer(Timer::from_seconds(10., TimerMode::Once)),
     ));
+    commands.spawn((
+        Sprite::from_image(asset_server.load("sprites/alli_pixel.png")),
+        Transform {
+            translation: Vec3::new(0., 0., -2.4),
+            ..default()
+        },
+        PopupTimer(Timer::from_seconds(12., TimerMode::Once)),
+    ));
     //info!("Hello world!");
 }
 

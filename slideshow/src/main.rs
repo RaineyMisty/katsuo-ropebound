@@ -42,12 +42,27 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn((
         Sprite::from_image(asset_server.load("sprites/JaggerSlideshowImg.png")),
         Transform {
-            translation: Vec3::new(0., 0., -3.),
+            translation: Vec3::new(0., 0., -2.1),
             ..default()
         },
-        PopupTimer(Timer::from_seconds(4., TimerMode::Once)),
+        PopupTimer(Timer::from_seconds(6., TimerMode::Once)),
     ));
-
+    commands.spawn((
+        Sprite::from_image(asset_server.load("sprites/shmulPixel.png")),
+        Transform {
+            translation: Vec3::new(0., 0., -2.2),
+            ..default()
+        },
+        PopupTimer(Timer::from_seconds(8., TimerMode::Once)),
+    ));
+    commands.spawn((
+        Sprite::from_image(asset_server.load("sprites/7952590F.png")),
+        Transform {
+            translation: Vec3::new(0., 0., -2.3),
+            ..default()
+        },
+        PopupTimer(Timer::from_seconds(10., TimerMode::Once)),
+    ));
     //info!("Hello world!");
 }
 

@@ -39,6 +39,14 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         },
         PopupTimer(Timer::from_seconds(4., TimerMode::Once)),
     ));
+    commands.spawn((
+        Sprite::from_image(asset_server.load("sprites/JaggerSlideshowImg.png")),
+        Transform {
+            translation: Vec3::new(0., 0., -3.),
+            ..default()
+        },
+        PopupTimer(Timer::from_seconds(4., TimerMode::Once)),
+    ));
 
     //info!("Hello world!");
 }

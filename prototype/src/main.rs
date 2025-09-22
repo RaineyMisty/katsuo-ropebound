@@ -5,7 +5,7 @@ fn main() {
         .insert_resource(DebugColliders(false))
         .add_plugins(DefaultPlugins)
         .add_systems(Startup, setup)
-        .add_systems(Update, (player_movement, apply_gravity, player_platform_collision, toggle_debug))
+        .add_systems(Update, (player_movement, apply_gravity, player_platform_collision, toggle_debug, update_camera.after(player_movement)))
         .add_systems(Update, draw_colliders.run_if(debug_colliders_on))
         .run();
 }
@@ -97,7 +97,15 @@ fn debug_colliders_on(debug: Res<DebugColliders>) -> bool {
 }
 
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
-    commands.spawn(Camera2d);
+    commands.spawn((
+        Camera2d,
+        Camera {
+            ..default()
+        },
+        Transform::from_xyz(0.0, 0.0, 999.0),
+        GlobalTransform::default(),
+        MainCamera,
+    ));
 
     // make player 1
     commands.spawn(PlayerBundle::new(
@@ -109,7 +117,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             jump: KeyCode::KeyW,
         },
         "spriteguy.png"
-    ));
+    )).insert(FollowedPlayer);
 
     // make player 2
     commands.spawn(PlayerBundle::new(
@@ -195,6 +203,27 @@ fn player_movement(
             }
         }
     }
+}
+
+#[derive(Component)]
+struct MainCamera;
+
+#[derive(Component)]
+struct FollowedPlayer;
+const CAMERA_DECAY_RATE: f32 = 3.;
+
+// System for the camera movement
+fn update_camera(mut camera: Single<&mut Transform, (With<Camera2d>, Without<Player>)>,
+player: Single<&Transform, (With<Player>, Without<Camera2d>, With<FollowedPlayer>)>,
+time: Res<Time>) {
+    let Vec3 {x, y, ..} = player.translation;
+    // Change 0.0 to x to allow for camera to move horizontally
+    let direction = Vec3::new(x, y, camera.translation.z);
+
+    // Smoothing effect for the camera
+    camera
+        .translation
+        .smooth_nudge(&direction, CAMERA_DECAY_RATE, time.delta_secs());
 }
 
 // this also applies velocity

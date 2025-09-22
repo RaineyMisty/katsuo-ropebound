@@ -1,59 +1,54 @@
-use bevy::prelude::*;
+use bevy::{prelude::*, window::PresentMode};
+
+#[derive(Component, Deref, DerefMut)]
+struct PopupTimer(Timer);
+
 
 fn main() {
     App::new()
-        .add_plugins(DefaultPlugins)
-        .insert_resource(SlideTimer(Timer::from_seconds(3.0, TimerMode::Repeating)))
-        .insert_resource(SlideIndex(0))
+        .add_plugins(DefaultPlugins.set(WindowPlugin {
+            primary_window: Some(Window {
+                title: "credits!".into(),
+                resolution: (1280., 720.).into(),
+                present_mode: PresentMode::AutoVsync,
+                ..default()
+            }),
+            ..default()
+        }))
         .add_systems(Startup, setup)
-        .add_systems(Update, change_color)
+        .add_systems(Update, show_popup)
         .run();
 }
 
-#[derive(Resource)]
-struct SlideTimer(Timer);
-
-#[derive(Resource)]
-struct SlideIndex(usize);
-
-#[derive(Component)]
-struct Slide;
-
-fn setup(mut commands: Commands) {
+fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn(Camera2d);
-
-    // Spawn sprite manually without SpriteBundle
+    commands.spawn(Sprite::from_image(asset_server.load("sprites/Picture720-Ket-Hwa.png")));
     commands.spawn((
-        Sprite {
-            color: COLORS[0],
-            custom_size: Some(Vec2::new(200.0, 200.0)),
+        Sprite::from_image(asset_server.load("sprites/testchar.png")),
+        Transform {
+            translation: Vec3::new(0., 0., -1.),
             ..default()
         },
-        Transform::default(),
-        GlobalTransform::default(),
-        Visibility::default(),
-        Slide,
+        PopupTimer(Timer::from_seconds(2., TimerMode::Once)),
     ));
+    commands.spawn((
+        Sprite::from_image(asset_server.load("sprites/testchar.png")),
+        Transform {
+            translation: Vec3::new(0., 0., -2.),
+            ..default()
+        },
+        PopupTimer(Timer::from_seconds(4., TimerMode::Once)),
+    ));
+
+    info!("Hello world!");
 }
 
-fn change_color(
-    time: Res<Time>,
-    mut timer: ResMut<SlideTimer>,
-    mut index: ResMut<SlideIndex>,
-    mut query: Query<&mut Sprite, With<Slide>>,
-) {
-    if timer.0.tick(time.delta()).just_finished() {
-        index.0 = (index.0 + 1) % COLORS.len();
-        if let Ok(mut sprite) = query.get_single_mut() {
-            sprite.color = COLORS[index.0];
+fn show_popup(time: Res<Time>, mut popup: Query<(&mut PopupTimer, &mut Transform)>) {
+    for (mut timer, mut transform) in popup.iter_mut() {
+        timer.tick(time.delta());
+        if timer.just_finished() {
+            transform.translation.z = 2.;
+            info!("Should be Linux!");
         }
     }
 }
-
-const COLORS: [Color; 5] = [
-    Color::srgb(1.0, 0.0, 0.0),
-    Color::srgb(0.0, 1.0, 0.0),
-    Color::srgb(0.0, 0.0, 1.0),
-    Color::srgb(1.0, 1.0, 0.0),
-    Color::srgb(0.5, 0.0, 0.5),
-];

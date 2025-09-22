@@ -3,14 +3,14 @@ CS1666 game design game: Katsuo
 
 First manager is Ket-Hwa Cheng (MorningDuringNight KEC344)
 
-Advanced topic group AI: Ket-Hwa (github: MorningDuringNight Pitt: KEC344), 
-                         Tingxu (github: RaineyMisty Pitt: tic128), 
-                         Xiaoting (github: XtWang299 Pitt: xiw323), 
-                         Zhuoyan (github: qhynSamuel Pitt: zhc158)
+Advanced topic group AI: Ket-Hwa Cheng(github: MorningDuringNight Pitt: KEC344), 
+                         Tingxu Chen(github: RaineyMisty Pitt: tic128), 
+                         Xiaoting Wang(github: XtWang299 Pitt: xiw323), 
+                         Zhuoyan Cen(github: qhynSamuel Pitt: zhc158)
 
-Advanced topic group multiplayer: Jagger (github: Jagger-Hershey Pitt: JCH168),
-                                  Alli (github: AlliBatell Pitt: ALB594),
-                                  Sean (github: Sean-Shmulevich Pitt: szs23)
+Advanced topic group multiplayer: Jagger Hershey (github: Jagger-Hershey Pitt: JCH168),
+                                  Alli Batell (github: AlliBatell Pitt: ALB594),
+                                  Sean Shmulevich(github: Sean-Shmulevich Pitt: szs23)
 
 ## game premise:
 

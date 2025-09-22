@@ -1,5 +1,5 @@
 [package]
-name = "movement"
+name = "maploading"
 
 edition.workspace = true
 version.workspace = true

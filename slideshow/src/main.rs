@@ -30,10 +30,10 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn((
         Sprite::from_image(asset_server.load("sprites/AAAaaa.png")),
         Transform {
-            translation: Vec3::new(0., 0., -1.),
+            translation: Vec3::new(0., 0., -2.),
             ..default()
         },
-        PopupTimer(Timer::from_seconds(2., TimerMode::Once)), Despawnable,
+        PopupTimer(Timer::from_seconds(2. + 0.1, TimerMode::Once)), Despawnable,
         //DespawnTimer(Timer::from_seconds(0.1, TimerMode::Once))
     ));
     commands.spawn((
@@ -42,7 +42,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             translation: Vec3::new(0., 0., -1.2),
             ..default()
         },
-        PopupTimer(Timer::from_seconds(4., TimerMode::Once)), Despawnable,
+        PopupTimer(Timer::from_seconds(4.+ 0.1, TimerMode::Once)), Despawnable,
     ));
     commands.spawn((
         Sprite::from_image(asset_server.load("sprites/JaggerSlideshowImg.png")),
@@ -50,7 +50,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             translation: Vec3::new(0., 0., -1.4),
             ..default()
         },
-        PopupTimer(Timer::from_seconds(6., TimerMode::Once)), Despawnable,
+        PopupTimer(Timer::from_seconds(6.+ 0.1, TimerMode::Once)), Despawnable,
     ));
     commands.spawn((
         Sprite::from_image(asset_server.load("sprites/shmulPixel.png")),
@@ -58,7 +58,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             translation: Vec3::new(0., 0., -1.6),
             ..default()
         },
-        PopupTimer(Timer::from_seconds(8., TimerMode::Once)), Despawnable,
+        PopupTimer(Timer::from_seconds(8.+ 0.1, TimerMode::Once)), Despawnable,
     ));
     commands.spawn((
         Sprite::from_image(asset_server.load("sprites/7952590F.png")),
@@ -66,7 +66,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             translation: Vec3::new(0., 0., -1.8),
             ..default()
         },
-        PopupTimer(Timer::from_seconds(10., TimerMode::Once)),Despawnable,
+        PopupTimer(Timer::from_seconds(10.+ 0.1, TimerMode::Once)),Despawnable,
     ));
     commands.spawn((
         Sprite::from_image(asset_server.load("sprites/alli_pixel.png")),
@@ -74,7 +74,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             translation: Vec3::new(0., 0., -2.),
             ..default()
         },
-        PopupTimer(Timer::from_seconds(12., TimerMode::Once)),Despawnable,
+        PopupTimer(Timer::from_seconds(12.+ 0.1, TimerMode::Once)),Despawnable,
     ));
     //info!("Hello world!");
 }

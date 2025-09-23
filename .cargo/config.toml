@@ -1,3 +1,2 @@
 [alias]
 vroom = "run --features bevy/dynamic_linking"
-makealias = "./alias_workspace.sh"

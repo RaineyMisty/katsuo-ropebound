@@ -3,6 +3,8 @@ use bevy::{prelude::*, window::PresentMode};
 #[derive(Component, Deref, DerefMut)]
 struct PopupTimer(Timer);
 
+#[derive(Component)]
+struct Despawnable;
 
 fn main() {
     App::new()
@@ -16,6 +18,7 @@ fn main() {
             ..default()
         }))
         .add_systems(Startup, setup)
+        .add_systems(Startup, despawn)
         .add_systems(Update, show_popup)
         .run();
 }
@@ -23,42 +26,44 @@ fn main() {
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn(Camera2d);
     commands.spawn(Sprite::from_image(asset_server.load("sprites/Picture720-Ket-Hwa.png")));
+    //despawn(commands, asset_server,);
     commands.spawn((
         Sprite::from_image(asset_server.load("sprites/AAAaaa.png")),
         Transform {
             translation: Vec3::new(0., 0., -1.),
             ..default()
         },
-        PopupTimer(Timer::from_seconds(2., TimerMode::Once)),
+        PopupTimer(Timer::from_seconds(2., TimerMode::Once)), Despawnable,
+        //DespawnTimer(Timer::from_seconds(0.1, TimerMode::Once))
     ));
     commands.spawn((
         Sprite::from_image(asset_server.load("sprites/safeimagekit-ZhuoyanCen.png")),
         Transform {
-            translation: Vec3::new(0., 0., -2.),
+            translation: Vec3::new(0., 0., -1.1),
             ..default()
         },
-        PopupTimer(Timer::from_seconds(4., TimerMode::Once)),
+        PopupTimer(Timer::from_seconds(4., TimerMode::Once)), Despawnable,
     ));
     commands.spawn((
         Sprite::from_image(asset_server.load("sprites/JaggerSlideshowImg.png")),
         Transform {
-            translation: Vec3::new(0., 0., -2.1),
+            translation: Vec3::new(0., 0., -1.2),
             ..default()
         },
-        PopupTimer(Timer::from_seconds(6., TimerMode::Once)),
+        PopupTimer(Timer::from_seconds(6., TimerMode::Once)), Despawnable,
     ));
     commands.spawn((
         Sprite::from_image(asset_server.load("sprites/shmulPixel.png")),
         Transform {
-            translation: Vec3::new(0., 0., -2.2),
+            translation: Vec3::new(0., 0., -1.3),
             ..default()
         },
-        PopupTimer(Timer::from_seconds(8., TimerMode::Once)),
+        PopupTimer(Timer::from_seconds(8., TimerMode::Once)), Despawnable,
     ));
     commands.spawn((
         Sprite::from_image(asset_server.load("sprites/7952590F.png")),
         Transform {
-            translation: Vec3::new(0., 0., -2.3),
+            translation: Vec3::new(0., 0., -1.4),
             ..default()
         },
         PopupTimer(Timer::from_seconds(10., TimerMode::Once)),
@@ -66,7 +71,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn((
         Sprite::from_image(asset_server.load("sprites/alli_pixel.png")),
         Transform {
-            translation: Vec3::new(0., 0., -2.4),
+            translation: Vec3::new(0., 0., -1.5),
             ..default()
         },
         PopupTimer(Timer::from_seconds(12., TimerMode::Once)),
@@ -78,8 +83,15 @@ fn show_popup(time: Res<Time>, mut popup: Query<(&mut PopupTimer, &mut Transform
     for (mut timer, mut transform) in popup.iter_mut() {
         timer.tick(time.delta());
         if timer.just_finished() {
-            transform.translation.z = 2.;
+            transform.translation.z = 1.;
             //info!("Should be Linux!");
         }
     }
+}
+
+fn despawn(mut commands: Commands, cute: Query<Entity, With<Despawnable>>){
+    for entity in cute.iter(){
+        commands.entity(entity).despawn();
+    }
+
 }

@@ -8,4 +8,5 @@ pub mod motion;
 
 pub mod prelude {
     pub use super::motion::Velocity;
+    pub use super::motion::Force;
 }

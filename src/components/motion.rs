@@ -7,3 +7,6 @@ use bevy::prelude::*;
 
 #[derive(Component, Default, Clone, Copy, Debug)]
 pub struct Velocity (pub Vec2);
+
+#[derive(Component, Default, Clone, Copy, Debug)]
+pub struct Force (pub Vec2);

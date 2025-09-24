@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 use crate::config::player::*;
-use crate::components::motion::Velocity;
+use crate::components::motion::{Velocity, Force};
 
 #[derive(Component, Clone)]
 pub struct Player {
@@ -19,12 +19,13 @@ pub struct PlayerControls {
 pub struct PlayerBundle {
     pub sprite: Sprite,
     pub player: Player,
+    pub force: Force,
     pub velocity: Velocity,
     pub transform: Transform,
 }
 
 impl PlayerBundle {
-    pub fn new(controls: PlayerControls, texture: Handle<Image>, transform: Transform , velocity: Velocity) -> Self {
+    pub fn new(controls: PlayerControls, texture: Handle<Image>, transform: Transform, velocity: Velocity, force: Force) -> Self {
         Self {
             sprite: Sprite {
                 image: texture,
@@ -32,6 +33,7 @@ impl PlayerBundle {
                 ..Default::default()
             },
             player: Player { controls },
+            force: force,
             velocity: velocity,
             transform: transform,
         }

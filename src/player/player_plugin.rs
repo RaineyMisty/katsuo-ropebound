@@ -29,5 +29,6 @@ fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>, spawn_po
         right: KeyCode::KeyD,
     };
     let velocity = Velocity(spawn_velocity.velocity);
-    commands.spawn(PlayerBundle::new(controls, texture, transform, velocity));
+    let force = Force(Vec2::ZERO);
+    commands.spawn(PlayerBundle::new(controls, texture, transform, velocity, force));
 }

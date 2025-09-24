@@ -9,7 +9,7 @@ use crate::player::bundle::{PlayerBundle, PlayerControls};
 use crate::config::PlayerSpawnPoint;
 use crate::config::PlayerSpawnVelocity;
 
-use crate::components::motion::Velocity;
+use crate::components::motion::{Velocity, Force};
 
 pub struct PlayerPlugin;
 

@@ -3,7 +3,7 @@ use bevy_ecs_tilemap::prelude::*;
 use serde::Deserialize;
 use std::collections::HashMap;
 
-const MAP_NAME: &str = "test";
+const MAP_NAME: &str = "level1";
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]

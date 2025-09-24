@@ -1,50 +1,50 @@
 {
-    "metadata": {
-        "tileSizePx": 80,
-        "rows": 32,
-        "cols": 16
-    },
-    "layerImages": {
-        "tileFg": "test/tile_fg.png",
-        "entity": "test/entity.png"
-    },
-    "collisionAreas": [
-        {
-            "startX": 520,
-            "startY": 361,
-            "width": 257.5,
-            "height": 219
-        }
-    ],
-    "entities": {
-        "GQzZ01": {
-            "type": "platform",
-            "boundary": {
-                "startX": 800,
-                "startY": 2400,
-                "width": 400,
-                "height": 77.5
-            },
-            "attributes": {
-                "oneWay": false,
-                "moving": {
-                    "moveType": "linear",
-                    "startX": 800,
-                    "startY": 2400,
-                    "endX": 200,
-                    "endY": 2400,
-                    "speed": 1,
-                    "trigger": {
-                        "triggerType": "loop"
-                    }
-                }
-            },
-            "collision": {
-                "startX": 801,
-                "startY": 2400,
-                "width": 399,
-                "height": 77.5
-            }
-        }
+  "collisionAreas": [
+    {
+      "height": 219,
+      "startX": 520,
+      "startY": 361,
+      "width": 257.5
     }
+  ],
+  "entities": {
+    "GQzZ01": {
+      "attributes": {
+        "moving": {
+          "endX": 200,
+          "endY": 2400,
+          "moveType": "linear",
+          "speed": 1,
+          "startX": 800,
+          "startY": 2400,
+          "trigger": {
+            "triggerType": "loop"
+          }
+        },
+        "oneWay": false
+      },
+      "boundary": {
+        "height": 77.5,
+        "startX": 800,
+        "startY": 2400,
+        "width": 400
+      },
+      "collision": {
+        "height": 77.5,
+        "startX": 801,
+        "startY": 2400,
+        "width": 399
+      },
+      "type": "platform"
+    }
+  },
+  "layerImages": {
+    "entity": "test/entity.png",
+    "tileFg": "test/tile_fg.png"
+  },
+  "metadata": {
+    "cols": 16,
+    "rows": 32,
+    "tileSizePx": 80
+  }
 }

@@ -11,8 +11,8 @@ pub fn integrate_force_system(
 ) {
     let delta_seconds = time.delta_secs();
     for (mut velocity, force) in query.iter_mut() {
-        velocity.0.x += force.force.x * delta_seconds;
-        velocity.0.y += force.force.y * delta_seconds;
+        velocity.0.x += force.0.x * delta_seconds;
+        velocity.0.y += force.0.y * delta_seconds;
     }
 }
 

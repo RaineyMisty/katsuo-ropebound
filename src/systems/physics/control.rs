@@ -20,10 +20,10 @@ pub fn player_movement_input_system(
 
         // Horizontal force
         if keyboard_input.pressed(player.controls.left) {
-            force.0.x -= PLAYER_MOVE_FORCE - resistance_force.x;
+            force.0.x = - PLAYER_MOVE_FORCE + resistance_force.x;
         }
         if keyboard_input.pressed(player.controls.right) {
-            force.0.x += PLAYER_MOVE_FORCE - resistance_force.x;
+            force.0.x = PLAYER_MOVE_FORCE - resistance_force.x;
         }
 
         // // Vertical force

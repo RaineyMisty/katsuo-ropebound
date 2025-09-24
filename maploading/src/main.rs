@@ -2,9 +2,8 @@ use bevy::prelude::*;
 use bevy_ecs_tilemap::prelude::*;
 use serde::Deserialize;
 use std::collections::HashMap;
-use base64::Engine;
-use base64::engine::general_purpose::STANDARD;
 
+const MAP_NAME: &str = "level1";
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
@@ -32,8 +31,7 @@ pub struct EntityData {
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct LayerData {
-    pub metadata: Metadata,
+pub struct LayerImages {
     #[serde(rename = "tileFG")]
     pub tile_fg: String,
     pub entity: String,
@@ -42,7 +40,8 @@ pub struct LayerData {
 #[derive(Deserialize, Debug, Resource)]
 #[serde(rename_all = "camelCase")]
 pub struct MapFile {
-    pub layer_data: LayerData,
+    pub metadata: Metadata,
+    pub layer_images: LayerImages,
     pub collision_areas: Vec<Rectangle>,
     pub entities: HashMap<String, EntityData>,
 }
@@ -74,33 +73,28 @@ fn load_map_data(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
 ) {
+    // works relative to workspace and relative to root
+    let json_path = format!(
+        "{}/assets/{}/{}.json",
+        env!("CARGO_MANIFEST_DIR"),
+        MAP_NAME,
+        MAP_NAME
+    );
+
     // read Json document
-    let json_str = std::fs::read_to_string("maploading/assets/allFunctionality.json")
+    let json_str = std::fs::read_to_string(&json_path)
         .expect("Failed to read JSON file");
     
     let map: MapFile = serde_json::from_str(&json_str)
         .expect("Failed to parse JSON into MapFile");
 
-    // deal with with Base64 image data
-    let tile_fg_data = map.layer_data.tile_fg
-        .trim_start_matches("data:image/png;base64,");
-    let entity_data = map.layer_data.entity
-        .trim_start_matches("data:image/png;base64,");
-
-    // recover bytes from Base64
-    let tile_fg_bytes = STANDARD.decode(tile_fg_data)
-        .expect("Failed to decode tile FG Base64");
-    let entity_bytes = STANDARD.decode(entity_data)
-        .expect("Failed to decode entity Base64");
-
-    std::fs::write("./maploading/assets/temp_tile_fg.png", &tile_fg_bytes)
-        .expect("Failed to write temp tile image");
-    std::fs::write("./maploading/assets/temp_entity.png", &entity_bytes)
-        .expect("Failed to write temp entity image");
+    // tile_fg and entitiy point to image path's relative to the asset folder
+    let tile_fg_path = map.layer_images.tile_fg.clone();
+    let entity_path = map.layer_images.entity.clone();
 
     // load images as textures
-    let tile_fg_handle = asset_server.load("temp_tile_fg.png");
-    let entity_handle = asset_server.load("temp_entity.png");
+    let tile_fg_handle = asset_server.load(&tile_fg_path);
+    let entity_handle = asset_server.load(&entity_path);
 
     // store texture handles as resource
     commands.insert_resource(MapTextureHandles {
@@ -154,8 +148,8 @@ fn spawn_map_entities(
     commands.spawn(Camera2d);
 
     // let texture_handle: Handle<Image> = asset_server.load("tileLayer.png");
-    let texture_handle: Handle<Image> = asset_server.load("temp_tile_fg.png");
-    let metadata = &map_data.layer_data.metadata;
+    let texture_handle: Handle<Image> = asset_server.load(format!("{MAP_NAME}/tileFG.png"));
+    let metadata = &map_data.metadata;
     let map_size = TilemapSize { 
         x: metadata.cols, 
         y: metadata.rows 
@@ -207,7 +201,7 @@ fn spawn_map_entities(
 fn startup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn(Camera2d);
 
-    let texture_handle: Handle<Image> = asset_server.load("tiles.png");
+    let texture_handle: Handle<Image> = asset_server.load(format!("{MAP_NAME}/tiles.png"));
 
     let map_size: TilemapSize = TilemapSize { x: 10, y: 10 };
 

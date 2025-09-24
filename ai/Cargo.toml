@@ -8,3 +8,6 @@ authors.workspace = true
 [dependencies]
 bevy.workspace = true
 rand.workspace = true
+
+[package.metadata.commands]
+pullmap = "bash ../.cargo/pullMap.sh"

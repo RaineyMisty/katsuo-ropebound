@@ -11,6 +11,9 @@ use self::integrate::integrate_velocity_system;
 pub struct PhysicsPlugin;
 impl Plugin for PhysicsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(FixedUpdate, integrate_velocity_system).chain();
+        app.add_systems(FixedUpdate, 
+            player_movement_input_system,
+            integrate_velocity_system
+        ).chain();
     }
 }

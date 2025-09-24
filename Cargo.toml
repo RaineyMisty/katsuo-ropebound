@@ -1,0 +1,33 @@
+[workspace.package]
+name = "bevy-katsuo"
+authors = [
+    "Ket-Hwa Cheng (github: MorningDuringNight)",
+    "Tingxu (github: RaineyMisty )",
+    "Xiaoting (github: XtWang299)",
+    "Zhuoyan (github: qhynSamuel)",
+    "Jagger (github: Jagger-Hershey)",
+    "Alli (github: AlliBatell)",
+    "Sean (github: Sean-Shmulevich)"
+]
+version = "0.1.0"
+edition = "2024"
+
+[profile.dev]
+opt-level = 1
+
+# Apply all optimiations to dependencies in dev builds
+[profile.dev.package."*"]
+opt-level = 3
+
+[workspace.dependencies]
+bevy = "0.16.1"
+rand = "0.9.2"
+[workspace]
+members = [
+    "slideshow",
+    "ai",
+    "movementsystem",
+    "multiplayer",
+    "maploading",
+    "prototype", "javatobevy",
+]

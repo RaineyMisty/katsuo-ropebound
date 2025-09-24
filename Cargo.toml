@@ -29,5 +29,10 @@ members = [
     "movementsystem",
     "multiplayer",
     "maploading",
+<<<<<<< HEAD
     "prototype", "javatobevy",
 ]
+=======
+    "prototype",
+]
+>>>>>>> c89da28bbbc779acb4c7932b3a2c2b6266852fee

@@ -7,7 +7,7 @@ use crate::config::player::{PLAYER_MOVE_FORCE, PLAYER_JUMP_FORCE, PLAYER_CONTROL
 use crate::player::bundle::Player;
 use crate::components::motion::{Velocity, Force};
 
-fn player_movement_input_system(
+pub fn player_movement_input_system(
     keyboard_input: Res<ButtonInput<KeyCode>>,
     mut query: Query<(&mut Velocity, &mut Force, &Player), With<Player>>,
 ) {
@@ -16,18 +16,14 @@ fn player_movement_input_system(
         let resistance = PLAYER_CONTROL_SPEED_LIMIT / PLAYER_MOVE_FORCE;
 
         // Calculate the resistance force
-        let resistance_force = resistance * velocity.velocity;
-
-        // Apply resistance force
-        force.0.x -= resistance_force.x;
-        force.0.y -= resistance_force.y;
+        let resistance_force = resistance * velocity.0;
 
         // Horizontal force
         if keyboard_input.pressed(player.controls.left) {
-            force.0.x -= PLAYER_MOVE_FORCE;
+            force.0.x -= PLAYER_MOVE_FORCE - resistance_force.x;
         }
         if keyboard_input.pressed(player.controls.right) {
-            force.0.x += PLAYER_MOVE_FORCE;
+            force.0.x += PLAYER_MOVE_FORCE - resistance_force.x;
         }
 
         // // Vertical force
@@ -35,7 +31,7 @@ fn player_movement_input_system(
         //     force.0.y += PLAYER_MOVE_FORCE - resistance_force.y;
         // }
         // if keyboard_input.pressed(player.controls.down) {
-        //     force.0.y -= PLAYER_MOVE_FORCE + resistance_force.y;
+        //     force.0.y -= PLAYER_MOVE_FORCE - resistance_force.y;
         // }
     }
 }

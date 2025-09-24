@@ -4,7 +4,8 @@
 // Description: <Systems for player control>
 use bevy::prelude::*;
 use crate::config::player::{PLAYER_MOVE_FORCE, PLAYER_JUMP_FORCE, PLAYER_CONTROL_SPEED_LIMIT};
-use crate::components::{Player, Velocity, Force};
+use crate::player::bundle::Player;
+use crate::components::motion::{Velocity, Force};
 
 fn player_movement_input_system(
     keyboard_input: Res<ButtonInput<KeyCode>>,
@@ -18,23 +19,23 @@ fn player_movement_input_system(
         let resistance_force = resistance * velocity.velocity;
 
         // Apply resistance force
-        force.force.x -= resistance_force.x;
-        force.force.y -= resistance_force.y;
+        force.0.x -= resistance_force.x;
+        force.0.y -= resistance_force.y;
 
         // Horizontal force
         if keyboard_input.pressed(player.controls.left) {
-            force.force.x -= PLAYER_MOVE_FORCE;
+            force.0.x -= PLAYER_MOVE_FORCE;
         }
         if keyboard_input.pressed(player.controls.right) {
-            force.force.x += PLAYER_MOVE_FORCE;
+            force.0.x += PLAYER_MOVE_FORCE;
         }
 
         // // Vertical force
         // if keyboard_input.pressed(player.controls.up) {
-        //     force.force.y += PLAYER_MOVE_FORCE - resistance_force.y;
+        //     force.0.y += PLAYER_MOVE_FORCE - resistance_force.y;
         // }
         // if keyboard_input.pressed(player.controls.down) {
-        //     force.force.y -= PLAYER_MOVE_FORCE + resistance_force.y;
+        //     force.0.y -= PLAYER_MOVE_FORCE + resistance_force.y;
         // }
     }
 }

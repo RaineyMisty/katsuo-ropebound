@@ -5,6 +5,7 @@
 use bevy::prelude::*;
 
 pub mod integrate;
+pub mod control;
 
 use self::integrate::integrate_velocity_system;
 

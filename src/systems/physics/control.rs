@@ -17,12 +17,16 @@ fn player_movement_input_system(
         // Calculate the resistance force
         let resistance_force = resistance * velocity.velocity;
 
+        // Apply resistance force
+        force.force.x -= resistance_force.x;
+        force.force.y -= resistance_force.y;
+
         // Horizontal force
         if keyboard_input.pressed(player.controls.left) {
-            force.force.x -= PLAYER_MOVE_FORCE + resistance_force.x;
+            force.force.x -= PLAYER_MOVE_FORCE;
         }
         if keyboard_input.pressed(player.controls.right) {
-            force.force.x += PLAYER_MOVE_FORCE - resistance_force.x;
+            force.force.x += PLAYER_MOVE_FORCE;
         }
 
         // // Vertical force

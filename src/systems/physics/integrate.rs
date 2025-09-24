@@ -5,6 +5,17 @@
 use bevy::prelude::*;
 use crate::components::motion::Velocity;
 
+pub fn intergrate_force_system(
+    time: Res<Time<Fixed>>,
+    mut query: Query<(&mut Velocity, &Force)>,
+) {
+    let delta_seconds = time.delta_secs();
+    for (mut velocity, force) in query.iter_mut() {
+        velocity.0.x += force.force.x * delta_seconds;
+        velocity.0.y += force.force.y * delta_seconds;
+    }
+}
+
 pub fn integrate_velocity_system(
     time: Res<Time<Fixed>>,
     mut query: Query<(&mut Transform, &Velocity)>,

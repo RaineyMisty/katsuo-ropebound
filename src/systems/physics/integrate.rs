@@ -3,9 +3,9 @@
 // Author: Tingxu Chen <tic128@pitt.edu>
 // Description: <Systems for physics integration>
 use bevy::prelude::*;
-use crate::components::motion::Velocity;
+use crate::components::motion::{Velocity, Force};
 
-pub fn intergrate_force_system(
+pub fn integrate_force_system(
     time: Res<Time<Fixed>>,
     mut query: Query<(&mut Velocity, &Force)>,
 ) {

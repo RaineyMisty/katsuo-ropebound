@@ -13,18 +13,29 @@ pub fn player_movement_input_system(
 ) {
     for (mut velocity, mut force, player) in &mut query {
         // Calculate the resistance parameter
-        let resistance = PLAYER_CONTROL_SPEED_LIMIT / PLAYER_MOVE_FORCE;
+        // f = c*v => c = f/v
+        let resistance = PLAYER_MOVE_FORCE / PLAYER_CONTROL_SPEED_LIMIT; 
 
-        // Calculate the resistance force
-        let resistance_force = resistance * velocity.0;
+        // Calculate the resistance force (speed-dependent)
+        let resistance_force = resistance * velocity.0.length();
+
+        // Reset force
+        force.0 = Vec2::ZERO;
 
         // Horizontal force
         if keyboard_input.pressed(player.controls.left) {
-            force.0.x = - PLAYER_MOVE_FORCE + resistance_force.x;
+            force.0.x = - PLAYER_MOVE_FORCE;
+            if velocity.0.x < 0.0 {
+                force.0.x += resistance_force;
+            }
         }
         if keyboard_input.pressed(player.controls.right) {
-            force.0.x = PLAYER_MOVE_FORCE - resistance_force.x;
+            force.0.x = PLAYER_MOVE_FORCE;
+            if velocity.0.x > 0.0 {
+                force.0.x -= resistance_force;
+            }
         }
+
 
         // // Vertical force
         // if keyboard_input.pressed(player.controls.up) {

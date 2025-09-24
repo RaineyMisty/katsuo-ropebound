@@ -105,7 +105,7 @@ replace_base64_with_paths() {
     local rel_dir="${assets_dir##*/}"   # just "hello", "level1", etc.
 
     sedi \
-        -e "s|\"tileFG\": *\"data:image/png;base64,[^\"]*\"|\"tileFG\": \"${rel_dir}/tileFG.png\"|" \
+        -e "s|\"tileFg\": *\"data:image/png;base64,[^\"]*\"|\"tileFg\": \"${rel_dir}/tile_fg.png\"|" \
         -e "s|\"entity\": *\"data:image/png;base64,[^\"]*\"|\"entity\": \"${rel_dir}/entity.png\"|" \
         "$file"
 }
@@ -140,10 +140,10 @@ main() {
     download_map
 
     # Extract base64-encoded images into map_dir
-    tile_fg=$(extract_base64_field "tileFG" "$output")
+    tile_fg=$(extract_base64_field "tileFg" "$output")
     entity=$(extract_base64_field "entity" "$output")
 
-    echo "$tile_fg" | base64 --decode > "${map_dir}/tileFG.png"
+    echo "$tile_fg" | base64 --decode > "${map_dir}/tile_fg.png"
     echo "$entity"  | base64 --decode > "${map_dir}/entity.png"
 
     # Replace embedded base64 paths with relative paths

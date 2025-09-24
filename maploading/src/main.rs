@@ -3,7 +3,7 @@ use bevy_ecs_tilemap::prelude::*;
 use serde::Deserialize;
 use std::collections::HashMap;
 
-const MAP_NAME: &str = "level1";
+const MAP_NAME: &str = "test";
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
@@ -32,7 +32,6 @@ pub struct EntityData {
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct LayerImages {
-    #[serde(rename = "tileFG")]
     pub tile_fg: String,
     pub entity: String,
 }
@@ -148,7 +147,7 @@ fn spawn_map_entities(
     commands.spawn(Camera2d);
 
     // let texture_handle: Handle<Image> = asset_server.load("tileLayer.png");
-    let texture_handle: Handle<Image> = asset_server.load(format!("{MAP_NAME}/tileFG.png"));
+    let texture_handle: Handle<Image> = asset_server.load(format!("{MAP_NAME}/tile_fg.png"));
     let metadata = &map_data.metadata;
     let map_size = TilemapSize { 
         x: metadata.cols, 

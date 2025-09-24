@@ -5,8 +5,8 @@
         "cols": 16
     },
     "layerImages": {
-        "tileFg": "level1/tile_fg.png",
-        "entity": "level1/entity.png"
+        "tileFg": "test/tile_fg.png",
+        "entity": "test/entity.png"
     },
     "collisionAreas": [
         {

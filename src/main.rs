@@ -2,7 +2,7 @@ mod app;
 mod player;
 mod config;
 mod components;
-mod systems;
+mod physics;
 
 fn main() {
     app::run();

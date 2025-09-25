@@ -6,7 +6,7 @@
 use bevy::prelude::*;
 use bevy::time::Fixed;
 use crate::player::PlayerPlugin;
-use crate::systems::physics::PhysicsPlugin;
+use crate::physics::PhysicsPlugin;
 use crate::config::*;
 
 pub fn run() {

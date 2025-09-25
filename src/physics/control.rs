@@ -15,9 +15,11 @@ pub fn player_movement_input_system(
         // Calculate the resistance parameter
         // f = c*v => c = f/v
         let resistance = PLAYER_MOVE_FORCE / PLAYER_CONTROL_SPEED_LIMIT; 
+        let resistance_y = PLAYER_JUMP_FORCE / PLAYER_CONTROL_SPEED_LIMIT;
 
         // Calculate the resistance force (speed-dependent)
-        let resistance_force = resistance * velocity.0.length();
+        let resistance_force = resistance * velocity.0;
+        let resistance_force_y = resistance_y * velocity.0;
 
         // Reset force
         force.0 = Vec2::ZERO;
@@ -26,23 +28,28 @@ pub fn player_movement_input_system(
         if keyboard_input.pressed(player.controls.left) {
             force.0.x = - PLAYER_MOVE_FORCE;
             if velocity.0.x < 0.0 {
-                force.0.x += resistance_force;
+                force.0.x += resistance_force.x.abs();
             }
         }
         if keyboard_input.pressed(player.controls.right) {
             force.0.x = PLAYER_MOVE_FORCE;
             if velocity.0.x > 0.0 {
-                force.0.x -= resistance_force;
+                force.0.x -= resistance_force.x.abs();
             }
         }
 
-
-        // // Vertical force
-        // if keyboard_input.pressed(player.controls.up) {
-        //     force.0.y += PLAYER_MOVE_FORCE - resistance_force.y;
-        // }
-        // if keyboard_input.pressed(player.controls.down) {
-        //     force.0.y -= PLAYER_MOVE_FORCE - resistance_force.y;
-        // }
+        // Vertical force
+        if keyboard_input.pressed(player.controls.up) {
+            force.0.y = PLAYER_JUMP_FORCE;
+            if velocity.0.y > 0.0 {
+                force.0.y -= resistance_force_y.y.abs();
+            }
+        }
+        if keyboard_input.pressed(player.controls.down) {
+            force.0.y = - PLAYER_JUMP_FORCE;
+            if velocity.0.y < 0.0 {
+                force.0.y += resistance_force_y.y.abs();
+            }
+        }
     }
 }

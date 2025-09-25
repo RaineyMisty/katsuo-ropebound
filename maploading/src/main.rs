@@ -2,6 +2,7 @@ use bevy::prelude::*;
 use bevy_ecs_tilemap::prelude::*;
 use serde::Deserialize;
 use std::collections::HashMap;
+use std::path::Path;
 
 const MAP_NAME: &str = "level1";
 
@@ -73,12 +74,10 @@ fn load_map_data(
     asset_server: Res<AssetServer>,
 ) {
     // works relative to workspace and relative to root
-    let json_path = format!(
-        "{}/assets/{}/{}.json",
-        env!("CARGO_MANIFEST_DIR"),
-        MAP_NAME,
-        MAP_NAME
-    );
+    let json_path = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("assets")
+        .join(MAP_NAME)
+        .join(format!("{MAP_NAME}.json"));
 
     // read Json document
     let json_str = std::fs::read_to_string(&json_path)

@@ -6,8 +6,10 @@ use bevy::prelude::*;
 
 pub mod integrate;
 pub mod control;
+pub mod gravity;
 
 use self::control::player_movement_input_system;
+use self::gravity::gravity_system;
 use self::integrate::clean_force_system;
 use self::integrate::integrate_force_system;
 use self::integrate::integrate_velocity_system;
@@ -19,6 +21,7 @@ impl Plugin for PhysicsPlugin {
             FixedUpdate, 
             (
                 clean_force_system,
+                gravity_system,
                 player_movement_input_system,
                 integrate_force_system,
                 integrate_velocity_system

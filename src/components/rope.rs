@@ -3,20 +3,20 @@
 // Author: Tingxu Chen <tic128@pitt.edu>
 // Description: <Rope component>
 use bevy::prelude::*;
-use crate::config::physics::{ROPE_MAX_LENGTH, SPRING_CONSTANT};
+use crate::config::physics::{ROPE_REST_LENGTH, ROPE_MAX_EXTENSION, SPRING_CONSTANT};
 
 #[derive(Clone, Copy, Debug)]
 pub struct RopeConstraint {
     pub rest_length: f32,
-    pub max_length: f32,
+    pub max_extension: f32,
     pub spring_constant: f32,
 }
 
 impl Default for RopeConstraint {
     fn default() -> Self {
         RopeConstraint {
-            rest_length: ROPE_MAX_LENGTH * 0.5,
-            max_length: ROPE_MAX_LENGTH,
+            rest_length: ROPE_REST_LENGTH,
+            max_extension: ROPE_MAX_EXTENSION,
             spring_constant: SPRING_CONSTANT,
         }
     }

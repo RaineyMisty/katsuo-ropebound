@@ -14,5 +14,6 @@ pub const PLAYER_MOVE_FORCE: f32 = 3000.0;
 pub const PLAYER_JUMP_FORCE: f32 = 6000.0;
 
 // Rope parameters
-pub const ROPE_MAX_LENGTH: f32 = 300.0;
+pub const ROPE_REST_LENGTH: f32 = 300.0;
+pub const ROPE_MAX_EXTENSION: f32 = 50.0;  // Maximum extension beyond rest length
 pub const SPRING_CONSTANT: f32 = 50.0;

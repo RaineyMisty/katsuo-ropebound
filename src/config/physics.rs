@@ -6,3 +6,5 @@
 use bevy::prelude::*;
 
 pub const GRAVITY: Vec2 = Vec2::new(0.0, -98.0);
+
+pub const ROPE_MAX_LENGTH: f32 = 300.0;

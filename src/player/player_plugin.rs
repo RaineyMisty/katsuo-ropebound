@@ -31,4 +31,17 @@ fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>, spawn_po
     let net_force = NetForce(Vec2::ZERO);
     let velocity = Velocity(spawn_velocity.velocity);
     commands.spawn(PlayerBundle::new(controls, texture, transform, velocity, net_force));
+    // Spawn a second player for testing
+    // This is temporary and will be removed later
+    // Ideally we would have a better way
+    // use load player assets
+    let transform = Transform::from_translation(spawn_point.position + Vec3::new(300.0, 0.0, 0.0));
+    let texture = asset_server.load("spriteguy.png");
+    let controls = PlayerControls {
+        up: KeyCode::ArrowUp,
+        down: KeyCode::ArrowDown,
+        left: KeyCode::ArrowLeft,
+        right: KeyCode::ArrowRight,
+    };
+    commands.spawn(PlayerBundle::new(controls, texture, transform, velocity, net_force));
 }

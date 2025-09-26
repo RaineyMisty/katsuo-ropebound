@@ -9,4 +9,22 @@ use bevy::prelude::*;
 pub struct Velocity (pub Vec2);
 
 #[derive(Component, Default, Clone, Copy, Debug)]
-pub struct Force (pub Vec2);
+pub struct NetForce (pub Vec2);
+
+#[derive(Component, Clone, Copy, Debug)]
+pub struct Mass (pub f32);
+
+impl Default for Mass {
+    fn default() -> Self {
+        Mass(1.0)
+    }
+}
+
+#[derive(Component, Clone, Copy, Debug)]
+pub struct Gravity (pub bool);
+
+impl Default for Gravity {
+    fn default() -> Self {
+        Gravity(true)
+    }
+}

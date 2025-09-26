@@ -9,7 +9,7 @@ use crate::player::bundle::{PlayerBundle, PlayerControls};
 use crate::config::PlayerSpawnPoint;
 use crate::config::PlayerSpawnVelocity;
 
-use crate::components::motion::{Velocity, Force};
+use crate::components::motion::{Velocity, NetForce};
 
 pub struct PlayerPlugin;
 
@@ -29,6 +29,6 @@ fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>, spawn_po
         right: KeyCode::KeyD,
     };
     let velocity = Velocity(spawn_velocity.velocity);
-    let force = Force(Vec2::ZERO);
-    commands.spawn(PlayerBundle::new(controls, texture, transform, velocity, force));
+    let net_force = NetForce(Vec2::ZERO);
+    commands.spawn(PlayerBundle::new(controls, texture, transform, velocity, net_force));
 }

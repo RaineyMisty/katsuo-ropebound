@@ -12,6 +12,7 @@ pub mod rope_force;
 use self::integrate::clean_force_system;
 use self::integrate::integrate_force_system;
 use self::integrate::integrate_velocity_system;
+use self::integrate::boundary;
 use self::control::player_movement_input_system;
 use self::gravity::gravity_system;
 use self::rope_force::clean_rope_force_system;
@@ -31,7 +32,8 @@ impl Plugin for PhysicsPlugin {
                 rope_tension_system,
                 rope_force_to_system,
                 integrate_force_system,
-                integrate_velocity_system
+                integrate_velocity_system,
+                boundary,
             ).chain()
         );
     }

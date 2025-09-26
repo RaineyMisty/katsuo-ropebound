@@ -9,7 +9,7 @@ use crate::player::bundle::{PlayerBundle, PlayerControls};
 use crate::config::PlayerSpawnPoint;
 use crate::config::PlayerSpawnVelocity;
 
-use crate::components::motion::{Velocity, NetForce};
+use crate::components::motion::{Velocity, Mass};
 use crate::components::rope::{Rope, RopeConstraint};
 
 pub struct PlayerPlugin;
@@ -29,9 +29,9 @@ fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>, spawn_po
         left: KeyCode::KeyA,
         right: KeyCode::KeyD,
     };
-    let net_force = NetForce(Vec2::ZERO);
+    let mass = Mass(1.0);
     let velocity = Velocity(spawn_velocity.velocity);
-    let p1 = commands.spawn(PlayerBundle::new(controls, texture, transform, velocity, net_force)).id();
+    let p1 = commands.spawn(PlayerBundle::new(controls, texture, transform, velocity, mass)).id();
     // Spawn a second player for testing
     // This is temporary and will be removed later
     // Ideally we would have a better way
@@ -44,7 +44,8 @@ fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>, spawn_po
         left: KeyCode::ArrowLeft,
         right: KeyCode::ArrowRight,
     };
-    let p2 = commands.spawn(PlayerBundle::new(controls, texture, transform, velocity, net_force)).id();
+    let mass = Mass(1.0);
+    let p2 = commands.spawn(PlayerBundle::new(controls, texture, transform, velocity, mass)).id();
 
     // Add p1 and p2 a rope component
     commands.spawn(Rope {

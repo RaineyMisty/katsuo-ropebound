@@ -11,6 +11,9 @@ pub struct Velocity (pub Vec2);
 #[derive(Component, Default, Clone, Copy, Debug)]
 pub struct NetForce (pub Vec2);
 
+#[derive(Component, Default, Clone, Copy, Debug)]
+pub struct Momentum (pub Vec2);
+
 #[derive(Component, Clone, Copy, Debug)]
 pub struct Mass (pub f32);
 

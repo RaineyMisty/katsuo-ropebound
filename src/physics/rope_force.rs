@@ -7,6 +7,12 @@ use crate::components::rope::{Rope, RopeConstraint};
 use crate::components::motion::RopeForce;
 use crate::players::Player;
 
+pub fn clean_rope_force_system(mut q_rope_force: Query<&mut RopeForce>) {
+    for mut rope_force in &mut q_rope_force {
+        rope_force.0.force = Vec2::ZERO;
+    }
+}
+
 pub fn rope_tension_system(
     q_transforms: Query<&Transform>,
     mut q_rope_force: Query<(&Rope, &mut RopeForce)>,

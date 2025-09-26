@@ -10,6 +10,7 @@ use crate::config::PlayerSpawnPoint;
 use crate::config::PlayerSpawnVelocity;
 
 use crate::components::motion::{Velocity, NetForce};
+use crate::components::rope::{Rope, RopeConstraint};
 
 pub struct PlayerPlugin;
 
@@ -30,7 +31,7 @@ fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>, spawn_po
     };
     let net_force = NetForce(Vec2::ZERO);
     let velocity = Velocity(spawn_velocity.velocity);
-    commands.spawn(PlayerBundle::new(controls, texture, transform, velocity, net_force));
+    let p1 = commands.spawn(PlayerBundle::new(controls, texture, transform, velocity, net_force)).id();
     // Spawn a second player for testing
     // This is temporary and will be removed later
     // Ideally we would have a better way
@@ -43,5 +44,12 @@ fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>, spawn_po
         left: KeyCode::ArrowLeft,
         right: KeyCode::ArrowRight,
     };
-    commands.spawn(PlayerBundle::new(controls, texture, transform, velocity, net_force));
+    let p2 = commands.spawn(PlayerBundle::new(controls, texture, transform, velocity, net_force)).id();
+
+    // Add p1 and p2 a rope component
+    commands.spawn(Rope {
+        constraint: RopeConstraint::default(),
+        attached_entity_head: p1,
+        attached_entity_tail: p2,
+    });
 }

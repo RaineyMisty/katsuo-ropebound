@@ -17,22 +17,26 @@ pub fn player_movement_input_system(
         let resistance = PLAYER_MOVE_FORCE / PLAYER_CONTROL_SPEED_LIMIT; 
 
         // Calculate the resistance force (speed-dependent)
-        let resistance_force = resistance * velocity.0;
+        let resistance_force = resistance * velocity.0.x.abs();
 
         // Reset control force
         control_force.0 = Vec2::ZERO;
 
         // Horizontal force
         if keyboard_input.pressed(player.controls.left) {
-            control_force.0.x = - PLAYER_MOVE_FORCE;
-            if velocity.0.x < 0.0 {
-                control_force.0.x += resistance_force.x.abs();
+            if velocity.0.x > -PLAYER_CONTROL_SPEED_LIMIT { // speed up if not reached limit
+                control_force.0.x = - PLAYER_MOVE_FORCE;
+                if velocity.0.x < 0.0 {
+                    control_force.0.x += resistance_force;
+                }
             }
         }
         if keyboard_input.pressed(player.controls.right) {
-            control_force.0.x = PLAYER_MOVE_FORCE;
-            if velocity.0.x > 0.0 {
-                control_force.0.x -= resistance_force.x.abs();
+            if velocity.0.x < PLAYER_CONTROL_SPEED_LIMIT { // don't speed up if reached limit
+                control_force.0.x = PLAYER_MOVE_FORCE;
+                if velocity.0.x > 0.0 {
+                    control_force.0.x -= resistance_force;
+                }
             }
         }
 

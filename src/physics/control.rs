@@ -39,17 +39,8 @@ pub fn player_movement_input_system(
         }
 
         // Vertical force
-        if keyboard_input.pressed(player.controls.up) {
+        if keyboard_input.just_pressed(player.controls.up) {
             force.0.y = PLAYER_JUMP_FORCE;
-            if velocity.0.y > 0.0 {
-                force.0.y -= resistance_force_y.y.abs();
-            }
-        }
-        if keyboard_input.pressed(player.controls.down) {
-            force.0.y = - PLAYER_JUMP_FORCE;
-            if velocity.0.y < 0.0 {
-                force.0.y += resistance_force_y.y.abs();
-            }
         }
     }
 }

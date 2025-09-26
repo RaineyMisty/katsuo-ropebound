@@ -30,7 +30,7 @@ fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>, spawn_po
         left: KeyCode::KeyA,
         right: KeyCode::KeyD,
     };
-    let mass = Mass(PLAYER_SPAWN_MASS);
+    let mass = Mass(PLAYER_SPAWN_MASS * 1.5); // make the first player heavier
     let velocity = Velocity(spawn_velocity.velocity);
     let p1 = commands.spawn(PlayerBundle::new(controls, texture, transform, velocity, mass)).id();
     // Spawn a second player for testing

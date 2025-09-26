@@ -3,7 +3,7 @@
 // Author: Tingxu Chen <tic128@pitt.edu>
 // Description: <Systems for physics integration>
 use bevy::prelude::*;
-use crate::components::motion::{Velocity, NetForce};
+use crate::components::motion::{Velocity, NetForce, Momentum, Mass};
 
 pub fn clean_force_system(
     mut query: Query<&mut NetForce>,
@@ -15,12 +15,19 @@ pub fn clean_force_system(
 
 pub fn integrate_force_system(
     time: Res<Time<Fixed>>,
-    mut query: Query<(&mut Velocity, &NetForce)>,
+    mut query: Query<(&mut Momentum, &NetForce)>,
 ) {
     let delta_seconds = time.delta_secs();
-    for (mut velocity, net_force) in query.iter_mut() {
-        velocity.0.x += net_force.0.x * delta_seconds;
-        velocity.0.y += net_force.0.y * delta_seconds;
+    for (mut momentum, net_force) in query.iter_mut() {
+        momentum.0 += net_force.0 * delta_seconds;
+    }
+}
+
+pub fn integrate_momentum_system(
+    mut query: Query<(&mut Velocity, &Momentum, &Mass)>,
+) {
+    for (mut velocity, momentum, mass) in query.iter_mut() {
+        velocity.0 = momentum.0 / mass.0;
     }
 }
 

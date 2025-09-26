@@ -46,3 +46,11 @@ pub fn rope_tension_system(
         }
     }
 }
+
+pub fn rope_force_to_player_system(
+    mut query: Query<(&RopeForce, &Player, &mut NetForce)>,
+) {
+    for (rope_force, _player, mut net_force) in &mut query {
+        net_force.0 += rope_force.0.force;
+    }
+}

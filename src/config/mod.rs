@@ -4,5 +4,7 @@
 // Description: <Configuration module>
 
 pub mod player;
+pub mod physics;
 
 pub use player::*;
+pub use physics::*;

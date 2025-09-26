@@ -15,11 +15,9 @@ pub fn player_movement_input_system(
         // Calculate the resistance parameter
         // f = c*v => c = f/v
         let resistance = PLAYER_MOVE_FORCE / PLAYER_CONTROL_SPEED_LIMIT; 
-        let resistance_y = PLAYER_JUMP_FORCE / PLAYER_CONTROL_SPEED_LIMIT;
 
         // Calculate the resistance force (speed-dependent)
         let resistance_force = resistance * velocity.0;
-        let resistance_force_y = resistance_y * velocity.0;
 
         // Reset control force
         control_force.0 = Vec2::ZERO;

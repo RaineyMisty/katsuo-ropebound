@@ -28,3 +28,6 @@ impl Default for Gravity {
         Gravity(true)
     }
 }
+
+#[derive(Component, Default, Clone, Copy, Debug)]
+pub struct ControlForce (pub Vec2);

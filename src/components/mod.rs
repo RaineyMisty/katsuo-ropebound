@@ -9,4 +9,5 @@ pub mod motion;
 pub mod prelude {
     pub use super::motion::Velocity;
     pub use super::motion::NetForce;
+    pub use super::motion::ControlForce;
 }

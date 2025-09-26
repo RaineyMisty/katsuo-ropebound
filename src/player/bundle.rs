@@ -5,7 +5,6 @@ use crate::components::motion::{Velocity, NetForce, ControlForce};
 #[derive(Component, Clone)]
 pub struct Player {
     pub controls: PlayerControls,
-    pub control_force: ControlForce,
 }
 
 #[derive(Clone)]
@@ -20,6 +19,7 @@ pub struct PlayerControls {
 pub struct PlayerBundle {
     pub sprite: Sprite,
     pub player: Player,
+    pub control_force: ControlForce,
     pub net_force: NetForce,
     pub velocity: Velocity,
     pub transform: Transform,
@@ -33,10 +33,11 @@ impl PlayerBundle {
                 custom_size: Some(PLAYER_SIZE),
                 ..Default::default()
             },
-            player: Player { controls: controls, control_force: control_force },
-            net_force: net_force,
-            velocity: velocity,
-            transform: transform,
+            player: Player { controls },
+            control_force,
+            net_force,
+            velocity,
+            transform,
         }
     }
 }

@@ -31,3 +31,6 @@ impl Default for Gravity {
 
 #[derive(Component, Default, Clone, Copy, Debug)]
 pub struct ControlForce (pub Vec2);
+
+#[derive(Component, Clone, Copy, Debug)]
+pub struct RopeForce (pub Vec2);

@@ -8,9 +8,6 @@ use bevy::prelude::*;
 pub const PLAYER_SIZE: Vec2 = Vec2::new(64.0, 64.0);
 pub const PLAYER_INITIAL_POSITION: Vec3 = Vec3::new(-500.0, -200.0, 0.0);
 pub const PLAYER_INITIAL_VELOCITY: Vec2 = Vec2::new(0.0, 0.0);
-pub const PLAYER_CONTROL_SPEED_LIMIT: f32 = 120.0;
-pub const PLAYER_MOVE_FORCE: f32 = 3000.0;
-pub const PLAYER_JUMP_FORCE: f32 = 6000.0;
 
 #[derive(Resource, Clone, Copy)]
 pub struct PlayerSpawnPoint {

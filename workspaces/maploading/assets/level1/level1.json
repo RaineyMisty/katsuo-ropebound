@@ -1,0 +1,29 @@
+{
+  "collisionAreas": [],
+  "entities": {
+    "BtSAoe": {
+      "boundary": {
+        "height": 26,
+        "startX": 191,
+        "startY": 870,
+        "width": 257
+      },
+      "collision": {
+        "height": 26,
+        "startX": 191,
+        "startY": 870,
+        "width": 257
+      },
+      "type": "platform"
+    }
+  },
+  "layerImages": {
+    "entity": "level1/entity.png",
+    "tileFg": "level1/tile_fg.png"
+  },
+  "metadata": {
+    "cols": 20,
+    "rows": 32,
+    "tileSizePx": 64
+  }
+}

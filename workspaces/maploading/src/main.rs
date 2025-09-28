@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 use bevy_ecs_tilemap::prelude::*;
+use bevy::math::primitives::Rectangle;
 use serde::Deserialize;
 use std::collections::HashMap;
 use std::path::Path;
@@ -14,20 +15,21 @@ pub struct Metadata {
     pub cols: u32,
 }
 
-#[derive(Deserialize, Debug, Clone)]
-#[serde(rename_all = "camelCase")]
-pub struct Rectangle {
-    pub start_x: f32,
-    pub start_y: f32,
-    pub width: f32,
-    pub height: f32,
-}
+// #[derive(Deserialize, Debug, Clone)]
+// #[serde(rename_all = "camelCase")]
+// pub struct Rectangle {
+//     pub start_x: f32,
+//     pub start_y: f32,
+//     pub width: f32,
+//     pub height: f32,
+// }
 
-#[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct EntityData {
-    pub boundary: Rectangle,
-    pub collision: Rectangle,
+#[derive(serde::Deserialize, Debug)]
+struct EntityData {
+    boundary: Boundary,
+    #[serde(rename = "type")]
+    kind: String,
 }
 
 #[derive(Deserialize, Debug)]
@@ -108,22 +110,74 @@ fn move_camera_with_arrows(
         if keys.pressed(KeyCode::ArrowUp) && transform.translation.y < ((64.0*32.0)-(720.0/2.0)) {
             transform.translation.y += speed * dt;
         }
-        if keys.pressed(KeyCode::ArrowDown) && transform.translation.y > (720.0/2.0) {
+        else if keys.pressed(KeyCode::ArrowDown) && transform.translation.y >= (720.0/2.0) {
             transform.translation.y -= speed * dt;
         }
+        // else if keys.pressed(KeyCode::ArrowLeft) {
+        //     transform.translation.x -= speed * dt;
+        // }
+        // else if keys.pressed(KeyCode::ArrowRight) {
+        //     transform.translation.x += speed * dt;
+        // }
     } else {
         // (optional) log once if camera isn't found
         // info!("No camera found with CameraController");
     }
 }
 
+#[derive(serde::Deserialize, Debug)]
+struct Boundary {
+    startX: f32,
+    startY: f32,
+    width: f32,
+    height: f32,
+}
+
+#[derive(serde::Deserialize, Debug)]
+struct EntityFile {
+    entities: HashMap<String, EntityData>,
+}
+
+
+pub fn spawn_entity_rectangles(
+    mut commands: Commands,
+    mut meshes: ResMut<Assets<Mesh>>,
+    mut materials: ResMut<Assets<ColorMaterial>>,
+    map_data: Res<MapFile>,
+) {
+    let map_height = map_data.metadata.rows as f32 * map_data.metadata.tile_size_px as f32;
+
+    for (id, entity) in &map_data.entities {
+        let b = &entity.boundary;
+
+        let x = b.startX + b.width / 2.0;
+        let y = map_height - (b.startY + b.height / 2.0);
+
+        let color = match entity.kind.as_str() {
+            "platform" => Color::srgb(0.2, 0.8, 0.3),
+            "enemy" => Color::srgb(0.8, 0.2, 0.2),
+            _ => Color::srgba(0.6, 0.6, 0.6, 0.8),
+        };
+
+        commands.spawn((
+            Mesh2d(meshes.add(Rectangle::default())),
+            MeshMaterial2d(materials.add(color)),
+            Transform::from_xyz(x, y, 0.0)
+                .with_scale(Vec3::new(b.width, b.height, 1.0)),
+            Name::new(format!("Entity {id}")),
+        ));
+    }
+}
+
 // ─── Spawn Tilemap ────────────────────────────────────────────
+// make map entities,  
 fn spawn_map_entities(
     mut commands: Commands,
     map_data: Res<MapFile>,
     map_textures: Res<MapTextureHandles>,
     asset_server: Res<AssetServer>,
 ) {
+
     let metadata = &map_data.metadata;
     let map_size = TilemapSize { 
         x: metadata.cols, 
@@ -140,17 +194,15 @@ fn spawn_map_entities(
         Camera2d,
         Transform {
             translation: Vec3::new(
-                0.0,  // start horizontally centered
-                720.0 / 2.0,
-                0.0,
+                map_width / 2.0,
+                720.0 / 2.0, 
+                0.0, // keep positive z so it's above everything
             ),
             scale: Vec3::splat(1.0),
             ..Default::default()
         },
         CameraController,
     ));
-
-    let texture_handle: Handle<Image> = asset_server.load(format!("{MAP_NAME}/tile_fg.png"));
     info!("Map Size: {:?}", map_size);
 
     // Layer 1
@@ -160,6 +212,13 @@ fn spawn_map_entities(
     let w = map_size.x;
     let h = map_size.y;
 
+    // send tileset in json
+    // send 2d array of set tiles. 
+    // send rotation and flip data
+    // iterate map of set tiles.
+    //
+    // calculate groups.
+    // make platform entities out of tile groups.
     for i in 0..(w * h) {
         let y = i / w;
         let x = i % w;
@@ -187,9 +246,9 @@ fn spawn_map_entities(
         map_type,
         size: map_size,
         storage: tile_storage,
-        texture: TilemapTexture::Single(map_textures.tile_fg.clone()),
+        texture: TilemapTexture::Single(map_textures.entity.clone()),
         tile_size,
-        anchor: TilemapAnchor::BottomCenter,
+        anchor: TilemapAnchor::BottomLeft,
         // transform: Transform::from_translation(Vec3::new(0.0, -360.0, 0.0)),
         ..Default::default()
     });
@@ -231,11 +290,12 @@ fn main() {
                 .set(ImagePlugin::default_nearest()),
         )
         .add_plugins(TilemapPlugin)
-        .add_systems(Startup, (load_map_data, spawn_map_entities).chain())
+        .add_systems(Startup, (load_map_data, spawn_map_entities ).chain())
         .add_systems(
             Update,
             (
                 handle_keyboard_input,
+                spawn_entity_rectangles,
                 handle_mouse_input,
                 move_camera_with_arrows, // 👈 added
                 exit_app.run_if(input_just_pressed(KeyCode::Escape)),

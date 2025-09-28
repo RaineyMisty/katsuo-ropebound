@@ -1,9 +1,14 @@
 use bevy::prelude::*;
 use bevy_ecs_tilemap::prelude::*;
 use bevy::math::primitives::Rectangle;
+use bevy::asset::LoadState;
 use serde::Deserialize;
 use std::collections::HashMap;
 use std::path::Path;
+
+use bevy::render::mesh::{Indices, MeshVertexAttribute};
+use bevy::render::render_asset::RenderAssetUsages;
+use bevy::render::render_resource::PrimitiveTopology;
 
 const MAP_NAME: &str = "level1";
 
@@ -138,14 +143,78 @@ struct EntityFile {
     entities: HashMap<String, EntityData>,
 }
 
+fn make_textured_rect(
+    width: f32,
+    height: f32,
+    tex_x: f32,
+    tex_y: f32,
+    tex_w: f32,
+    tex_h: f32,
+    atlas_w: f32,
+    atlas_h: f32,
+) -> Mesh {
+    let mut mesh = Mesh::new(PrimitiveTopology::TriangleList, RenderAssetUsages::RENDER_WORLD);
+
+    // Rectangle vertices centered at origin
+    let hw = width / 2.0;
+    let hh = height / 2.0;
+
+    // Positions (X, Y, Z)
+    mesh.insert_attribute(
+        Mesh::ATTRIBUTE_POSITION,
+        vec![
+            [-hw, -hh, 0.0], // bottom left
+            [ hw, -hh, 0.0], // bottom right
+            [ hw,  hh, 0.0], // top right
+            [-hw,  hh, 0.0], // top left
+        ],
+    );
+
+    // UV coordinates (normalized)
+    let u_min = tex_x / atlas_w;
+    let v_min = 1.0 - (tex_y + tex_h) / atlas_h;
+    let u_max = (tex_x + tex_w) / atlas_w;
+    let v_max = 1.0 - tex_y / atlas_h;
+
+    mesh.insert_attribute(
+        Mesh::ATTRIBUTE_UV_0,
+        vec![
+            [u_min, v_min],
+            [u_max, v_min],
+            [u_max, v_max],
+            [u_min, v_max],
+        ],
+    );
+
+    // Indices (two triangles)
+    mesh.insert_indices(Indices::U32(vec![
+        0, 1, 2,
+        0, 2, 3,
+    ]));
+
+    mesh
+}
 
 pub fn spawn_entity_rectangles(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
     map_data: Res<MapFile>,
+    map_textures: Res<MapTextureHandles>,
+    images: Res<Assets<Image>>,
+    asset_server: Res<AssetServer>,
 ) {
     let map_height = map_data.metadata.rows as f32 * map_data.metadata.tile_size_px as f32;
+
+    // ✅ Use the handle stored in MapTextureHandles
+    match asset_server.get_load_state(&map_textures.entity) {
+        Some(LoadState::Loaded) => {
+            // ready to use the image
+        }
+        _ => return,
+    }
+    let atlas = images.get(&map_textures.entity).unwrap();
+    let atlas_size = atlas.size_f32();
 
     for (id, entity) in &map_data.entities {
         let b = &entity.boundary;
@@ -153,17 +222,21 @@ pub fn spawn_entity_rectangles(
         let x = b.startX + b.width / 2.0;
         let y = map_height - (b.startY + b.height / 2.0);
 
-        let color = match entity.kind.as_str() {
-            "platform" => Color::srgb(0.2, 0.8, 0.3),
-            "enemy" => Color::srgb(0.8, 0.2, 0.2),
-            _ => Color::srgba(0.6, 0.6, 0.6, 0.8),
-        };
+        let mesh = make_textured_rect(
+            b.width,
+            b.height,
+            b.startX,
+            b.startY,
+            b.width,
+            b.height,
+            atlas_size.x,
+            atlas_size.y,
+        );
 
         commands.spawn((
-            Mesh2d(meshes.add(Rectangle::default())),
-            MeshMaterial2d(materials.add(color)),
-            Transform::from_xyz(x, y, 0.0)
-                .with_scale(Vec3::new(b.width, b.height, 1.0)),
+            Mesh2d(meshes.add(mesh)),
+            MeshMaterial2d(materials.add(Color::WHITE)),
+            Transform::from_xyz(x, y, 0.0),
             Name::new(format!("Entity {id}")),
         ));
     }
@@ -290,12 +363,11 @@ fn main() {
                 .set(ImagePlugin::default_nearest()),
         )
         .add_plugins(TilemapPlugin)
-        .add_systems(Startup, (load_map_data, spawn_map_entities ).chain())
+        .add_systems(Startup, (load_map_data, spawn_map_entities, spawn_entity_rectangles).chain())
         .add_systems(
             Update,
             (
                 handle_keyboard_input,
-                spawn_entity_rectangles,
                 handle_mouse_input,
                 move_camera_with_arrows, // 👈 added
                 exit_app.run_if(input_just_pressed(KeyCode::Escape)),

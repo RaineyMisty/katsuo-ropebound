@@ -10,7 +10,7 @@ use bevy::prelude::*;
 pub fn player_player_coll_system (
      time: Res<Time>,
         mut query:Query<(
-            Entity,&mut Velocity,&mut Transform,&mut Momentum, &mut Aabb, &mut Mass)>,
+            Entity,&mut Velocity,&mut Transform,&mut Momentum, &mut Aabb)>,
         ){
 
         let mut players_stuff: Vec<_> = query.iter_mut().collect();
@@ -25,21 +25,24 @@ pub fn player_player_coll_system (
             if let Some(obj1) = one.last_mut() {
                 // check 2nd obj
                 for obj2 in two.iter_mut(){
+
                     let future1 = obj1.2.translation.truncate() + obj1.1.0 * change_intime;
                     let future2 = obj2.2.translation.truncate() + obj2.1.0 * change_intime;
                     // CHECK IF THEY HIT 
                     if check_aabb(future1, obj1.4.halfed(), future2, obj2.4.halfed()){
                         //think about this in a perfectly in elastic collision
-                        let total_momentum = (obj1.3.0.x * obj1.5.0) + (obj2.3.0.x * obj2.5.0) / (obj1.5.0 + obj1.5.0);
-                        if obj1.3.0.x > obj2.3.0.x{
-                            obj2.3.0.x = obj1.3.0.x;
-                            obj1.3.0.x = 0.;
+                        let total_momentum = (obj1.3.0.x) + (obj2.3.0.x);
+                        if obj1.3.0.x.abs() > obj2.3.0.x.abs(){
+                            obj2.3.0.x = total_momentum*0.5;
+                            obj1.3.0.x = total_momentum*0.5;
+                            obj1.1.0.x = 0.;
                             info!("This is a hit");
                         }
-                        else if obj1.3.0.x <= obj2.3.0.x{
-                            obj1.3.0.x = obj2.3.0.x;
-                            obj2.3.0.x = 0.;
-                        }
+                        // else if obj1.3.0.x <= obj2.3.0.x{
+                        //     obj1.3.0.x = -obj2.3.0.x;
+                        //     obj2.3.0.x = 0.;
+                        //     obj2.1.0.x = 0.;
+                        // }
                         else{
                             obj1.1.0.x = 0.;
                             obj2.1.0.x = 0.;

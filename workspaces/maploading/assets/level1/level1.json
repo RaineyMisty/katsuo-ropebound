@@ -49,6 +49,21 @@
       },
       "type": "platform"
     },
+    "TdSXO7": {
+      "boundary": {
+        "height": 131,
+        "startX": 314,
+        "startY": 51,
+        "width": 190
+      },
+      "collision": {
+        "height": 131,
+        "startX": 314,
+        "startY": 51,
+        "width": 190
+      },
+      "type": "platform"
+    },
     "WdSXfK": {
       "attributes": {
         "oneWay": false

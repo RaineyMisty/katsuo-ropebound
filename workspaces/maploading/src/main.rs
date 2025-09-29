@@ -92,8 +92,11 @@ fn load_map_data(
     let map: MapFile = serde_json::from_str(&json_str)
         .expect("Failed to parse JSON into MapFile");
 
+
     let tile_fg_handle = asset_server.load(&map.layer_images.tile_fg);
     let entity_handle = asset_server.load(&map.layer_images.entity);
+
+    spawn_full_image(&mut commands, &asset_server, "level1/tile_fg.png", 10.0);
 
     commands.spawn((
         Camera2d,
@@ -156,58 +159,6 @@ struct Boundary {
 struct EntityFile {
     entities: HashMap<String, EntityData>,
 }
-
-fn make_textured_rect(
-    world_width: f32,
-    world_height: f32,
-    tex_x: f32,
-    tex_y: f32,
-    tex_w: f32,
-    tex_h: f32,
-    atlas_w: f32,
-    atlas_h: f32,
-) -> Mesh {
-    let mut mesh = Mesh::new(PrimitiveTopology::TriangleList, RenderAssetUsages::RENDER_WORLD);
-
-    // Rectangle vertices centered at origin
-    let hw = world_width / 2.0;
-    let hh = world_height / 2.0;
-
-    // Geometry in local space
-    mesh.insert_attribute(
-        Mesh::ATTRIBUTE_POSITION,
-        vec![
-            [-hw, -hh, 0.0], // bottom left
-            [ hw, -hh, 0.0], // bottom right
-            [ hw,  hh, 0.0], // top right
-            [-hw,  hh, 0.0], // top left
-        ],
-    );
-
-    // Convert from top-left pixel coords → bottom-left UV coords
-    let u_min = tex_x / atlas_w;
-    let u_max = (tex_x + tex_w) / atlas_w;
-    let v_max = 1.0 - tex_y / atlas_h;
-    let v_min = 1.0 - (tex_y + tex_h) / atlas_h;
-
-    mesh.insert_attribute(
-        Mesh::ATTRIBUTE_UV_0,
-        vec![
-            [u_min, v_min],
-            [u_max, v_min],
-            [u_max, v_max],
-            [u_min, v_max],
-        ],
-    );
-
-    mesh.insert_indices(Indices::U32(vec![
-        0, 1, 2,
-        0, 2, 3,
-    ]));
-
-    mesh
-}
-
 
 pub fn spawn_entity_rectangles(
     mut commands: Commands,
@@ -302,6 +253,54 @@ fn spawn_map_entities(
         });
     }
 }
+#[derive(Component)]
+pub struct FullscreenSprite;
+
+#[derive(Component, Deref, DerefMut)]
+pub struct ImgHandle(pub Handle<Image>);
+
+fn log_mouse_position(
+    windows: Query<&Window>,
+    cameras: Query<(&Camera, &GlobalTransform)>,
+    buttons: Res<ButtonInput<MouseButton>>,
+) {
+    // Get the single primary window
+    let Ok(window) = windows.get_single() else { return };
+
+    // Get the single active camera and its transform
+    let Ok((camera, camera_transform)) = cameras.get_single() else { return };
+
+    // Check if the mouse cursor is inside the window
+    if let Some(cursor_position) = window.cursor_position() {
+        // Convert the screen-space position to a world-space ray
+        if let Ok(ray) = camera.viewport_to_world(camera_transform, cursor_position) {
+            let pos = ray.origin.truncate();
+
+            if buttons.just_pressed(MouseButton::Left) {
+                info!("🖱 Mouse clicked at WORLD position: x: {:.2}, y: {:.2}", pos.x, pos.y);
+            } else {
+                info!("Mouse at WORLD position: x: {:.2}, y: {:.2}", pos.x, pos.y);
+            }
+        }
+    }
+}
+
+pub fn spawn_full_image(
+    commands: &mut Commands,
+    asset_server: &AssetServer,
+    image_path: &str,
+    z_layer: f32,
+) {
+    let handle: Handle<Image> = asset_server.load(image_path);
+    commands.spawn((
+        Sprite::from_image(handle.clone()),
+        ImgHandle(handle),
+
+        Transform::from_xyz(1280.0/2.0, (64.0*32.0)/2.0, z_layer),
+        FullscreenSprite,
+    ));
+}
+
 // ─── Input Systems ────────────────────────────────────────────
 fn exit_app(mut exit: EventWriter<AppExit>) {
     exit.send(AppExit::Success);
@@ -338,13 +337,14 @@ fn main() {
                 .set(ImagePlugin::default_nearest()),
         )
         .add_plugins(TilemapPlugin)
-        .add_systems(Startup, (load_map_data, spawn_map_entities).chain())
+        .add_systems(Startup, (load_map_data, spawn_map_entities, spawn_entity_rectangles).chain())
         .add_systems(
             Update,
             (
                 handle_keyboard_input,
                 handle_mouse_input,
                 move_camera_with_arrows, // 👈 added
+                log_mouse_position,
                 exit_app.run_if(input_just_pressed(KeyCode::Escape)),
             ),
         )

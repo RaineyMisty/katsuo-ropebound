@@ -2,6 +2,7 @@ use bevy::prelude::*;
 use std::collections::HashMap;
 use super::data::{MapFile, Boundary};
 
+// This represents a platform object.
 #[derive(Bundle)]
 pub struct MyAtlasSpriteBundle {
     sprite: Sprite,

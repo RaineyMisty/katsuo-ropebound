@@ -21,13 +21,15 @@ pub fn load_map_from_json(map_name: &str) -> MapFile {
 }
 
 pub fn load_map_data(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let map = load_map_from_json(MAP_NAME);
+    let map: MapFile = load_map_from_json(MAP_NAME);
+    let map_width = map.metadata.cols * map.metadata.tile_size_px;
+    let map_height = map.metadata.rows * map.metadata.tile_size_px;
+
     let tile_fg_handle = asset_server.load(&map.layer_images.tile_fg);
     let entity_handle = asset_server.load(&map.layer_images.entity);
-
     // load in the tileFG as one full image sprite.
     commands.spawn(full_image(
-        &(map.metadata.tile_size_px * map.metadata.cols, map.metadata.tile_size_px * map.metadata.rows),
+        &(map_width, map_height),
         &tile_fg_handle,
         -1.0,
     ));

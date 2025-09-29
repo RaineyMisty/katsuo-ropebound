@@ -2,6 +2,7 @@ use bevy::prelude::*;
 use crate::config::player::*;
 use crate::components::motion::{Velocity, NetForce, ControlForce, Gravity, RopeForce, Mass, Momentum};
 use crate::components::collision::Aabb;
+
 #[derive(Component, Clone)]
 pub struct Player {
     pub controls: PlayerControls,

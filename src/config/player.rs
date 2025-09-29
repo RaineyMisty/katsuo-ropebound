@@ -13,7 +13,6 @@ pub const PLAYER_WIDTH: f32 = 64.;
 pub const PLAYER_SPAWN_MASS: f32 = 120.0; // in kg
 
 
-
 #[derive(Resource, Clone, Copy)]
 pub struct PlayerSpawnPoint {
     pub position: Vec3,
@@ -23,4 +22,3 @@ pub struct PlayerSpawnPoint {
 pub struct PlayerSpawnVelocity {
     pub velocity: Vec2,
 }
-

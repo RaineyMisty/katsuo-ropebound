@@ -95,6 +95,20 @@ fn load_map_data(
     let tile_fg_handle = asset_server.load(&map.layer_images.tile_fg);
     let entity_handle = asset_server.load(&map.layer_images.entity);
 
+    commands.spawn((
+        Camera2d,
+        Transform {
+            translation: Vec3::new(
+                1280.0 / 2.0,
+                720.0 / 2.0, 
+                0.0, // keep positive z so it's above everything
+            ),
+            scale: Vec3::splat(1.0),
+            ..Default::default()
+        },
+        CameraController,
+    ));
+
     commands.insert_resource(MapTextureHandles {
         tile_fg: tile_fg_handle,
         entity: entity_handle,
@@ -144,8 +158,8 @@ struct EntityFile {
 }
 
 fn make_textured_rect(
-    width: f32,
-    height: f32,
+    world_width: f32,
+    world_height: f32,
     tex_x: f32,
     tex_y: f32,
     tex_w: f32,
@@ -156,10 +170,10 @@ fn make_textured_rect(
     let mut mesh = Mesh::new(PrimitiveTopology::TriangleList, RenderAssetUsages::RENDER_WORLD);
 
     // Rectangle vertices centered at origin
-    let hw = width / 2.0;
-    let hh = height / 2.0;
+    let hw = world_width / 2.0;
+    let hh = world_height / 2.0;
 
-    // Positions (X, Y, Z)
+    // Geometry in local space
     mesh.insert_attribute(
         Mesh::ATTRIBUTE_POSITION,
         vec![
@@ -170,11 +184,11 @@ fn make_textured_rect(
         ],
     );
 
-    // UV coordinates (normalized)
+    // Convert from top-left pixel coords → bottom-left UV coords
     let u_min = tex_x / atlas_w;
-    let v_min = 1.0 - (tex_y + tex_h) / atlas_h;
     let u_max = (tex_x + tex_w) / atlas_w;
     let v_max = 1.0 - tex_y / atlas_h;
+    let v_min = 1.0 - (tex_y + tex_h) / atlas_h;
 
     mesh.insert_attribute(
         Mesh::ATTRIBUTE_UV_0,
@@ -186,7 +200,6 @@ fn make_textured_rect(
         ],
     );
 
-    // Indices (two triangles)
     mesh.insert_indices(Indices::U32(vec![
         0, 1, 2,
         0, 2, 3,
@@ -195,26 +208,14 @@ fn make_textured_rect(
     mesh
 }
 
+
 pub fn spawn_entity_rectangles(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
     map_data: Res<MapFile>,
-    map_textures: Res<MapTextureHandles>,
-    images: Res<Assets<Image>>,
-    asset_server: Res<AssetServer>,
 ) {
     let map_height = map_data.metadata.rows as f32 * map_data.metadata.tile_size_px as f32;
-
-    // ✅ Use the handle stored in MapTextureHandles
-    match asset_server.get_load_state(&map_textures.entity) {
-        Some(LoadState::Loaded) => {
-            // ready to use the image
-        }
-        _ => return,
-    }
-    let atlas = images.get(&map_textures.entity).unwrap();
-    let atlas_size = atlas.size_f32();
 
     for (id, entity) in &map_data.entities {
         let b = &entity.boundary;
@@ -222,111 +223,85 @@ pub fn spawn_entity_rectangles(
         let x = b.startX + b.width / 2.0;
         let y = map_height - (b.startY + b.height / 2.0);
 
-        let mesh = make_textured_rect(
-            b.width,
-            b.height,
-            b.startX,
-            b.startY,
-            b.width,
-            b.height,
-            atlas_size.x,
-            atlas_size.y,
-        );
+        let color = match entity.kind.as_str() {
+            "platform" => Color::srgb(0.2, 0.8, 0.3),
+            "enemy" => Color::srgb(0.8, 0.2, 0.2),
+            _ => Color::srgba(0.6, 0.6, 0.6, 0.8),
+        };
 
         commands.spawn((
-            Mesh2d(meshes.add(mesh)),
-            MeshMaterial2d(materials.add(Color::WHITE)),
-            Transform::from_xyz(x, y, 0.0),
+            Mesh2d(meshes.add(Rectangle::default())),
+            MeshMaterial2d(materials.add(color)),
+            Transform::from_xyz(x, y, 0.0)
+                .with_scale(Vec3::new(b.width, b.height, 1.0)),
             Name::new(format!("Entity {id}")),
         ));
     }
 }
 
-// ─── Spawn Tilemap ────────────────────────────────────────────
-// make map entities,  
-fn spawn_map_entities(
-    mut commands: Commands,
-    map_data: Res<MapFile>,
-    map_textures: Res<MapTextureHandles>,
-    asset_server: Res<AssetServer>,
-) {
-
-    let metadata = &map_data.metadata;
-    let map_size = TilemapSize { 
-        x: metadata.cols, 
-        y: metadata.rows
-    };
-
-    let map_height = map_size.y as f32 * 64.0;
-    let map_width = map_size.x as f32 * 64.0;
-    let window_height = 720.0;
-    let scale_factor = map_height / window_height;
-
-    // spawn camera
-    commands.spawn((
-        Camera2d,
-        Transform {
-            translation: Vec3::new(
-                map_width / 2.0,
-                720.0 / 2.0, 
-                0.0, // keep positive z so it's above everything
-            ),
-            scale: Vec3::splat(1.0),
-            ..Default::default()
-        },
-        CameraController,
-    ));
-    info!("Map Size: {:?}", map_size);
-
-    // Layer 1
-    let mut tile_storage = TileStorage::empty(map_size);
-    let tilemap_entity = commands.spawn_empty().id();
-
-    let w = map_size.x;
-    let h = map_size.y;
-
-    // send tileset in json
-    // send 2d array of set tiles. 
-    // send rotation and flip data
-    // iterate map of set tiles.
-    //
-    // calculate groups.
-    // make platform entities out of tile groups.
-    for i in 0..(w * h) {
-        let y = i / w;
-        let x = i % w;
-        let tile_pos = TilePos { x, y };
-
-        // Flip Y for texture indexing so the top row starts at index 0
-        let tex_index = (h - 1 - y) * w + x;
-
-        let tile_entity = commands.spawn(TileBundle {
-            position: tile_pos,
-            texture_index: TileTextureIndex(tex_index),
-            tilemap_id: TilemapId(tilemap_entity),
-            ..Default::default()
-        }).id();
-
-        tile_storage.set(&tile_pos, tile_entity);
-    }
-    
-    let tile_size: TilemapTileSize = TilemapTileSize { x: 64.0, y: 64.0 };
-    let grid_size = tile_size.into();
-    let map_type = TilemapType::default();
-
-    commands.entity(tilemap_entity).insert(TilemapBundle {
-        grid_size,
-        map_type,
-        size: map_size,
-        storage: tile_storage,
-        texture: TilemapTexture::Single(map_textures.entity.clone()),
-        tile_size,
-        anchor: TilemapAnchor::BottomLeft,
-        // transform: Transform::from_translation(Vec3::new(0.0, -360.0, 0.0)),
-        ..Default::default()
-    });
+#[derive(Bundle)]
+struct MyAtlasSpriteBundle {
+    sprite: Sprite,
+    transform: Transform,
+    visibility: Visibility,
+    name: Name,
 }
 
+// try to get a specifc portiton of the image and load it to a specific area.
+fn spawn_map_entities(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    map_data: Res<MapFile>,
+    mut atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
+) {
+    let texture_handle = asset_server.load("level1/entity.png");
+    let texture_size = UVec2::new(1280, 64 * 32);
+    let map_height = map_data.metadata.rows as f32 * map_data.metadata.tile_size_px as f32;
+
+    // Create a mutable layout we will populate with subregions for each entity
+    let mut layout = TextureAtlasLayout::new_empty(texture_size);
+
+    // Keep track of which atlas index belongs to which entity
+    let mut atlas_indices: HashMap<String, usize> = HashMap::new();
+
+    for (i, (entity_id, entity_data)) in map_data.entities.iter().enumerate() {
+        // For now, let's assume each entity gets a 128×128 region laid out horizontally
+        let region_x = entity_data.boundary.startX as u32;
+        let region_y = entity_data.boundary.startY as u32;
+        let region_width = entity_data.boundary.width as u32;
+        let region_height = entity_data.boundary.height as u32;
+
+        let rect = URect::new(region_x, region_y, region_x + region_width, region_y + region_height);
+        let index = layout.add_texture(rect);
+        atlas_indices.insert(entity_id.clone(), index);
+    }
+
+    // Add the layout once after populating it
+    let layout_handle = atlas_layouts.add(layout);
+    // Spawn one sprite per entity, using its unique atlas index
+    for (entity_id, entity) in &map_data.entities {
+        let index = atlas_indices[entity_id];
+
+        let b = &entity.boundary;
+
+        let x = b.startX + b.width / 2.0;
+        let y = map_height - (b.startY + b.height / 2.0);
+
+        commands.spawn(MyAtlasSpriteBundle {
+            sprite: Sprite {
+                image: texture_handle.clone(),
+                texture_atlas: Some(TextureAtlas {
+                    layout: layout_handle.clone(),
+                    index,
+                }),
+                ..default()
+            },
+            transform: Transform::from_xyz(x, y, 0.0),
+            visibility: Visibility::default(),
+            name: Name::new(entity_id.clone()),
+        });
+    }
+}
 // ─── Input Systems ────────────────────────────────────────────
 fn exit_app(mut exit: EventWriter<AppExit>) {
     exit.send(AppExit::Success);
@@ -363,7 +338,7 @@ fn main() {
                 .set(ImagePlugin::default_nearest()),
         )
         .add_plugins(TilemapPlugin)
-        .add_systems(Startup, (load_map_data, spawn_map_entities, spawn_entity_rectangles).chain())
+        .add_systems(Startup, (load_map_data, spawn_map_entities).chain())
         .add_systems(
             Update,
             (

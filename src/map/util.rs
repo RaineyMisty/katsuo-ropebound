@@ -80,33 +80,40 @@ pub fn build_entity_bundles(
     factory: &Res<EntityFactory>,
     atlas: &Res<AtlasLayoutResource>,
     map_data: &Res<MapFile>,
-) -> Vec<GameEntityBundle> {
+) -> Vec<impl Bundle> {
     let map_height = (map_data.metadata.rows * map_data.metadata.tile_size_px) as f32;
     let mut bundles = Vec::new();
 
     for (id, entity) in &map_data.entities {
-        let mut builder = factory.builder()
-            .id(id)
-            .index(atlas.indices[id])
-            .position(entity_position(&entity.boundary, map_height));
+        let base_position = entity_position(&entity.boundary, map_height);
 
-        if let Some(collision) = &entity.collision {
+        // Optional collider calculation
+        let collider = entity.collision.as_ref().map(|collision| {
             let center_x = collision.start_x + collision.width / 2.0;
             let center_y = map_height - (collision.start_y + collision.height / 2.0);
-            let offset_x = center_x - entity_position(&entity.boundary, map_height).x;
-            let offset_y = center_y - entity_position(&entity.boundary, map_height).y;
 
-            builder = builder.collider(
-                collision.width,
-                collision.height,
-                Vec2::new(offset_x, offset_y),
-            );
-        } else {
+            let offset_x = center_x - base_position.x;
+            let offset_y = center_y - base_position.y;
+
+            // width, height — your Collider::new handles offset internally
+            (collision.width, collision.height, Vec2::new(offset_x, offset_y))
+        });
+
+        // If collider exists, pass its size to make_entity_bundle; otherwise None
+        let collider_tuple = collider.map(|(w, h, _)| (w, h));
+
+        let bundle = factory.make_entity_bundle(
+            id,
+            atlas.indices[id],
+            base_position,
+            collider_tuple,
+        );
+
+        if collider.is_none() {
             warn!("No collision shape defined on entity: {}", id);
         }
 
-        // We always produce the same GameEntityBundle now
-        bundles.push(builder.make_bundle());
+        bundles.push(bundle);
     }
 
     bundles

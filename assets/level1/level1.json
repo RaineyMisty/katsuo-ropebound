@@ -1,6 +1,24 @@
 {
   "collisionAreas": [],
   "entities": {
+    "1iHFG0": {
+      "attributes": {
+        "oneWay": false
+      },
+      "boundary": {
+        "height": 34,
+        "startX": 1025,
+        "startY": 1674,
+        "width": 129
+      },
+      "collision": {
+        "height": 25,
+        "startX": 1027,
+        "startY": 1679,
+        "width": 125
+      },
+      "type": "platform"
+    },
     "2gkQ3n": {
       "boundary": {
         "height": 23,
@@ -49,6 +67,54 @@
       },
       "type": "platform"
     },
+    "VwfTNI": {
+      "boundary": {
+        "height": 23.5,
+        "startX": 578,
+        "startY": 1870.5,
+        "width": 254
+      },
+      "collision": {
+        "height": 23.5,
+        "startX": 578,
+        "startY": 1870.5,
+        "width": 254
+      },
+      "type": "platform"
+    },
+    "Wg6iA0": {
+      "boundary": {
+        "height": 24.5,
+        "startX": 900,
+        "startY": 1807.5,
+        "width": 252
+      },
+      "collision": {
+        "height": 24.5,
+        "startX": 900,
+        "startY": 1807.5,
+        "width": 252
+      },
+      "type": "platform"
+    },
+    "iaPvZb": {
+      "attributes": {
+        "oneWay": false
+      },
+      "boundary": {
+        "height": 46,
+        "startX": 196,
+        "startY": 1998,
+        "width": 315
+      },
+      "collision": {
+        "height": 30,
+        "startX": 197,
+        "startY": 1996,
+        "width": 313
+      },
+      "type": "platform"
+    },
     "uQjBCL": {
       "boundary": {
         "height": 23,
@@ -61,6 +127,21 @@
         "startX": 960,
         "startY": 1897,
         "width": 256
+      },
+      "type": "platform"
+    },
+    "y0Snkg": {
+      "boundary": {
+        "height": 23.5,
+        "startX": 1154,
+        "startY": 1744,
+        "width": 124
+      },
+      "collision": {
+        "height": 23.5,
+        "startX": 1154,
+        "startY": 1744,
+        "width": 124
       },
       "type": "platform"
     }

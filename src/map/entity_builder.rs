@@ -1,12 +1,7 @@
 use bevy::prelude::*;
 use super::bundles::{GameEntityBundle, BaseComponents};
+use super::Collider;
 
-
-
-/// builder for game entities based on shared atlas/sprite data.
-///
-/// Shared handle store for building entities.
-/// This replaces the "God object" factory.
 #[derive(Resource, Clone)]
 pub struct EntityFactory {
     pub image: Handle<Image>,
@@ -14,77 +9,39 @@ pub struct EntityFactory {
 }
 
 impl EntityFactory {
-    /// Creates a new entity builder with shared factory data.
-    pub fn builder(&self) -> EntityBuilder {
-        EntityBuilder::new(self)
-    }
-}
-
-pub struct EntityBuilder<'a> {
-    factory: &'a EntityFactory,
-    id: String,
-    index: usize,
-    position: Vec3,
-    collider: Option<super::Collider>,
-}
-
-impl<'a> EntityBuilder<'a> {
-    pub fn new(factory: &'a EntityFactory) -> Self {
-        Self {
-            factory,
-            id: "entity".to_string(),
-            index: 0,
-            position: Vec3::ZERO,
-            collider: None,
-        }
-    }
-
-    pub fn id(mut self, id: &str) -> Self {
-        self.id = id.to_string();
-        self
-    }
-
-    pub fn index(mut self, index: usize) -> Self {
-        self.index = index;
-        self
-    }
-
-    pub fn position(mut self, position: Vec3) -> Self {
-        self.position = position;
-        self
-    }
-
-    pub fn collider(mut self, width: f32, height: f32, offset: Vec2) -> Self {
-        self.collider = Some(super::Collider::new(width, height, offset));
-        self
-    }
-
-
-    /// Builds a `PlatformBundle` entity.
-    pub fn make_bundle(self) -> GameEntityBundle {
-        GameEntityBundle {
-            base: self.base_components(),
-            collider: self.collider.unwrap_or(super::Collider::new(0.0, 0.0, Vec2::new(0.0,0.0))),
-        }
-    }
-
-    fn base_components(&self) -> BaseComponents {
-        BaseComponents {
-            sprite: self.make_sprite(),
-            transform: Transform::from_translation(self.position),
+    /// Build a simple `GameEntityBundle` in one shot.
+    ///
+    /// `id`: name for the entity
+    /// `index`: texture atlas index
+    /// `position`: world position
+    /// `collider`: optional (width, height) if you want to attach a Collider
+    pub fn make_entity_bundle(
+        &self,
+        id: &str,
+        index: usize,
+        position: Vec3,
+        collider: Option<(f32, f32)>,
+    ) -> impl Bundle {
+        // Build base sprite + transform bundle
+        let base = BaseComponents {
+            sprite: Sprite {
+                image: self.image.clone(),
+                texture_atlas: Some(TextureAtlas {
+                    layout: self.atlas_layout.clone(),
+                    index,
+                }),
+                ..Default::default()
+            },
+            transform: Transform::from_translation(position),
             visibility: Visibility::default(),
-            name: Name::new(self.id.clone()),
-        }
-    }
+            name: Name::new(String::from(id)),
+        };
 
-    fn make_sprite(&self) -> Sprite {
-        Sprite {
-            image: self.factory.image.clone(),
-            texture_atlas: Some(TextureAtlas {
-                layout: self.factory.atlas_layout.clone(),
-                index: self.index,
-            }),
-            ..default()
+        GameEntityBundle {
+            base,
+            collider: collider
+                .map(|(w, h)| Collider::new(w, h, Vec2::ZERO))
+                .unwrap_or_else(|| Collider::new(0.0, 0.0, Vec2::ZERO)),
         }
     }
 }

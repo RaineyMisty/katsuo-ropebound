@@ -59,6 +59,6 @@ pub fn load_map(mut commands: Commands, map: Res<MapFile>, factory: Res<EntityFa
 
     let map_entities = build_entity_bundles(&factory, &atlas, &map);
     for bundle in map_entities {
-        bundle.spawn(&mut commands);
+        commands.spawn(bundle);
     }
 }

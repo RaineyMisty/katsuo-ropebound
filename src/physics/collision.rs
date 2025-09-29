@@ -36,7 +36,7 @@ pub fn player_player_coll_system (
                             obj2.3.0.x = total_momentum*0.5;
                             obj1.3.0.x = total_momentum*0.5;
                             obj1.1.0.x = 0.;
-                            info!("This is a hit");
+                            //info!("This is a hit");
                         }
                         // else if obj1.3.0.x <= obj2.3.0.x{
                         //     obj1.3.0.x = -obj2.3.0.x;
@@ -57,6 +57,10 @@ pub fn player_player_coll_system (
 fn check_aabb(pos1: Vec2, width: Vec2, pos2: Vec2, width2: Vec2) -> bool{
     //possible future use for collision top and collision bottom
     let collisioned = (pos1.x - pos2.x).abs() <= width.x + width2.x && (pos1.y - pos2.y).abs() <= width.y + width2.y;
-    
+    //let collision_top = (pos1.y - pos2.y).abs() <= width.y + width2.y && (pos1.y - pos2.y).abs() <= width.y + width2.y;
     return collisioned;
+}
+
+fn check_top(pos1: Vec2, width: Vec2, pos2: Vec2, width2: Vec2) -> bool{
+    return (pos1.x - pos2.x).abs() <= width.x + width2.x && (pos1.y > pos2.y || pos2.y > pos1.y) && (pos1.y - width.y) <= (pos2.y + width2.y);
 }

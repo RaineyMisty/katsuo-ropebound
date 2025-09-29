@@ -51,6 +51,3 @@ pub struct MapTextureHandles {
     pub tile_fg: Handle<Image>,
     pub entity: Handle<Image>,
 }
-
-#[derive(Component)]
-pub struct CameraController;

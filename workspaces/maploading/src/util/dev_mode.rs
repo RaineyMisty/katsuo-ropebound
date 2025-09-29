@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use crate::util::map::data::CameraController;
+use crate::CameraController;
 
 pub fn log_mouse_position(
     windows: Query<&Window>,

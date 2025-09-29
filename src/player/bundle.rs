@@ -48,7 +48,7 @@ impl PlayerBundle {
             momentum: Momentum(Vec2::ZERO),
             velocity,
             transform,
-            size: Aabb {length: PLAYER_LENGTH ,width: PLAYER_WIDTH},
+            size: Aabb {length: PLAYER_LENGTH, width: PLAYER_WIDTH},
         }
     }
 }

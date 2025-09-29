@@ -1,6 +1,8 @@
-pub mod spawn;
 pub mod loader;
-pub mod data;
-pub mod util;
+mod data;
+mod util;
+mod entity_builder;
+pub use data::MapFile;
+pub use entity_builder::Collider;
 
 pub const MAP_NAME: &str = "level1";

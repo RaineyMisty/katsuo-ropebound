@@ -1,8 +1,30 @@
-// src/util/map/dat.rs
+// src/util/map/dat.r
+// Screen size resource.
 use bevy::math::primitives::Rectangle;
 use bevy::prelude::*;
 use serde::Deserialize;
 use std::collections::HashMap;
+
+#[derive(Deserialize, Debug)]
+#[serde(default)]
+pub struct ScreenSize {
+    pub w: u32,
+    pub h: u32,
+}
+
+
+impl Default for ScreenSize {
+    fn default() -> Self {
+        Self { w: 1280, h: 720 } // or whatever your desired default is
+    }
+}
+
+#[derive(Debug, Deserialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub enum EntityKind {
+    Platform,
+    Coin,
+}
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
@@ -10,6 +32,9 @@ pub struct Metadata {
     pub tile_size_px: u32,
     pub rows: u32,
     pub cols: u32,
+
+    #[serde(default)]
+    pub screen_size: ScreenSize,
 }
 
 #[derive(Deserialize, Debug)]
@@ -23,19 +48,11 @@ pub struct Boundary {
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct CollisionBox {
-    pub offset_x: f32,
-    pub offset_y: f32,
-    pub width: f32,
-    pub height: f32,
-}
-
-#[derive(Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
 pub struct EntityData {
     pub boundary: Boundary,
     #[serde(rename = "type")]
-    pub kind: String,
+    pub kind: EntityKind,
+    pub collision: Option<Boundary>,
 }
 
 #[derive(Deserialize, Debug)]

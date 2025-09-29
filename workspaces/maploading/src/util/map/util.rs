@@ -1,7 +1,7 @@
 use bevy::prelude::*;
-use super::data::{MapFile};
-use super::data::{MapFile, MapTextureHandles, AtlasLayoutResource};
+use super::data::{MapFile, AtlasLayoutResource};
 use std::collections::HashMap;
+use crate::util::map::{data::{EntityKind::Platform, EntityKind::Coin, Boundary}, entity_builder::{EntityFactory, GameEntityBundle}};
 
 #[derive(Component)]
 pub struct FullscreenSprite;
@@ -62,4 +62,48 @@ fn build_layout(
         .collect::<HashMap<_, _>>();
 
     (layout, atlas_indices)
+}
+
+fn entity_position(b: &Boundary, map_height: f32) -> Vec3 {
+    Vec3::new(
+        b.start_x + b.width / 2.0,
+        map_height - (b.start_y + b.height / 2.0),
+        0.0,
+    )
+}
+// data that points to the image and the associated layout. for a group of entity objects from the map.
+pub fn build_entity_bundles(
+    factory: &Res<EntityFactory>,
+    atlas: &Res<AtlasLayoutResource>,
+    map_data: &Res<MapFile>,
+) -> Vec<GameEntityBundle> {
+    let map_height = (map_data.metadata.rows * map_data.metadata.tile_size_px) as f32;
+    let mut bundles = Vec::new();
+
+    for (id, entity) in &map_data.entities {
+        let mut builder = factory.builder()
+            .id(id)
+            .index(atlas.indices[id])
+            .position(entity_position(&entity.boundary, map_height));
+
+        if let Some(collision) = &entity.collision {
+            let center_x = collision.start_x + collision.width / 2.0;
+            let center_y = map_height - (collision.start_y + collision.height / 2.0);
+            let offset_x = center_x - entity_position(&entity.boundary, map_height).x;
+            let offset_y = center_y - entity_position(&entity.boundary, map_height).y;
+
+            builder = builder.collider(
+                collision.width,
+                collision.height,
+                Vec2::new(offset_x, offset_y),
+            );
+        } else {
+            warn!("No collision shape defined on entity: {}", id);
+        }
+
+        // We always produce the same GameEntityBundle now
+        bundles.push(builder.make_bundle());
+    }
+
+    bundles
 }

@@ -1,14 +1,14 @@
 // src/util/map/loader.rs
 use bevy::prelude::*;
 use std::path::Path;
-use crate::util::map::spawn::spawn_map_entity;
+
+use super::entity_builder::{EntityFactory};
 
 use super::MAP_NAME;
 use super::data::{MapFile, MapTextureHandles, AtlasLayoutResource};
-use super::util::{full_image, atlas_layout};
+use super::util::{full_image, atlas_layout, build_entity_bundles};
 
-
-pub fn load_map_from_json(map_name: &str) -> MapFile {
+pub fn load_json_map_data(map_name: &str) -> MapFile {
     let json_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("assets")
         .join(map_name)
@@ -21,13 +21,20 @@ pub fn load_map_from_json(map_name: &str) -> MapFile {
 }
 
 pub fn load_map_resouces(mut commands: Commands, asset_server: Res<AssetServer>, mut atlas_layouts: ResMut<Assets<TextureAtlasLayout>>) {
-    let map: MapFile = load_map_from_json(MAP_NAME);
+    let map: MapFile = load_json_map_data(MAP_NAME);
 
     let tile_fg_handle = asset_server.load(&map.layer_images.tile_fg);
     let entity_handle = asset_server.load(&map.layer_images.entity);
 
+    let texture_atlas = atlas_layout(&map, &mut atlas_layouts);
     // define entity textures.
-    commands.insert_resource(atlas_layout(&map, &mut atlas_layouts));
+    //
+
+    commands.insert_resource(EntityFactory {
+        image: entity_handle.clone(),
+        atlas_layout: texture_atlas.layout.clone(),
+    });
+    commands.insert_resource(texture_atlas);
     commands.insert_resource(map);
 
     // I dont see why this is necessary if every game object should be able to point to its asset.
@@ -37,7 +44,7 @@ pub fn load_map_resouces(mut commands: Commands, asset_server: Res<AssetServer>,
     });
 }
 
-pub fn load_map(mut commands: Commands, map: Res<MapFile>, images: Res<MapTextureHandles>, atlas: Res<AtlasLayoutResource>) {
+pub fn load_map(mut commands: Commands, map: Res<MapFile>, factory: Res<EntityFactory>, images: Res<MapTextureHandles>, atlas: Res<AtlasLayoutResource>) {
     
     let map_width = map.metadata.cols * map.metadata.tile_size_px;
     let map_height = map.metadata.rows * map.metadata.tile_size_px;
@@ -45,11 +52,12 @@ pub fn load_map(mut commands: Commands, map: Res<MapFile>, images: Res<MapTextur
     // load in the tileFG as one full image sprite.
     commands.spawn(full_image(
         &(map_width, map_height),
-        &images.tile_fg,
-        -1.0,
+        &(images.tile_fg),
+        -1.0
     ));
 
-    map.entities.iter().for_each(|(id, entity)| {
-        commands.spawn(spawn_map_entity((map_width, map_height), &entity, &id, &atlas, &images));
-    });
+    let map_entities = build_entity_bundles(&factory, &atlas, &map);
+    for bundle in map_entities {
+        bundle.spawn(&mut commands);
+    }
 }

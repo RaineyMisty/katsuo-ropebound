@@ -31,6 +31,24 @@
       },
       "type": "platform"
     },
+    "VfMTG1": {
+      "attributes": {
+        "oneWay": false
+      },
+      "boundary": {
+        "height": 131,
+        "startX": 544,
+        "startY": 1381,
+        "width": 266
+      },
+      "collision": {
+        "height": 166,
+        "startX": 720,
+        "startY": 1450,
+        "width": 320
+      },
+      "type": "platform"
+    },
     "uQjBCL": {
       "boundary": {
         "height": 23,

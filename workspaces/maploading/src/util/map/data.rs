@@ -71,20 +71,3 @@ pub struct MapFile {
     pub entities: HashMap<String, EntityData>,
 }
 
-// Bevy data structs
-#[derive(Resource)]
-pub struct MapTextureHandles {
-    pub tile_fg: Handle<Image>,
-    pub entity: Handle<Image>,
-}
-
-#[derive(Component, Debug)]
-pub struct Collider {
-    size: Vec2,
-}
-
-#[derive(Resource)]
-pub struct AtlasLayoutResource {
-    pub layout: Handle<TextureAtlasLayout>,
-    pub indices: HashMap<String, usize>,
-}

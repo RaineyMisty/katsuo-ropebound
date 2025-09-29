@@ -1,7 +1,10 @@
 use bevy::prelude::*;
-use super::data::{MapFile, AtlasLayoutResource};
+
+use super::data::{MapFile};
 use std::collections::HashMap;
-use crate::util::map::{data::{EntityKind::Platform, EntityKind::Coin, Boundary}, entity_builder::{EntityFactory, GameEntityBundle}};
+use super::{data::{Boundary}};
+use super::{bundles::{AtlasLayoutResource, GameEntityBundle}};
+use super::entity_builder::{EntityFactory};
 
 #[derive(Component)]
 pub struct FullscreenSprite;
@@ -21,6 +24,7 @@ pub fn full_image(
 }
 
 // game objects -> slice of the entity layer image
+// create the AtlasLayoutResource that we defined
 pub fn atlas_layout(
     map_data: &MapFile,
     atlas_layouts: &mut ResMut<Assets<TextureAtlasLayout>>,

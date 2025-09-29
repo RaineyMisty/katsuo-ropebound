@@ -5,7 +5,8 @@ use std::path::Path;
 use super::entity_builder::{EntityFactory};
 
 use super::MAP_NAME;
-use super::data::{MapFile, MapTextureHandles, AtlasLayoutResource};
+use super::data::{MapFile};
+use super::bundles::{MapTextureHandles, AtlasLayoutResource};
 use super::util::{full_image, atlas_layout, build_entity_bundles};
 
 pub fn load_json_map_data(map_name: &str) -> MapFile {

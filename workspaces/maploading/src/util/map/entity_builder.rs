@@ -1,40 +1,10 @@
 use bevy::prelude::*;
+use super::bundles::{GameEntityBundle, BaseComponents};
 
-#[derive(Component, Debug)]
-pub struct Collider {
-    pub size: Vec2,
-    pub offset: Vec2,
-}
 
-impl Collider {
-    pub fn new(width: f32, height: f32, offset: Vec2) -> Self {
-        Self {
-            size: Vec2::new(width, height),
-            offset,
-        }
-    }
-}
 
-#[derive(Bundle)]
-pub struct BaseComponents {
-    sprite: Sprite,
-    transform: Transform,
-    visibility: Visibility,
-    name: Name,
-}
-
-#[derive(Bundle)]
-pub struct GameEntityBundle {
-    #[bundle()]
-    pub base: BaseComponents,
-    pub collider: Collider,
-}
-
-impl GameEntityBundle {
-    pub fn spawn(self, commands: &mut Commands) {
-        commands.spawn(self);
-    }
-}
+/// builder for game entities based on shared atlas/sprite data.
+///
 /// Shared handle store for building entities.
 /// This replaces the "God object" factory.
 #[derive(Resource, Clone)]
@@ -50,21 +20,12 @@ impl EntityFactory {
     }
 }
 
-/// builder for game entities based on shared atlas/sprite data.
-/// Example:
-/// ```
-/// commands.spawn(factory.builder()
-///     .id("coin_1")
-///     .index(5)
-///     .position(Vec3::new(100.0, 200.0, 0.0))
-///     .coin());
-/// ```
 pub struct EntityBuilder<'a> {
     factory: &'a EntityFactory,
     id: String,
     index: usize,
     position: Vec3,
-    collider: Option<Collider>,
+    collider: Option<super::Collider>,
 }
 
 impl<'a> EntityBuilder<'a> {
@@ -94,7 +55,7 @@ impl<'a> EntityBuilder<'a> {
     }
 
     pub fn collider(mut self, width: f32, height: f32, offset: Vec2) -> Self {
-        self.collider = Some(Collider::new(width, height, offset));
+        self.collider = Some(super::Collider::new(width, height, offset));
         self
     }
 
@@ -103,7 +64,7 @@ impl<'a> EntityBuilder<'a> {
     pub fn make_bundle(self) -> GameEntityBundle {
         GameEntityBundle {
             base: self.base_components(),
-            collider: self.collider.unwrap_or(Collider::new(0.0, 0.0, Vec2::new(0.0,0.0))),
+            collider: self.collider.unwrap_or(super::Collider::new(0.0, 0.0, Vec2::new(0.0,0.0))),
         }
     }
 

@@ -12,10 +12,12 @@ use util::dev_mode::move_camera_with_arrows;
 #[derive(Component)]
 pub struct CameraController;
 
+
 // Screen size resource.
 #[derive(Resource)]
 pub struct ScreenSize(pub u32, pub u32);
 
+const SCREEN: ScreenSize = ScreenSize(1280, 720);
 // 
 fn camera_start(mut commands: Commands, screen: Res<ScreenSize>) {
     commands.spawn((
@@ -46,9 +48,8 @@ fn main() {
                 })
                 .set(ImagePlugin::default_nearest()),
         )
-        .insert_resource(ScreenSize(1280, 720))
-        .add_plugins(TilemapPlugin)
-        .add_systems(Startup, (load_map_data, camera_start, spawn_map_entities).chain())
+        .insert_resource(SCREEN)
+        .add_plugins(TilemapPlugin) .add_systems(Startup, (load_map_data, camera_start, spawn_map_entities).chain())
         .add_systems(Update, move_camera_with_arrows)
         .run();
 }

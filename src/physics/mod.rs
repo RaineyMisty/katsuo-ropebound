@@ -20,7 +20,7 @@ use self::gravity::gravity_system;
 use self::rope_force::clean_rope_force_system;
 use self::rope_force::rope_tension_system;
 use self::rope_force::rope_force_to_system;
-use self::collision::player_player_coll_system;
+use self::collision::player_collider_collision_system;
 
 pub struct PhysicsPlugin;
 impl Plugin for PhysicsPlugin {
@@ -36,7 +36,7 @@ impl Plugin for PhysicsPlugin {
                 rope_force_to_system,
                 integrate_force_system,
                 integrate_momentum_system,
-                player_player_coll_system,
+                player_collider_collision_system,
                 integrate_velocity_system,
                 boundary,
             ).chain()

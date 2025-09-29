@@ -64,6 +64,7 @@ pub fn run() {
         .add_plugins(DefaultPlugins)
         .add_plugins(PlayerPlugin)
         .add_plugins(PhysicsPlugin)
+        .add_systems(Update, draw_colliders)
         .run();
 }
 

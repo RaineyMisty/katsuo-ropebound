@@ -4,9 +4,9 @@ mod util;
 use bevy::prelude::*;
 use bevy_ecs_tilemap::TilemapPlugin;
 
-use util::map::loader::load_map_data;
-use util::map::spawn::spawn_map_entities;
+use util::map::loader::{load_map_resouces, load_map};
 use util::dev_mode::move_camera_with_arrows;
+
 
 // Component used for controlling camera in dev_mode
 #[derive(Component)]
@@ -39,17 +39,17 @@ fn main() {
     App::new()
         .add_plugins(
             DefaultPlugins
-                .set(WindowPlugin {
-                    primary_window: Some(Window {
-                        title: String::from("Arrow Key Camera Movement Example"),
-                        ..Default::default()
-                    }),
-                    ..default()
-                })
-                .set(ImagePlugin::default_nearest()),
+            .set(WindowPlugin {
+                primary_window: Some(Window {
+                    title: String::from("Arrow Key Camera Movement Example"),
+                    ..Default::default()
+                }),
+                ..default()
+            })
+            .set(ImagePlugin::default_nearest()),
         )
         .insert_resource(SCREEN)
-        .add_plugins(TilemapPlugin) .add_systems(Startup, (load_map_data, camera_start, spawn_map_entities).chain())
+        .add_plugins(TilemapPlugin) .add_systems(Startup, (load_map_resouces, camera_start, load_map).chain())
         .add_systems(Update, move_camera_with_arrows)
         .run();
 }

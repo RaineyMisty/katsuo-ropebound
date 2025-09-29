@@ -23,6 +23,15 @@ pub struct Boundary {
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
+pub struct CollisionBox {
+    pub offset_x: f32,
+    pub offset_y: f32,
+    pub width: f32,
+    pub height: f32,
+}
+
+#[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct EntityData {
     pub boundary: Boundary,
     #[serde(rename = "type")]
@@ -50,4 +59,15 @@ pub struct MapFile {
 pub struct MapTextureHandles {
     pub tile_fg: Handle<Image>,
     pub entity: Handle<Image>,
+}
+
+#[derive(Component, Debug)]
+pub struct Collider {
+    size: Vec2,
+}
+
+#[derive(Resource)]
+pub struct AtlasLayoutResource {
+    pub layout: Handle<TextureAtlasLayout>,
+    pub indices: HashMap<String, usize>,
 }

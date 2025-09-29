@@ -1,11 +1,11 @@
 // src/util/map/loader.rs
 use bevy::prelude::*;
 use std::path::Path;
+use crate::util::map::spawn::spawn_map_entity;
 
 use super::MAP_NAME;
-
-use super::data::{MapFile, MapTextureHandles};
-use super::bundlebuilder::{full_image};
+use super::data::{MapFile, MapTextureHandles, AtlasLayoutResource};
+use super::util::{full_image, atlas_layout};
 
 
 pub fn load_map_from_json(map_name: &str) -> MapFile {
@@ -20,24 +20,36 @@ pub fn load_map_from_json(map_name: &str) -> MapFile {
     serde_json::from_str(&json_str).expect("Failed to parse JSON into MapFile")
 }
 
-pub fn load_map_data(mut commands: Commands, asset_server: Res<AssetServer>) {
+pub fn load_map_resouces(mut commands: Commands, asset_server: Res<AssetServer>, mut atlas_layouts: ResMut<Assets<TextureAtlasLayout>>) {
     let map: MapFile = load_map_from_json(MAP_NAME);
-    let map_width = map.metadata.cols * map.metadata.tile_size_px;
-    let map_height = map.metadata.rows * map.metadata.tile_size_px;
 
     let tile_fg_handle = asset_server.load(&map.layer_images.tile_fg);
     let entity_handle = asset_server.load(&map.layer_images.entity);
-    // load in the tileFG as one full image sprite.
-    commands.spawn(full_image(
-        &(map_width, map_height),
-        &tile_fg_handle,
-        -1.0,
-    ));
 
+    // define entity textures.
+    commands.insert_resource(atlas_layout(&map, &mut atlas_layouts));
     commands.insert_resource(map);
+
     // I dont see why this is necessary if every game object should be able to point to its asset.
     commands.insert_resource(MapTextureHandles {
         tile_fg: tile_fg_handle,
         entity: entity_handle,
+    });
+}
+
+pub fn load_map(mut commands: Commands, map: Res<MapFile>, images: Res<MapTextureHandles>, atlas: Res<AtlasLayoutResource>) {
+    
+    let map_width = map.metadata.cols * map.metadata.tile_size_px;
+    let map_height = map.metadata.rows * map.metadata.tile_size_px;
+
+    // load in the tileFG as one full image sprite.
+    commands.spawn(full_image(
+        &(map_width, map_height),
+        &images.tile_fg,
+        -1.0,
+    ));
+
+    map.entities.iter().for_each(|(id, entity)| {
+        commands.spawn(spawn_map_entity((map_width, map_height), &entity, &id, &atlas, &images));
     });
 }

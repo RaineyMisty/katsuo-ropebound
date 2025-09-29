@@ -84,7 +84,7 @@ Q type learning while slow can provide a rather comprehensive learning algorithm
 #### Ai Goals
 - [ ] **5%** : Two AI can play together and are able to be maneuver to at least 1 platforms from the ground on their own proving partial training
 - [ ] **10%** : Two AI can play together and complete the level
-- [ ] **5%** : AI can play with a human player to at least 1 platform form the ground
+- [ ] **5%** : AI can play with a human player to at least 1 platform from the ground
 
 #### Multiplayer
 - [ ] 10% : At least 2 players can connect to the same game word, and movements are displayed to each other

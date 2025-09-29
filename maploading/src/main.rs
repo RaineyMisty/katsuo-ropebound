@@ -179,7 +179,7 @@ fn spawn_map_entities(
 
     
     // load entity texture
-    let tile_size: TilemapTileSize = TilemapTileSize { x: 80.0, y: 80.0 };
+    let tile_size: TilemapTileSize = TilemapTileSize { x: 64.0, y: 64.0 };
     let grid_size = tile_size.into();
     let map_type = TilemapType::default();
 
@@ -226,7 +226,7 @@ fn startup(mut commands: Commands, asset_server: Res<AssetServer>) {
         }
     }
 
-    let tile_size: TilemapTileSize = TilemapTileSize { x: 16.0, y: 16.0 };
+    let tile_size: TilemapTileSize = TilemapTileSize { x: 4.0, y: 4.0 };
     let grid_size = tile_size.into();
     let map_type = TilemapType::default();
 

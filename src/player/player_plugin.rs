@@ -36,7 +36,7 @@ fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>, spawn_po
     };
     let jump_controller = JumpController::default();
     let ground_state = GroundState::default();
-    let mass = Mass(PLAYER_SPAWN_MASS * 1.5); // make the first player heavier
+    let mass = Mass(PLAYER_SPAWN_MASS); // make the first player heavier (deleted for now but multiply mass)
     let velocity = Velocity(spawn_velocity.velocity);
     let p1 = commands.spawn(PlayerBundle::new(controls, texture, transform, velocity, mass, jump_controller, ground_state)).insert(FollowedPlayer).id();
     // Spawn a second player for testing

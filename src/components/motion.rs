@@ -37,37 +37,3 @@ pub struct ControlForce (pub Vec2);
 
 #[derive(Component, Clone, Copy, Debug)]
 pub struct RopeForce (pub Vec2);
-
-#[derive(Component)]
-pub struct JumpController {
-    pub is_jumping: bool,
-    pub jump_time_elapsed: f32,
-    pub max_jump_duration: f32,
-    pub jump_multiplier: f32,
-}
-
-impl Default for JumpController {
-    fn default() -> Self {
-        Self {
-            is_jumping: false,
-            jump_time_elapsed: 0.0,
-            max_jump_duration: 0.25,
-            jump_multiplier: 0.35,
-        }
-    }
-}
-
-#[derive(Component)]
-pub struct GroundState {
-    pub is_grounded: bool,
-    pub coyote_timer: Timer,
-}
-
-impl Default for GroundState {
-    fn default() -> Self {
-        Self {
-            is_grounded: false,
-            coyote_timer: Timer::from_seconds(0.1, TimerMode::Once),
-        }
-    }
-}

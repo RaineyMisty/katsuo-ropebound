@@ -3,8 +3,7 @@ use bevy::prelude::*;
 use super::data::{MapFile};
 use std::collections::HashMap;
 use super::{data::{Boundary}};
-use super::{bundles::{AtlasLayoutResource, GameEntityBundle}};
-use super::entity_builder::{EntityFactory};
+use super::{bundles::{AtlasLayoutResource, GameEntityBundle, BaseComponents}};
 
 #[derive(Component)]
 pub struct FullscreenSprite;
@@ -21,26 +20,6 @@ pub fn full_image(
         Transform::from_xyz(map_dimentions.0 as f32 / 2.0 , map_dimentions.1 as f32 / 2.0, z_layer),
         FullscreenSprite,
     )
-}
-
-// game objects -> slice of the entity layer image
-// create the AtlasLayoutResource that we defined
-pub fn atlas_layout(
-    map_data: &MapFile,
-    atlas_layouts: &mut ResMut<Assets<TextureAtlasLayout>>,
-) -> AtlasLayoutResource {
-    let texture_size = UVec2::new(
-        map_data.metadata.cols * map_data.metadata.tile_size_px,
-        map_data.metadata.rows * map_data.metadata.tile_size_px,
-    );
-
-    let (layout, indices) = build_layout(map_data, texture_size);
-    let layout_handle = atlas_layouts.add(layout);
-
-    AtlasLayoutResource {
-        layout: layout_handle,
-        indices,
-    }
 }
 
 fn build_layout(
@@ -68,6 +47,58 @@ fn build_layout(
     (layout, atlas_indices)
 }
 
+// game objects -> slice of the entity layer image
+// create the AtlasLayoutResource that we defined
+pub fn atlas_layout(
+    map_data: &MapFile,
+    atlas_layouts: &mut ResMut<Assets<TextureAtlasLayout>>,
+) -> AtlasLayoutResource {
+    let texture_size = UVec2::new(
+        map_data.metadata.cols * map_data.metadata.tile_size_px,
+        map_data.metadata.rows * map_data.metadata.tile_size_px,
+    );
+
+    let (layout, indices) = build_layout(map_data, texture_size);
+    let layout_handle = atlas_layouts.add(layout);
+
+    AtlasLayoutResource {
+        layout: layout_handle,
+        indices,
+    }
+}
+
+fn make_entity_bundle(
+    id: &str,
+    index: usize,
+    position: Vec3,
+    collider: Option<(f32, f32)>,
+    image: &Handle<Image>,
+    atlas_layout: &Handle<TextureAtlasLayout>,
+) -> impl Bundle {
+    // Build base sprite + transform bundle
+    let base = BaseComponents {
+        sprite: Sprite {
+            image: image.clone(),
+            texture_atlas: Some(TextureAtlas {
+                layout: atlas_layout.clone(),
+                index,
+            }),
+            ..Default::default()
+        },
+        transform: Transform::from_translation(position),
+        visibility: Visibility::default(),
+        name: Name::new(String::from(id)),
+    };
+
+    GameEntityBundle {
+        base,
+        collider: collider
+            .map(|(w, h)| super::Collider::new(w, h, Vec2::ZERO))
+            .unwrap_or_else(|| super::Collider::new(0.0, 0.0, Vec2::ZERO)),
+    }
+}
+
+
 fn entity_position(b: &Boundary, map_height: f32) -> Vec3 {
     Vec3::new(
         b.start_x + b.width / 2.0,
@@ -75,38 +106,47 @@ fn entity_position(b: &Boundary, map_height: f32) -> Vec3 {
         0.0,
     )
 }
+
 // data that points to the image and the associated layout. for a group of entity objects from the map.
-pub fn build_entity_bundles(
-    factory: &Res<EntityFactory>,
+pub fn entity_bundles(
+    image: &Handle<Image>,
     atlas: &Res<AtlasLayoutResource>,
     map_data: &Res<MapFile>,
-) -> Vec<GameEntityBundle> {
+) -> Vec<impl Bundle> {
     let map_height = (map_data.metadata.rows * map_data.metadata.tile_size_px) as f32;
     let mut bundles = Vec::new();
 
     for (id, entity) in &map_data.entities {
-        let mut builder = factory.builder()
-            .id(id)
-            .index(atlas.indices[id])
-            .position(entity_position(&entity.boundary, map_height));
-
-        if let Some(collision) = &entity.collision {
+        let base_position = entity_position(&entity.boundary, map_height);
+        // Optional collider calculation
+        let collider = entity.collision.as_ref().map(|collision| {
             let center_x = collision.start_x + collision.width / 2.0;
             let center_y = map_height - (collision.start_y + collision.height / 2.0);
-            let offset_x = center_x - entity_position(&entity.boundary, map_height).x;
-            let offset_y = center_y - entity_position(&entity.boundary, map_height).y;
 
-            builder = builder.collider(
-                collision.width,
-                collision.height,
-                Vec2::new(offset_x, offset_y),
-            );
-        } else {
+            let offset_x = center_x - base_position.x;
+            let offset_y = center_y - base_position.y;
+
+            // width, height — your Collider::new handles offset internally
+            (collision.width, collision.height, Vec2::new(offset_x, offset_y))
+        });
+
+        // If collider exists, pass its size to make_entity_bundle; otherwise None
+        let collider_tuple = collider.map(|(w, h, _)| (w, h));
+
+        let bundle = make_entity_bundle(
+            id,
+            atlas.indices[id],
+            base_position,
+            collider_tuple,
+            &image,
+            &atlas.layout,
+        );
+
+        if collider.is_none() {
             warn!("No collision shape defined on entity: {}", id);
         }
 
-        // We always produce the same GameEntityBundle now
-        bundles.push(builder.make_bundle());
+        bundles.push(bundle);
     }
 
     bundles

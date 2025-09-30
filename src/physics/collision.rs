@@ -8,6 +8,8 @@ use bevy::prelude::*;
 use crate::components::motion::{GroundState, Momentum, Velocity};
 use crate::map::Collider;
 
+const PLATFORM_FRICTION: f32 = 0.92;
+
 pub fn player_collider_collision_system(
     time: Res<Time>,
     // Moving entities (players)
@@ -32,11 +34,6 @@ pub fn player_collider_collision_system(
                 let overlap_x = (max_a.x - min_b.x).min(max_b.x - min_a.x);
                 let overlap_y = (max_a.y - min_b.y).min(max_b.y - min_a.y);
 
-                info!(
-                    "💥 Player {:?} collided with Collider {:?} (overlap_x={}, overlap_y={})",
-                    player_entity, collider_entity, overlap_x, overlap_y
-                );
-
                 if overlap_x < overlap_y {
                     if future_pos.x < collider_pos.x {
                         trans.translation.x -= overlap_x;
@@ -52,6 +49,8 @@ pub fn player_collider_collision_system(
                         // If landing on collision, change 
                         trans.translation.y += overlap_y;
                         ground_state.is_grounded = true;
+                        vel.0.x *= PLATFORM_FRICTION;
+                        mom.0.x *= PLATFORM_FRICTION;
                     }
                     vel.0.y = 0.0;
                     mom.0.y = 0.0;

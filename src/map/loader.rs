@@ -2,12 +2,10 @@
 use bevy::prelude::*;
 use std::path::Path;
 
-use super::entity_builder::{EntityFactory};
-
 use super::MAP_NAME;
 use super::data::{MapFile};
 use super::bundles::{MapTextureHandles, AtlasLayoutResource};
-use super::util::{full_image, atlas_layout, build_entity_bundles};
+use super::util::{full_image, atlas_layout, entity_bundles};
 
 pub fn load_json_map_data(map_name: &str) -> MapFile {
     let json_path = Path::new(env!("CARGO_MANIFEST_DIR"))
@@ -31,10 +29,6 @@ pub fn load_map_resouces(mut commands: Commands, asset_server: Res<AssetServer>,
     // define entity textures.
     //
 
-    commands.insert_resource(EntityFactory {
-        image: entity_handle.clone(),
-        atlas_layout: texture_atlas.layout.clone(),
-    });
     commands.insert_resource(texture_atlas);
     commands.insert_resource(map);
 
@@ -45,7 +39,7 @@ pub fn load_map_resouces(mut commands: Commands, asset_server: Res<AssetServer>,
     });
 }
 
-pub fn load_map(mut commands: Commands, map: Res<MapFile>, factory: Res<EntityFactory>, images: Res<MapTextureHandles>, atlas: Res<AtlasLayoutResource>) {
+pub fn load_map(mut commands: Commands, map: Res<MapFile>, images: Res<MapTextureHandles>, atlas: Res<AtlasLayoutResource>) {
     
     let map_width = map.metadata.cols * map.metadata.tile_size_px;
     let map_height = map.metadata.rows * map.metadata.tile_size_px;
@@ -57,8 +51,8 @@ pub fn load_map(mut commands: Commands, map: Res<MapFile>, factory: Res<EntityFa
         -1.0
     ));
 
-    let map_entities = build_entity_bundles(&factory, &atlas, &map);
+    let map_entities = entity_bundles(&images.entity, &atlas, &map);
     for bundle in map_entities {
-        bundle.spawn(&mut commands);
+        commands.spawn(bundle);
     }
 }

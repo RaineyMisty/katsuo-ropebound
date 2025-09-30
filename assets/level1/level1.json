@@ -1,66 +1,33 @@
 {
   "collisionAreas": [],
   "entities": {
-    "2gkQ3n": {
+    "3GYQNX": {
       "boundary": {
-        "height": 23,
-        "startX": 127,
-        "startY": 1641,
-        "width": 321
-      },
-      "collision": {
-        "height": 23,
-        "startX": 127,
-        "startY": 1641,
-        "width": 321
-      },
-      "type": "platform"
-    },
-    "3nzzz6": {
-      "boundary": {
-        "height": 25,
-        "startX": 448,
-        "startY": 1191,
-        "width": 320
-      },
-      "collision": {
-        "height": 25,
-        "startX": 448,
-        "startY": 1191,
-        "width": 320
-      },
-      "type": "platform"
-    },
-    "VfMTG1": {
-      "attributes": {
-        "oneWay": false
-      },
-      "boundary": {
-        "height": 131,
-        "startX": 544,
-        "startY": 1381,
-        "width": 266
-      },
-      "collision": {
-        "height": 166,
-        "startX": 720,
-        "startY": 1450,
-        "width": 320
-      },
-      "type": "platform"
-    },
-    "uQjBCL": {
-      "boundary": {
-        "height": 23,
-        "startX": 960,
+        "height": 27,
+        "startX": 128,
         "startY": 1897,
-        "width": 256
+        "width": 320
       },
       "collision": {
-        "height": 23,
-        "startX": 960,
+        "height": 27,
+        "startX": 128,
         "startY": 1897,
-        "width": 256
+        "width": 320
+      },
+      "type": "platform"
+    },
+    "xctFB5": {
+      "boundary": {
+        "height": 67,
+        "startX": 766,
+        "startY": 381,
+        "width": 66
+      },
+      "collision": {
+        "height": 67,
+        "startX": 766,
+        "startY": 381,
+        "width": 66
       },
       "type": "platform"
     }

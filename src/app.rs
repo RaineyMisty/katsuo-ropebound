@@ -16,7 +16,16 @@ use crate::map::MapFile;
 use crate::map::Collider;
 use bevy::color::Color;
 
-
+// Example query for getting the platform colliders which are visible on screen
+// fn log_offscreen_entities(
+//     q: Query<(Entity, &ViewVisibility), (With<Collider>, With<Transform>)>,
+// ) {
+//     for (e, view) in &q {
+//         if !view.get() {
+//             info!("🛰 Entity {:?} with Collider is off-screen", e);
+//         }
+//     }
+// }
 pub fn draw_colliders(
     mut gizmos: Gizmos,
     query: Query<(&Transform, &Collider)>,

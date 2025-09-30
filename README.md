@@ -83,11 +83,12 @@ Q type learning while slow can provide a rather comprehensive learning algorithm
 
 #### Ai Goals
 - [ ] **5%** : Two AI can play together and are able to be maneuver to at least 1 platforms from the ground on their own proving partial training
-- [ ] **7%** : Two AI can play together and are able to be maneuver to at least 2 platforms from the ground on their own proving partial training
-- [ ] **8%** : Two AI can play together and are able to be maneuver to at least 3 platforms from the ground on their own proving partial training
+- [ ] **10%** : Two AI can play together and complete the level
+- [ ] **5%** : AI can play with a human player to at least 1 platform from the ground
 
 #### Multiplayer
-- [ ] 20% : At least 2 players can connect to the game and be able to play together, with the ability to coordinate with the other outloud and complete the map.
+- [ ] 10% : At least 2 players can connect to the same game word, and movements are displayed to each other
+- [ ] 10% : Client-side prediction implemented to reduce percieved lag
 
 #### Map
 - [ ] **10%**: With moving platforms, hazards (spikes or trampoline) and standard platforms until reaching the top of the map. Spike implementation will cause instant game over, trampoline will give a jump boost to the player upon contact with the trampoline, and standard platforms are standing grounds.

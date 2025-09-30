@@ -1,5 +1,3 @@
-mod util;
-mod map;
 mod app;
 mod player;
 mod config;

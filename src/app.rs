@@ -48,10 +48,11 @@ fn camera_start(mut commands: Commands, map: Res<MapFile>) {
                  screen.h as f32 / 2.0,
                  0.0,
              ),
-             scale: Vec3::splat(1.0),
+             scale: Vec3::splat(1.4),
              ..Default::default() 
         },
         CameraController,
+        MainCamera,
     ));
 }
 
@@ -64,7 +65,29 @@ pub fn run() {
         .add_plugins(DefaultPlugins)
         .add_plugins(PlayerPlugin)
         .add_plugins(PhysicsPlugin)
-        .add_systems(Update, draw_colliders)
+        .add_systems(Update, (update_camera, draw_colliders).chain())
         .run();
 }
 
+// Camera Components
+#[derive(Component)]
+pub struct MainCamera;
+
+#[derive(Component)]
+pub struct FollowedPlayer;
+
+const CAMERA_DECAY_RATE: f32 = 3.;
+
+// System for the camera movement
+fn update_camera(mut camera: Single<&mut Transform, (With<MainCamera>, Without<FollowedPlayer>)>,
+player: Single<&Transform, (With<FollowedPlayer>, Without<Camera2d>)>,
+time: Res<Time>) {
+    let Vec3 {x, y, ..} = player.translation;
+    // Change 0.0 to x to allow for camera to move horizontally
+    let direction = Vec3::new(x, y, camera.translation.z);
+
+    // Smoothing effect for the camera
+    camera
+        .translation
+        .smooth_nudge(&direction, CAMERA_DECAY_RATE, time.delta_secs());
+}

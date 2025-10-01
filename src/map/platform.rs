@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use super::{mapdata::{Boundary, EntityData, EntityAttrs}};
+use super::{mapdata::{Boundary, EntityData}};
 
 // Bevy data structs
 #[derive(Component, Debug)]
@@ -15,7 +15,6 @@ pub struct GameEntityBundle {
     pub visibility: Visibility,
     pub name: Name,
     pub collider: Collider,
-    pub attributes: EntityAttrs,
 }
 
 impl Collider {
@@ -75,6 +74,5 @@ pub fn platform(
         collider: collider
             .map(|(w, h, _)| Collider::new(w, h, Vec2::ZERO))
             .unwrap_or_else(|| Collider::new(0.0, 0.0, Vec2::ZERO)),
-        attributes: entity.attributes.clone(),
     }
 }

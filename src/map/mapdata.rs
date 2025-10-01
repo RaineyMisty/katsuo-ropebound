@@ -55,7 +55,7 @@ pub struct EntityData {
     pub attributes: EntityAttrs,
 }
 
-#[derive(Component, Deserialize, Debug, Clone)]
+#[derive(Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct EntityAttrs {
     oneWay: bool,
@@ -70,8 +70,8 @@ pub enum MoveType {
     Custom,
 }
 
-#[derive(Component, Deserialize, Debug, Clone)]
-#[serde(rename_all = "camelCase", default)]  // 👈 important
+#[derive(Deserialize, Debug, Clone)]
+#[serde(rename_all = "camelCase")]  // 👈 important
 pub struct Moving {
     pub start_x: i32,
     pub start_y: i32,
@@ -82,27 +82,8 @@ pub struct Moving {
     pub speed: f32,
     pub trigger: MovementTrigger,
 
-    // --- New fields for runtime state ---
-    pub t: f32,
-
-    pub forward: bool,
 }
 
-impl Default for Moving {
-    fn default() -> Self {
-        Self {
-            start_x: 0,
-            start_y: 0,
-            end_x: 0,
-            end_y: 0,
-            move_type: MoveType::Linear,
-            speed: 1.0,
-            trigger: MovementTrigger::default(),
-            t: 0.0,
-            forward: true,
-        }
-    }
-}
 
 #[derive(Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -110,25 +91,11 @@ pub struct MovementTrigger {
     pub trigger_type: MovementTriggerType,
 }
 
-impl Default for MovementTrigger {
-    fn default() -> Self {
-        Self {
-            trigger_type: MovementTriggerType::default(),
-        }
-    }
-}
-
-#[derive(Component, Deserialize, Clone, Debug)]
+#[derive(Deserialize, Clone, Debug)]
 #[serde(rename_all = "camelCase")]
 pub enum MovementTriggerType {
     Loop,
     OnPlayerContact,
-}
-
-impl Default for MovementTriggerType {
-    fn default() -> Self {
-        MovementTriggerType::Loop
-    }
 }
 
 #[derive(Deserialize, Debug)]

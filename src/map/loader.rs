@@ -16,7 +16,7 @@ pub struct MapTextureHandles {
 pub struct FullscreenSprite;
 
 
-pub fn full_image(
+pub fn background_layer(
     map_dimentions: &(u32, u32),
     image_handle: &Handle<Image>,
     z_layer: f32,
@@ -70,7 +70,7 @@ fn entity_bundles(
 
     for (id, entity) in &map_data.entities {
 
-        // match for entity.kind Platform or Coin enum
+        // match for entity.kind, Platform or Coin enum
         let bundle = platform(
             id,
             atlas.indices[id],
@@ -90,7 +90,7 @@ pub fn load_map(mut commands: Commands, map: Res<MapFile>, images: Res<MapTextur
     let map_height = map.metadata.rows * map.metadata.tile_size_px;
 
     // load in the tileFG as one full image sprite.
-    commands.spawn(full_image(
+    commands.spawn(background_layer(
         &(map_width, map_height),
         &(images.tile_fg),
         -1.0

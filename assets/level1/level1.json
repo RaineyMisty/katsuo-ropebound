@@ -7,7 +7,7 @@
           "endX": 400,
           "endY": 1897,
           "moveType": "linear",
-          "speed": 0.5,
+          "speed": 1,
           "startX": 128,
           "startY": 1897,
           "trigger": {
@@ -19,13 +19,13 @@
       "boundary": {
         "height": 27,
         "startX": 288,
-        "startY": 137.5,
+        "startY": 138,
         "width": 320
       },
       "collision": {
         "height": 27,
         "startX": 288,
-        "startY": 137.5,
+        "startY": 138,
         "width": 320
       },
       "type": "platform"
@@ -36,7 +36,7 @@
           "endX": 419,
           "endY": 1648,
           "moveType": "linear",
-          "speed": 0.5,
+          "speed": 1,
           "startX": 319,
           "startY": 1448,
           "trigger": {
@@ -47,13 +47,13 @@
       },
       "boundary": {
         "height": 24,
-        "startX": 383.5,
+        "startX": 384,
         "startY": 588,
         "width": 129
       },
       "collision": {
         "height": 24,
-        "startX": 383.5,
+        "startX": 384,
         "startY": 588,
         "width": 129
       },
@@ -65,14 +65,14 @@
       },
       "boundary": {
         "height": 59,
-        "startX": 63.5,
-        "startY": 353.5,
+        "startX": 64,
+        "startY": 354,
         "width": 123
       },
       "collision": {
         "height": 59,
-        "startX": 63.5,
-        "startY": 353.5,
+        "startX": 64,
+        "startY": 354,
         "width": 123
       },
       "type": "platform"
@@ -81,11 +81,11 @@
       "attributes": {
         "moving": {
           "endX": 613,
-          "endY": 700,
+          "endY": 400,
           "moveType": "linear",
           "speed": 0.5,
           "startX": 513,
-          "startY": 1321,
+          "startY": 1521,
           "trigger": {
             "triggerType": "loop"
           }
@@ -94,15 +94,15 @@
       },
       "boundary": {
         "height": 20.5,
-        "startX": 672.5,
-        "startY": 716.25,
+        "startX": 673,
+        "startY": 516,
         "width": 319
       },
       "collision": {
-        "height": 20.5,
-        "startX": 672.5,
-        "startY": 716.25,
-        "width": 319
+        "height": 25,
+        "startX": 672,
+        "startY": 525,
+        "width": 320
       },
       "type": "platform"
     },
@@ -113,13 +113,13 @@
       "boundary": {
         "height": 61,
         "startX": 1216,
-        "startY": 288.5,
+        "startY": 289,
         "width": 124
       },
       "collision": {
         "height": 61,
         "startX": 1216,
-        "startY": 288.5,
+        "startY": 289,
         "width": 124
       },
       "type": "platform"
@@ -137,7 +137,7 @@
       "collision": {
         "height": 48.5,
         "startX": 642,
-        "startY": 158.25,
+        "startY": 158,
         "width": 304
       },
       "type": "platform"
@@ -185,13 +185,13 @@
       "boundary": {
         "height": 67,
         "startX": 799,
-        "startY": 1633.5,
+        "startY": 1634,
         "width": 66
       },
       "collision": {
         "height": 67,
         "startX": 799,
-        "startY": 1633.5,
+        "startY": 1634,
         "width": 66
       },
       "type": "platform"

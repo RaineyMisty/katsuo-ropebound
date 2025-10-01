@@ -5,6 +5,7 @@ use super::MapFile;
 #[derive(Resource)]
 pub struct AtlasLayoutResource {
     pub layout: Handle<TextureAtlasLayout>,
+    // map entity names to layout indices.
     pub indices: HashMap<String, usize>,
 }
 

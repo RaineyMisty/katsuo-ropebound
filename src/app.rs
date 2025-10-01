@@ -145,7 +145,6 @@ fn camera_start(mut commands: Commands, map: Res<MapFile>) {
                  SCREEN.1 / 2.0,
                  0.0,
              ),
-             scale: Vec3::splat(1.4),
              ..Default::default() 
         },
         CameraController,
@@ -178,15 +177,23 @@ pub struct FollowedPlayer;
 const CAMERA_DECAY_RATE: f32 = 3.;
 
 // System for the camera movement
-fn update_camera(mut camera: Single<&mut Transform, (With<MainCamera>, Without<FollowedPlayer>)>,
-player: Single<&Transform, (With<FollowedPlayer>, Without<Camera2d>)>,
-time: Res<Time>) {
-    let Vec3 {x, y, ..} = player.translation;
-    // Change 0.0 to x to allow for camera to move horizontally
-    let direction = Vec3::new(x, y, camera.translation.z);
+fn update_camera(
+    mut camera: Single<&mut Transform, (With<MainCamera>, Without<FollowedPlayer>)>,
+    player: Single<&Transform, (With<FollowedPlayer>, Without<Camera2d>)>,
+    time: Res<Time>,
+) {
+    let Vec3 { y, .. } = player.translation;
 
-    // Smoothing effect for the camera
+    // Minimum Y value the camera is allowed to go to
+    let min_y = SCREEN.1 / 2.0; // 👈 adjust this to fit your level layout
+
+    // Clamp only the minimum
+    let clamped_y = y.max(min_y);
+
+    // Keep X fixed
+    let target = Vec3::new(camera.translation.x, clamped_y, camera.translation.z);
+
     camera
         .translation
-        .smooth_nudge(&direction, CAMERA_DECAY_RATE, time.delta_secs());
+        .smooth_nudge(&target, CAMERA_DECAY_RATE, time.delta_secs());
 }

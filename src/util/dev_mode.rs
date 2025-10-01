@@ -6,9 +6,6 @@ use crate::app::MainCamera;
 #[derive(Resource)]
 pub struct Debug(pub bool);
 
-// if false; Debug will not be inserted and cannot be toggled at runtime
-const DEBUG: bool = true;
-
 // toggle on and off if debug mode is true.
 pub fn toggle_debug(
     keyboard_input: Res<ButtonInput<KeyCode>>,
@@ -84,17 +81,15 @@ pub struct DevModePlugin;
 
 impl Plugin for DevModePlugin {
     fn build(&self, app: &mut App) {
-        if DEBUG {
-            app
-                .insert_resource(Debug(false))
-                .add_systems(Update, toggle_debug)
-                .add_systems(
-                    Update,
-                    (
-                        draw_colliders,
-                        move_camera_with_arrows,
-                    ).run_if(debug_on)
-                );
-        }
+        app
+            .insert_resource(Debug(false))
+            .add_systems(Update, toggle_debug)
+            .add_systems(
+                Update,
+                (
+                    draw_colliders,
+                    move_camera_with_arrows,
+                ).run_if(debug_on)
+            );
     }
 }

@@ -24,3 +24,12 @@ impl Collision {
         (a.center.y - b.center.y).abs() <= (a.half_extents.y + b.half_extents.y)
     }
 }
+
+#[derive(Event, Clone, Copy, Debug)]
+pub struct CollisionEvent {
+    pub entity_a: Entity,
+    pub entity_b: Entity,
+    pub vector: Vec2, // vector from a to b
+    pub normal: Vec2, // normal vector from a to b
+    pub penetration: f32, // penetration depth
+}

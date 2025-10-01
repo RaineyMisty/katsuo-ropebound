@@ -57,10 +57,10 @@ pub fn run() {
 
         .add_systems(Startup, init_player_camera)
         .add_plugins(MapPlugin)
+        .add_plugins(DevModePlugin)
         .add_plugins(DefaultPlugins)
         .add_plugins(PlayerPlugin)
         .add_plugins(PhysicsPlugin)
-        .add_plugins(DevModePlugin)
 
         .add_systems(Update, update_camera)
         .run();

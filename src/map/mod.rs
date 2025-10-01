@@ -3,7 +3,7 @@ mod mapdata;
 mod platform;
 mod atlas_layout;
 
-pub use mapdata::{MapFile, EntityAttrs, Moving};
+pub use mapdata::{MapFile};
 pub use platform::{Collider};
 pub mod loader;
 
@@ -15,7 +15,12 @@ pub struct MapPlugin;
 
 impl Plugin for MapPlugin {
     fn build(&self, app: &mut App) {
-        app
-            .add_systems(Startup, (load_map_resouces, load_map).chain());
+        app.add_systems(
+            Startup,
+            (
+                load_map_resouces,
+                load_map
+            ).chain()
+        );
     }
 }

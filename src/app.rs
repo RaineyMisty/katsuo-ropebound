@@ -9,13 +9,12 @@ use crate::player::PlayerPlugin;
 use crate::physics::PhysicsPlugin;
 use crate::config::*;
 
-use crate::map::loader::{load_map_resouces, load_map};
-use crate::map::{EntityAttrs, MapFile, Moving};
-// use crate::util::dev_mode::move_camera_with_arrows;
+use crate::map::loader::{load_map, load_map_resouces};
+use crate::map::{EntityAttrs, MapFile, Moving, SCREEN};
+use crate::util::{DevModePlugin};
 
-use crate::map::Collider;
-use bevy::color::Color;
-const SCREEN: (f32, f32) = (1280.0, 720.0);
+use bevy::render::view::RenderLayers;
+
 
 // Example query for getting the platform colliders which are visible on screen
 // fn log_offscreen_entities(
@@ -27,22 +26,6 @@ const SCREEN: (f32, f32) = (1280.0, 720.0);
 //         }
 //     }
 // }
-fn draw_colliders(
-    mut gizmos: Gizmos,
-    query: Query<(&Transform, &Collider)>,
-) {
-    for (transform, collider) in &query {
-        // Center of the rectangle in 2D
-        let position_2d = transform.translation.truncate() + collider.offset;
-
-        // Draw a rectangle centered on the entity's position
-        gizmos.rect_2d(
-            position_2d,
-            collider.size,
-            Color::srgba(1.0, 1.0, 1.0, 0.8),
-        );
-    }
-}
 
 
 // Update the moving.t value with ping-pong behavior
@@ -131,14 +114,16 @@ pub fn move_platforms_with_moving(
     }
 }
 
-#[derive(Component)]
-pub struct CameraController;
 
 // move a half screen right and a half screen up.
 // so that the origin is in the positive coordinate system
-fn camera_start(mut commands: Commands) {
+fn init_player_camera(mut commands: Commands) {
     commands.spawn((
         Camera2d,
+        Camera {
+            order: 0, // draw first (background/world)
+            ..default()
+        },
         Transform {
             translation: Vec3::new(
                  SCREEN.0 / 2.0,
@@ -147,7 +132,7 @@ fn camera_start(mut commands: Commands) {
              ),
              ..Default::default() 
         },
-        CameraController,
+        RenderLayers::layer(0),
         MainCamera,
     ));
 }
@@ -159,11 +144,13 @@ pub fn run() {
         .insert_resource(PlayerSpawnVelocity { velocity: PLAYER_INITIAL_VELOCITY })
 
         .add_systems(Startup, (load_map_resouces, load_map).chain())
-        .add_systems(Startup, camera_start)
+        .add_systems(Startup, init_player_camera)
         .add_plugins(DefaultPlugins)
         .add_plugins(PlayerPlugin)
         .add_plugins(PhysicsPlugin)
-        .add_systems(Update, (update_camera, draw_colliders).chain())
+        .add_plugins(DevModePlugin)
+
+        .add_systems(Update, update_camera)
         .add_systems(Update, move_platforms_with_moving)
         .run();
 }
@@ -185,13 +172,8 @@ fn update_camera(
 ) {
     let Vec3 { y, .. } = player.translation;
 
-    // Minimum Y value the camera is allowed to go to
-    let min_y = SCREEN.1 / 2.0; // 👈 adjust this to fit your level layout
-
-    // Clamp only the minimum
+    let min_y = SCREEN.1 / 2.0;
     let clamped_y = y.max(min_y);
-
-    // Keep X fixed
     let target = Vec3::new(camera.translation.x, clamped_y, camera.translation.z);
 
     camera

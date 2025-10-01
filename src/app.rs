@@ -136,7 +136,7 @@ pub struct CameraController;
 
 // move a half screen right and a half screen up.
 // so that the origin is in the positive coordinate system
-fn camera_start(mut commands: Commands, map: Res<MapFile>) {
+fn camera_start(mut commands: Commands) {
     commands.spawn((
         Camera2d,
         Transform {
@@ -158,7 +158,8 @@ pub fn run() {
         .insert_resource(PlayerSpawnPoint { position: PLAYER_INITIAL_POSITION })
         .insert_resource(PlayerSpawnVelocity { velocity: PLAYER_INITIAL_VELOCITY })
 
-        .add_systems(Startup, (load_map_resouces, camera_start, load_map).chain())
+        .add_systems(Startup, (load_map_resouces, load_map).chain())
+        .add_systems(Startup, camera_start)
         .add_plugins(DefaultPlugins)
         .add_plugins(PlayerPlugin)
         .add_plugins(PhysicsPlugin)

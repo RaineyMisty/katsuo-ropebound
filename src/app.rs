@@ -12,9 +12,6 @@ use crate::config::*;
 use crate::map::{MapPlugin, SCREEN};
 use crate::util::{DevModePlugin};
 
-use bevy::render::view::RenderLayers;
-
-
 // Example query for getting the platform colliders which are visible on screen
 // fn log_offscreen_entities(
 //     q: Query<(Entity, &ViewVisibility), (With<Collider>, With<Transform>)>,
@@ -44,7 +41,6 @@ fn init_player_camera(mut commands: Commands) {
              ),
              ..Default::default() 
         },
-        RenderLayers::layer(0),
         MainCamera,
     ));
 }

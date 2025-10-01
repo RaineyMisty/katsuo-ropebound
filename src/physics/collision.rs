@@ -5,7 +5,7 @@ use crate::config::physics::GRAVITY;
 use crate::components::collision::Aabb;
 
 use bevy::prelude::*;
-use crate::components::motion::{Velocity, Momentum};
+use crate::components::motion::{GroundState, Momentum, Velocity};
 use crate::map::Collider;
 
 const PLATFORM_FRICTION: f32 = 0.92;
@@ -13,15 +13,16 @@ const PLATFORM_FRICTION: f32 = 0.92;
 pub fn player_collider_collision_system(
     time: Res<Time>,
     // Moving entities (players)
-    mut players: Query<(Entity, &mut Velocity, &mut Transform, &mut Momentum, &Aabb), With<Player>>,
+    mut players: Query<(Entity, &mut Velocity, &mut Transform, &mut Momentum, &Aabb, &mut GroundState), With<Player>>,
     // Static colliders (platforms, walls)
     colliders: Query<(Entity, &Transform, &Collider), Without<Player>>,
 ) {
     let dt = time.delta_secs();
 
-    for (player_entity, mut vel, mut trans, mut mom, aabb) in players.iter_mut() {
+    for (player_entity, mut vel, mut trans, mut mom, aabb, mut ground_state) in players.iter_mut() {
         let future_pos = trans.translation.truncate() + vel.0 * dt;
 
+        ground_state.is_grounded = false;
         for (collider_entity, collider_trans, collider) in colliders.iter() {
             let collider_pos = collider_trans.translation.truncate();
 
@@ -45,7 +46,9 @@ pub fn player_collider_collision_system(
                     if future_pos.y < collider_pos.y {
                         trans.translation.y -= overlap_y;
                     } else {
+                        // If landing on collision, change 
                         trans.translation.y += overlap_y;
+                        ground_state.is_grounded = true;
                         vel.0.x *= PLATFORM_FRICTION;
                         mom.0.x *= PLATFORM_FRICTION;
                     }
@@ -115,4 +118,20 @@ fn check_aabb(pos1: Vec2, width: Vec2, pos2: Vec2, width2: Vec2) -> bool{
 
 fn check_top(pos1: Vec2, width: Vec2, pos2: Vec2, width2: Vec2) -> bool{
     return (pos1.x - pos2.x).abs() <= width.x + width2.x && (pos1.y > pos2.y || pos2.y > pos1.y) && (pos1.y - width.y) <= (pos2.y + width2.y);
+}
+
+pub fn update_coyote_timer_system(
+    time: Res<Time>,
+    mut query:Query<&mut GroundState, With<Player>>,
+) {
+    for mut ground_state in &mut query {
+        // If in air tick the coyote timer
+        if !ground_state.is_grounded {
+            ground_state.coyote_timer.tick(time.delta());
+        }
+        // Grounded reset timer
+        else {
+            ground_state.coyote_timer.reset();
+        }
+    }
 }

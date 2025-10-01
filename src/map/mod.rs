@@ -1,8 +1,9 @@
-pub mod loader;
-mod data;
-mod util;
-mod bundles;
-pub use data::MapFile;
-pub use bundles::Collider;
+mod mapdata;
+mod platform;
+mod atlas_layout;
 
-pub const MAP_NAME: &str = "level1";
+pub use mapdata::{MapFile, EntityAttrs, Moving};
+pub use platform::{Collider};
+pub mod loader;
+
+const MAP_NAME: &str = "level1";

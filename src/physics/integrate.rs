@@ -64,8 +64,8 @@ pub fn boundary(
             velocity.0.y = 0.0;
             momentum.0.y = 0.0;
         }
-        if transform.translation.y > height / 2.0 {
-            transform.translation.y = height / 2.0;
+        if transform.translation.y > (height + 32.0) {
+            transform.translation.y = height + 32.0;
             velocity.0.y = 0.0;
             momentum.0.y = 0.0;
         }

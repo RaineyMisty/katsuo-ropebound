@@ -6,7 +6,7 @@
 use bevy::prelude::*;
 
 pub const PLAYER_SIZE: Vec2 = Vec2::new(64.0, 64.0);
-pub const PLAYER_INITIAL_POSITION: Vec3 = Vec3::new(0.0, 500.0, 0.0);
+pub const PLAYER_INITIAL_POSITION: Vec3 = Vec3::new(0.0, 400.0, 0.0);
 pub const PLAYER_INITIAL_VELOCITY: Vec2 = Vec2::new(0.0, 0.0);
 pub const PLAYER_LENGTH: f32 = 64.;
 pub const PLAYER_WIDTH: f32 = 64.;

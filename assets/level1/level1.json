@@ -2,31 +2,138 @@
   "collisionAreas": [],
   "entities": {
     "3GYQNX": {
+      "attributes": {
+        "moving": {
+          "endX": 400,
+          "endY": 1597,
+          "moveType": "linear",
+          "speed": 0.4,
+          "startX": 128,
+          "startY": 1897,
+          "trigger": {
+            "triggerType": "loop"
+          }
+        },
+        "oneWay": false
+      },
       "boundary": {
         "height": 27,
-        "startX": 128,
-        "startY": 1897,
+        "startX": 288,
+        "startY": 137.5,
         "width": 320
       },
       "collision": {
         "height": 27,
-        "startX": 128,
-        "startY": 1897,
+        "startX": 288,
+        "startY": 137.5,
         "width": 320
       },
       "type": "platform"
     },
+    "9W9t6u": {
+      "attributes": {
+        "oneWay": false
+      },
+      "boundary": {
+        "height": 59,
+        "startX": 63.5,
+        "startY": 353.5,
+        "width": 123
+      },
+      "collision": {
+        "height": 59,
+        "startX": 63.5,
+        "startY": 353.5,
+        "width": 123
+      },
+      "type": "platform"
+    },
+    "EQJkqh": {
+      "attributes": {
+        "oneWay": false
+      },
+      "boundary": {
+        "height": 61,
+        "startX": 1216,
+        "startY": 288.5,
+        "width": 124
+      },
+      "collision": {
+        "height": 61,
+        "startX": 1216,
+        "startY": 288.5,
+        "width": 124
+      },
+      "type": "platform"
+    },
+    "L5K2kY": {
+      "attributes": {
+        "oneWay": false
+      },
+      "boundary": {
+        "height": 24,
+        "startX": 640,
+        "startY": 204,
+        "width": 256
+      },
+      "collision": {
+        "height": 48.5,
+        "startX": 642,
+        "startY": 158.25,
+        "width": 304
+      },
+      "type": "platform"
+    },
+    "TfEips": {
+      "attributes": {
+        "oneWay": false
+      },
+      "boundary": {
+        "height": 62,
+        "startX": 705,
+        "startY": 353,
+        "width": 126
+      },
+      "collision": {
+        "height": 62,
+        "startX": 705,
+        "startY": 353,
+        "width": 126
+      },
+      "type": "platform"
+    },
+    "rNNo4A": {
+      "attributes": {
+        "oneWay": false
+      },
+      "boundary": {
+        "height": 64,
+        "startX": 930,
+        "startY": 288,
+        "width": 192
+      },
+      "collision": {
+        "height": 64,
+        "startX": 930,
+        "startY": 288,
+        "width": 192
+      },
+      "type": "platform"
+    },
     "xctFB5": {
+      "attributes": {
+        "oneWay": false
+      },
       "boundary": {
         "height": 67,
-        "startX": 766,
-        "startY": 381,
+        "startX": 799,
+        "startY": 1633.5,
         "width": 66
       },
       "collision": {
         "height": 67,
-        "startX": 766,
-        "startY": 381,
+        "startX": 799,
+        "startY": 1633.5,
         "width": 66
       },
       "type": "platform"

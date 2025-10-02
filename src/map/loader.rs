@@ -4,7 +4,7 @@ use bevy::prelude::*;
 use std::path::Path;
 
 use super::{ MAP_NAME, MapFile };
-use super::platform::platform;
+use super::platform::{platform, Platform, Collider};
 use super::atlas_layout::{atlas_layout, AtlasLayoutResource};
 
 #[derive(Resource)]
@@ -78,7 +78,7 @@ fn entity_bundles(
     atlas: &Res<AtlasLayoutResource>,
     map_data: &Res<MapFile>,
     map_height: u32,
-) -> Vec<impl Bundle> {
+) -> Vec<Platform> {
     let mut bundles = Vec::new();
 
     for (id, entity) in &map_data.entities {
@@ -98,6 +98,28 @@ fn entity_bundles(
     bundles
 }
 
+pub fn make_ground() -> Platform {
+    let sprite = Sprite {
+        color: Color::srgb(0.3, 0.8, 0.3), // ✅ Optional debug color
+        custom_size: Some(Vec2::new(1280.0, 5.0)),
+        ..Default::default()
+    };
+
+    let transform = Transform::from_xyz(1280.0 / 2.0, -1.0, 0.0);
+    let visibility = Visibility::default();
+
+    let collider = super::Collider {
+        aabb: Aabb2d::new(
+            Vec2::new(0.0, 0.0),
+            Vec2::new(1280.0, 5.0) * 0.5,
+        ),
+    };
+
+    // 👇 Builder replaces the bundle struct
+    Platform::new("Ground", sprite, transform, visibility)
+        .with_collider(collider)
+}
+
 pub fn load_map(mut commands: Commands, map: Res<MapFile>, images: Res<MapTextureHandles>, atlas: Res<AtlasLayoutResource>, map_dimensions: Res<MapDimensions>) {
     
     // load in the tileFG as one full image sprite.
@@ -109,26 +131,10 @@ pub fn load_map(mut commands: Commands, map: Res<MapFile>, images: Res<MapTextur
 
     let map_entities = entity_bundles(&images.entity, &atlas, &map, map_dimensions.h);
 
-    for bundle in map_entities {
-        commands.spawn(bundle);
+    for game_entity in map_entities {
+        game_entity.spawn(&mut commands);
     }
+    let ground = make_ground();
+    ground.spawn(&mut commands);
 
-    commands.spawn(super::platform::Platform {
-        base: super::platform::BaseGameEntity {
-            sprite: Sprite {
-                color: Color::srgb(0.3, 0.8, 0.3), // ✅ Optional debug color
-                custom_size: Some(Vec2::new(1280.0, 5.0)),
-                ..Default::default()
-            },
-            transform: Transform::from_xyz(1280.0 / 2.0, -1.0, 0.0),
-            visibility: Visibility::default(),
-        },
-        name: Name::new("Ground"),
-        collider: super::Collider {
-            aabb: Aabb2d::new(
-                Vec2::new(0.0, 0.0),      // center
-                Vec2::new(1280.0, 5.0) * 0.5,      // half extents
-            ),
-        },
-    });
 }

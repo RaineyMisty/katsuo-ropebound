@@ -13,20 +13,20 @@ pub struct Collider {
 }
 
 
-#[derive(Bundle)]
-pub struct BaseGameEntity {
-    pub sprite: Sprite,
-    pub transform: Transform,
-    pub visibility: Visibility,
-}
-
-#[derive(Bundle)]
-pub struct Platform {
-    #[bundle()]
-    pub base: BaseGameEntity,
-    pub name: Name,
-    pub collider: Collider,
-}
+// #[derive(Bundle)]
+// pub struct BaseGameEntity {
+//     pub sprite: Sprite,
+//     pub transform: Transform,
+//     pub visibility: Visibility,
+// }
+//
+// #[derive(Bundle)]
+// pub struct Platform {
+//     #[bundle()]
+//     pub base: BaseGameEntity,
+//     pub name: Name,
+//     pub collider: Collider,
+// }
 
 fn collider_from_boundary(
     collision: Option<&Boundary>,
@@ -51,6 +51,64 @@ fn collider_from_boundary(
         })
 }
 
+pub struct Platform {
+    pub sprite: Sprite,
+    pub transform: Transform,
+    pub visibility: Visibility,
+    pub name: Name,
+    pub collider: Option<Collider>,
+    pub extra: Vec<Box<dyn FnOnce(&mut EntityCommands) + Send + Sync>>,
+}
+
+impl Platform {
+    pub fn new(
+        id: &str,
+        sprite: Sprite,
+        transform: Transform,
+        visibility: Visibility,
+    ) -> Self {
+        Self {
+            sprite,
+            transform,
+            visibility,
+            name: Name::new(id.to_string()),
+            collider: None,
+            extra: vec![],
+        }
+    }
+
+    pub fn with_collider(mut self, collider: Collider) -> Self {
+        self.collider = Some(collider);
+        self
+    }
+
+    pub fn with_component<C: Component>(mut self, component: C) -> Self {
+        self.extra.push(Box::new(move |ec| {
+            ec.insert(component);
+        }));
+        self
+    }
+
+    pub fn spawn(self, commands: &mut Commands) -> Entity {
+        let mut ec = commands.spawn((
+            self.sprite,
+            self.transform,
+            self.visibility,
+            self.name,
+        ));
+
+        if let Some(collider) = self.collider {
+            ec.insert(collider);
+        }
+
+        for extra in self.extra {
+            extra(&mut ec);
+        }
+
+        ec.id()
+    }
+}
+
 /// Build a platform entity with sprite + transform + optional collider
 pub fn platform(
     id: &str,
@@ -62,24 +120,22 @@ pub fn platform(
 ) -> Platform {
     let collider = collider_from_boundary(entity.collision.as_ref(), &entity.boundary, map_height);
 
-    Platform {
-        base: BaseGameEntity {
-            sprite: Sprite {
-                image: image.clone(),
-                texture_atlas: Some(TextureAtlas {
-                    layout: atlas_layout.clone(),
-                    index,
-                }),
-                ..Default::default()
-            },
-            transform: Transform::from_xyz(
-                entity.boundary.start_x,
-                entity.boundary.start_y,
-                0.0,
-            ),
-            visibility: Visibility::default(),
-        },
-        name: Name::new(id.to_string()),
-        collider,
-    }
+    let sprite = Sprite {
+        image: image.clone(),
+        texture_atlas: Some(TextureAtlas {
+            layout: atlas_layout.clone(),
+            index,
+        }),
+        ..Default::default()
+    };
+
+    let transform = Transform::from_xyz(
+        entity.boundary.start_x,
+        entity.boundary.start_y,
+        0.0,
+    );
+
+    let platform = Platform::new(id, sprite, transform, Visibility::default())
+        .with_collider(collider);
+    platform
 }

@@ -8,6 +8,12 @@ use super::platform::platform;
 use super::atlas_layout::{atlas_layout, AtlasLayoutResource};
 
 #[derive(Resource)]
+pub struct MapDimensions { 
+    pub w: u32,
+    pub h: u32,
+}
+
+#[derive(Resource)]
 pub struct MapTextureHandles {
     pub tile_fg: Handle<Image>,
     pub entity: Handle<Image>,
@@ -50,8 +56,13 @@ pub fn load_map_resouces(mut commands: Commands, asset_server: Res<AssetServer>,
 
     let texture_atlas = atlas_layout(&map, &mut atlas_layouts);
 
+    let map_width = map.metadata.cols * map.metadata.tile_size_px;
+    let map_height = map.metadata.rows * map.metadata.tile_size_px;
+    commands.insert_resource(MapDimensions {w: map_width, h:map_height});
+
     commands.insert_resource(texture_atlas);
     commands.insert_resource(map);
+
 
     // I dont see why this is necessary if every game object should be able to point to its asset,
     commands.insert_resource(MapTextureHandles {
@@ -66,6 +77,7 @@ fn entity_bundles(
     image: &Handle<Image>,
     atlas: &Res<AtlasLayoutResource>,
     map_data: &Res<MapFile>,
+    map_height: u32,
 ) -> Vec<impl Bundle> {
     let mut bundles = Vec::new();
 
@@ -78,6 +90,7 @@ fn entity_bundles(
             &entity,
             &image,
             &atlas.layout,
+            map_height,
         );
         bundles.push(bundle);
     }
@@ -85,19 +98,16 @@ fn entity_bundles(
     bundles
 }
 
-pub fn load_map(mut commands: Commands, map: Res<MapFile>, images: Res<MapTextureHandles>, atlas: Res<AtlasLayoutResource>) {
+pub fn load_map(mut commands: Commands, map: Res<MapFile>, images: Res<MapTextureHandles>, atlas: Res<AtlasLayoutResource>, map_dimensions: Res<MapDimensions>) {
     
-    let map_width = map.metadata.cols * map.metadata.tile_size_px;
-    let map_height = map.metadata.rows * map.metadata.tile_size_px;
-
     // load in the tileFG as one full image sprite.
     commands.spawn(background_layer(
-        &(map_width, map_height),
+        &(map_dimensions.w, map_dimensions.h),
         &(images.tile_fg),
         -1.0
     ));
 
-    let map_entities = entity_bundles(&images.entity, &atlas, &map);
+    let map_entities = entity_bundles(&images.entity, &atlas, &map, map_dimensions.h);
 
     for bundle in map_entities {
         commands.spawn(bundle);

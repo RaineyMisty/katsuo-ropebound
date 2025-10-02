@@ -1,7 +1,11 @@
 use bevy::prelude::*;
 use bevy::math::bounding::Aabb2d;
 use super::{mapdata::{Boundary, EntityData}};
+use super::SCREEN;
 
+// Questions Collider relative to game object
+// Setting optional properties.
+//
 // Bevy data structs
 #[derive(Component, Debug)]
 pub struct Collider {
@@ -24,41 +28,10 @@ pub struct Platform {
     pub collider: Collider,
 }
 
-// impl Collider {
-//     pub fn new(width: f32, height: f32, offset: Vec2) -> Self {
-//         Self {
-//             size: Vec2::new(width, height),
-//             offset,
-//         }
-//     }
-//
-//     pub fn min_max(&self, pos: Vec2) -> (Vec2, Vec2) {
-//         let min = pos + self.offset - self.size / 2.0;
-//         let max = pos + self.offset + self.size / 2.0;
-//         (min, max)
-//     }
-//     pub fn halfed(&self) -> Vec2 {
-//         self.size * 0.5
-//     }
-// }
-
-/// Convert a map `Boundary` to a Bevy Aabb2d.
-// fn collider_from_boundary(
-//     collision: Option<&Boundary>,
-// ) -> Collider {
-//     collision.map(|c| {
-//         let center = Vec2::new(c.start_x, c.start_y);
-//         let half_extents = Vec2::new(c.width, c.height) * 0.5;
-//         Collider {
-//             aabb: Aabb2d::new(center, half_extents),
-//         }
-//     }).unwrap_or(Collider {
-//         aabb: Aabb2d::new(Vec2::ZERO, Vec2::ZERO),
-//     })
-// }
 fn collider_from_boundary(
     collision: Option<&Boundary>,
     parent_boundary: &Boundary,
+    map_height: u32,
 ) -> Collider {
     collision
         .map(|c| {
@@ -66,7 +39,7 @@ fn collider_from_boundary(
 
             let local_center = Vec2::new(
                 c.start_x - parent_boundary.start_x,
-                (64.0*32.0) - (c.start_y+c.height) - parent_boundary.start_y,
+                (map_height as f32) - (c.start_y+c.height) - parent_boundary.start_y,
             ) + half_extents;
 
             Collider {
@@ -85,8 +58,9 @@ pub fn platform(
     entity: &EntityData,
     image: &Handle<Image>,
     atlas_layout: &Handle<TextureAtlasLayout>,
+    map_height: u32,
 ) -> Platform {
-    let collider = collider_from_boundary(entity.collision.as_ref(), &entity.boundary);
+    let collider = collider_from_boundary(entity.collision.as_ref(), &entity.boundary, map_height);
 
     Platform {
         base: BaseGameEntity {

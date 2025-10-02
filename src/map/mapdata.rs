@@ -81,7 +81,6 @@ pub struct Moving {
     #[serde(deserialize_with = "from_int_to_f32")]
     pub speed: f32,
     pub trigger: MovementTrigger,
-
 }
 
 

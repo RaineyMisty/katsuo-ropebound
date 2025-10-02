@@ -45,27 +45,6 @@ fn init_player_camera(mut commands: Commands) {
     ));
 }
 
-pub fn run() {
-    let mut app = App::new();
-    app
-        .insert_resource(Time::<Fixed>::from_hz(60.0))
-        .insert_resource(PlayerSpawnPoint { position: PLAYER_INITIAL_POSITION })
-        .insert_resource(PlayerSpawnVelocity { velocity: PLAYER_INITIAL_VELOCITY })
-
-        .add_systems(Startup, init_player_camera)
-        .add_plugins(MapPlugin)
-        .add_plugins(DefaultPlugins)
-        .add_plugins(PlayerPlugin)
-        .add_plugins(PhysicsPlugin)
-
-        .add_systems(Update, update_camera);
-
-    #[cfg(debug_assertions)] // not added in release mode.
-    app.add_plugins(DevModePlugin);
-
-    app.run();
-}
-
 // Camera Components
 #[derive(Component)]
 pub struct MainCamera;
@@ -91,3 +70,25 @@ fn update_camera(
         .translation
         .smooth_nudge(&target, CAMERA_DECAY_RATE, time.delta_secs());
 }
+
+pub fn run() {
+    let mut app = App::new();
+    #[cfg(debug_assertions)] // not added in release mode.
+    app.add_plugins(DevModePlugin);
+
+    app
+        .insert_resource(Time::<Fixed>::from_hz(60.0))
+        .insert_resource(PlayerSpawnPoint { position: PLAYER_INITIAL_POSITION })
+        .insert_resource(PlayerSpawnVelocity { velocity: PLAYER_INITIAL_VELOCITY })
+
+        .add_systems(Startup, init_player_camera)
+
+        .add_plugins(MapPlugin)
+        .add_plugins(DefaultPlugins)
+        .add_plugins(PlayerPlugin)
+        .add_plugins(PhysicsPlugin)
+
+        .add_systems(Update, update_camera)
+        .run();
+}
+

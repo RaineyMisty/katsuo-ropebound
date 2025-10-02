@@ -65,16 +65,25 @@ pub fn move_camera_with_arrows(
 pub fn draw_colliders(
     mut gizmos: Gizmos,
     query: Query<(&Transform, &Collider)>,
+    query_player: Query<(&Transform, &crate::player::PlayerCollider)>,
 ) {
+    // Draw regular colliders (red)
     for (transform, collider) in &query {
-        // Translate the local AABB into world space
         let world_aabb = collider.aabb.translated_by(transform.translation.truncate());
-
-        // Draw the rectangle outline for visualization
         gizmos.rect_2d(
             world_aabb.center(),
-            world_aabb.half_size() * 2.0, // convert half extents to full size
-            Color::srgba(1.0, 0.0, 0.0, 0.8), // bright red for visibility
+            world_aabb.half_size() * 2.0,
+            Color::srgba(1.0, 0.0, 0.0, 0.8),
+        );
+    }
+
+    // Draw player colliders (blue or green)
+    for (transform, player_collider) in &query_player {
+        let world_aabb = player_collider.aabb.translated_by(transform.translation.truncate());
+        gizmos.rect_2d(
+            world_aabb.center(),
+            world_aabb.half_size() * 2.0,
+            Color::srgba(0.0, 0.0, 1.0, 0.8), // bright blue
         );
     }
 }

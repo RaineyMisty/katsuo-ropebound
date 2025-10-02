@@ -157,15 +157,12 @@ pub fn player_collider_system(
                         if aabb1.center().y < aabb2.center().y {
                             // obj1 is below obj2
                             trans2.translation.y += overlap_y;
-                            vel1.0.y = 0.0;
                         } else {
                             // obj1 is above obj2 (landing)
                             trans1.translation.y += overlap_y;
-                            vel1.0.y = 0.0;
                         }
                     }
 
-                    info!("Collision between {:?} and {:?}", id1, id2);
                 }
             }
         }

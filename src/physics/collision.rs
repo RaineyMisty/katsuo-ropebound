@@ -55,7 +55,7 @@ fn resolve_collision(
 
 
 /// Main player–platform collision system
-pub fn player_vs_collider_system(
+pub fn platform_collider_system(
     time: Res<Time>,
     mut players: Query<(
         &mut Transform,
@@ -98,52 +98,79 @@ pub fn player_vs_collider_system(
 }
 
 
-pub fn player_player_coll_system (
-     time: Res<Time>,
-        mut query:Query<(
-            Entity,&mut Velocity,&mut Transform,&mut Momentum, &mut Aabb)>,
-        ){
+pub fn player_collider_system(
+    time: Res<Time>,
+    mut query: Query<(
+        Entity,
+        &mut Velocity,
+        &mut Transform,
+        &mut Momentum,
+        &PlayerCollider,
+    )>,
+) {
+    let dt = time.delta_secs();
+    let mut players: Vec<_> = query.iter_mut().collect();
 
-        let mut players_stuff: Vec<_> = query.iter_mut().collect();
-        let change_intime = time.delta_secs();
-        //iterating through players
-        for i in 0..players_stuff.len(){
-            if i + 1 >= players_stuff.len() {
-                 break; 
-                }
-            let (one, two) = players_stuff.split_at_mut(i+1);
-            //compare throug combinatorics
-            if let Some(obj1) = one.last_mut() {
-                // check 2nd obj
-                for obj2 in two.iter_mut(){
+    for i in 0..players.len() {
+        if i + 1 >= players.len() {
+            break;
+        }
 
-                    let future1 = obj1.2.translation.truncate() + obj1.1.0 * change_intime;
-                    let future2 = obj2.2.translation.truncate() + obj2.1.0 * change_intime;
-                    // CHECK IF THEY HIT 
-                    if check_aabb(future1, obj1.4.halfed(), future2, obj2.4.halfed()){
-                        //think about this in a perfectly in elastic collision
-                        let total_momentum = (obj1.3.0.x) + (obj2.3.0.x);
-                        if obj1.3.0.x.abs() > obj2.3.0.x.abs(){
-                            obj2.3.0.x = total_momentum*0.5;
-                            obj1.3.0.x = total_momentum*0.5;
-                            obj1.1.0.x = 0.;
-                            //info!("This is a hit");
+        let (one, two) = players.split_at_mut(i + 1);
+
+        if let Some(obj1) = one.last_mut() {
+            for obj2 in two.iter_mut() {
+                let &mut (id1, ref mut vel1, ref mut trans1, ref mut mom1, collider1) = obj1;
+                let &mut (id2, ref mut vel2, ref mut trans2, ref mut mom2, collider2) = obj2;
+
+                // Predict future positions
+                let future_pos1 = trans1.translation.truncate() + vel1.0 * dt;
+                let future_pos2 = trans2.translation.truncate() + vel2.0 * dt;
+
+                let aabb1 = collider1.aabb.translated_by(future_pos1);
+                let aabb2 = collider2.aabb.translated_by(future_pos2);
+
+                if aabb1.intersects(&aabb2) {
+                    // --- Compute overlap rectangle ---
+                    let overlap_x = (aabb1.max.x.min(aabb2.max.x)) - (aabb1.min.x.max(aabb2.min.x));
+                    let overlap_y = (aabb1.max.y.min(aabb2.max.y)) - (aabb1.min.y.max(aabb2.min.y));
+
+                    if overlap_x < overlap_y {
+                        // 🧭 Resolve horizontally
+                        if aabb1.center().x < aabb2.center().x {
+                            // push obj1 left, obj2 right
+                            trans1.translation.x -= overlap_x / 2.0;
+                            trans2.translation.x += overlap_x / 2.0;
+                        } else {
+                            trans1.translation.x += overlap_x / 2.0;
+                            trans2.translation.x -= overlap_x / 2.0;
                         }
-                        else if obj2.3.0.x.abs() > obj1.3.0.x.abs(){
-                            obj1.3.0.x = obj2.3.0.x;
-                            obj2.3.0.x = 0.;
-                            obj2.1.0.x = 0.;
-                        }
-                        else{
-                            obj1.1.0.x = 0.;
-                            obj2.1.0.x = 0.;
+
+                        // Basic horizontal momentum resolution
+                        let total_momentum = mom1.0.x + mom2.0.x;
+                        mom1.0.x = total_momentum * 0.5;
+                        mom2.0.x = total_momentum * 0.5;
+                        vel1.0.x = 0.0;
+                        vel2.0.x = 0.0;
+                    } else {
+                        // 🧭 Resolve vertically (top-down)
+                        if aabb1.center().y < aabb2.center().y {
+                            // obj1 is below obj2
+                            trans2.translation.y += overlap_y;
+                            vel1.0.y = 0.0;
+                        } else {
+                            // obj1 is above obj2 (landing)
+                            trans1.translation.y += overlap_y;
+                            vel1.0.y = 0.0;
                         }
                     }
+
+                    info!("Collision between {:?} and {:?}", id1, id2);
                 }
-                
+            }
+        }
     }
 }
-        }
 
 fn check_aabb(pos1: Vec2, width: Vec2, pos2: Vec2, width2: Vec2) -> bool{
     //possible future use for collision top and collision bottom

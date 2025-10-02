@@ -110,13 +110,13 @@ pub fn load_map(mut commands: Commands, map: Res<MapFile>, images: Res<MapTextur
                 custom_size: Some(Vec2::new(1280.0, 5.0)),
                 ..Default::default()
             },
-            transform: Transform::from_xyz(1280.0 / 2.0, 0.0, 0.0),
+            transform: Transform::from_xyz(1280.0 / 2.0, -1.0, 0.0),
             visibility: Visibility::default(),
         },
         name: Name::new("Ground"),
         collider: super::Collider {
             aabb: Aabb2d::new(
-                Vec2::new(1280.0 / 2.0, 0.0),      // center
+                Vec2::new(0.0, 0.0),      // center
                 Vec2::new(1280.0, 5.0) * 0.5,      // half extents
             ),
         },

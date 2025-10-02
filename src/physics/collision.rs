@@ -12,8 +12,7 @@ use crate::components::collision::Aabb;
 use crate::components::motion::{GroundState, Momentum, Velocity};
 use crate::map::Collider;
 
-const PLATFORM_FRICTION: f32 = 0.9;
-const EPS: f32 = 0.05;              // contact offset ("skin")
+const PLATFORM_FRICTION: f32 = 0.88;
 
 /// Predict the player's AABB for the next frame
 fn predicted_aabb(
@@ -91,7 +90,7 @@ pub fn platform_collider_system(
                 );
 
                 // Update the AABB after resolution
-                player_aabb = player_collider.aabb.translated_by(player_pos.truncate());
+                // player_aabb = player_collider.aabb.translated_by(player_pos.truncate());
             }
         }
     }
@@ -157,9 +156,14 @@ pub fn player_collider_system(
                         if aabb1.center().y < aabb2.center().y {
                             // obj1 is below obj2
                             trans2.translation.y += overlap_y;
+
+                            vel2.0.x *= PLATFORM_FRICTION;
+                            mom2.0.x *= PLATFORM_FRICTION;
                         } else {
                             // obj1 is above obj2 (landing)
                             trans1.translation.y += overlap_y;
+                            vel1.0.x *= PLATFORM_FRICTION;
+                            mom1.0.x *= PLATFORM_FRICTION;
                         }
                     }
 

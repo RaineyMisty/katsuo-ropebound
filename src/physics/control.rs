@@ -43,7 +43,7 @@ pub fn player_movement_input_system(
         let can_jump = ground_state.is_grounded || !ground_state.coyote_timer.finished();
 
         // Vertical force
-        if keyboard_input.just_pressed(player.controls.up) && !jump_controller.is_jumping && can_jump {
+        if keyboard_input.pressed(player.controls.up) && !jump_controller.is_jumping && can_jump {
             control_force.0.y = PLAYER_JUMP_FORCE;
             jump_controller.is_jumping = true;
             jump_controller.jump_time_elapsed = 0.0;

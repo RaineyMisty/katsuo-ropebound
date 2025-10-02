@@ -1,60 +1,97 @@
 use crate::config::physics::{PLAYER_MOVE_FORCE, PLAYER_JUMP_FORCE, PLAYER_CONTROL_SPEED_LIMIT};
+use crate::player::PlayerCollider;
+use bevy::math::bounding::{Aabb2d, AabbCast2d, BoundingVolume, RayCast2d};
+use bevy::math::{Dir2, Ray2d};
+
+use bevy::math::bounding::IntersectsVolume;
 use crate::player::bundle::Player;
 use bevy::{prelude::*, transform};
 use crate::config::physics::GRAVITY;
 use crate::components::collision::Aabb;
 
-use bevy::prelude::*;
 use crate::components::motion::{GroundState, Momentum, Velocity};
 use crate::map::Collider;
 
-const PLATFORM_FRICTION: f32 = 0.92;
+const PLATFORM_FRICTION: f32 = 0.9;
+const EPS: f32 = 0.05;              // contact offset ("skin")
 
-pub fn player_collider_collision_system(
+/// Predict the player's AABB for the next frame
+fn predicted_aabb(
+    transform: &Transform,
+    velocity: &Velocity,
+    player_collider: &PlayerCollider,
+    dt: f32,
+) -> Aabb2d {
+    let future_pos = transform.translation.truncate() + velocity.0 * dt;
+    player_collider.aabb.translated_by(future_pos)
+}
+
+fn resolve_collision(
+    player_pos: &mut Vec3,
+    velocity: &mut Vec2,
+    momentum: &mut Vec2,
+    ground: &mut GroundState,
+    offset: Vec2,
+) {
+    if offset.x.abs() > offset.y.abs() {
+        // Horizontal collision
+        velocity.x = 0.0;
+        momentum.x = 0.0;
+    } else {
+        // Vertical collision
+        // ✅ Instead of applying offset.y blindly, only correct penetration
+
+        velocity.y = 0.0;
+        momentum.y = 0.0;
+
+        if offset.y > 0.0 {
+            ground.is_grounded = true;
+            velocity.x *= PLATFORM_FRICTION;
+            momentum.x *= PLATFORM_FRICTION;
+        }
+    }
+}
+
+
+
+/// Main player–platform collision system
+pub fn player_vs_collider_system(
     time: Res<Time>,
-    // Moving entities (players)
-    mut players: Query<(Entity, &mut Velocity, &mut Transform, &mut Momentum, &Aabb, &mut GroundState), With<Player>>,
-    // Static colliders (platforms, walls)
-    colliders: Query<(Entity, &Transform, &Collider), Without<Player>>,
+    mut players: Query<(
+        &mut Transform,
+        &mut Velocity,
+        &mut Momentum,
+        &PlayerCollider,
+        &mut GroundState,
+    ), With<Player>>,
+    colliders: Query<(&Transform, &Collider), Without<Player>>,
 ) {
     let dt = time.delta_secs();
 
-    for (player_entity, mut vel, mut trans, mut mom, aabb, mut ground_state) in players.iter_mut() {
-        let future_pos = trans.translation.truncate() + vel.0 * dt;
+    for (mut transform, mut velocity, mut momentum, player_collider, mut ground) in players.iter_mut() {
+        let mut player_aabb = predicted_aabb(&transform, &velocity, player_collider, dt);
+        ground.is_grounded = false;
 
-        ground_state.is_grounded = false;
-        for (collider_entity, collider_trans, collider) in colliders.iter() {
-            let collider_pos = collider_trans.translation.truncate();
+        for (collider_transform, collider) in colliders.iter() {
+            let collider_pos = collider_transform.translation.truncate();
+            let collider_aabb = collider.aabb.translated_by(collider_pos);
 
-            if check_aabb(future_pos, aabb.halfed(), collider_pos, collider.halfed()) {
-                // Compute overlaps for positional correction
-                let (min_a, max_a) = aabb.min_max(future_pos);
-                let (min_b, max_b) = collider.min_max(collider_pos);
+            if player_aabb.intersects(&collider_aabb) {
+                let mut player_pos = transform.translation;
+                let player_center = player_aabb.center();
+                let closest = collider_aabb.closest_point(player_center);
+                let offset = player_center - closest;
 
-                let overlap_x = (max_a.x - min_b.x).min(max_b.x - min_a.x);
-                let overlap_y = (max_a.y - min_b.y).min(max_b.y - min_a.y);
+                resolve_collision(
+                    &mut player_pos,
+                    &mut velocity.0,
+                    &mut momentum.0,
+                    &mut ground,
+                    offset,
+                );
 
-                if overlap_x < overlap_y {
-                    if future_pos.x < collider_pos.x {
-                        trans.translation.x -= overlap_x;
-                    } else {
-                        trans.translation.x += overlap_x;
-                    }
-                    vel.0.x = 0.0;
-                    mom.0.x = 0.0;
-                } else {
-                    if future_pos.y < collider_pos.y {
-                        trans.translation.y -= overlap_y;
-                    } else {
-                        // If landing on collision, change 
-                        trans.translation.y += overlap_y;
-                        ground_state.is_grounded = true;
-                        vel.0.x *= PLATFORM_FRICTION;
-                        mom.0.x *= PLATFORM_FRICTION;
-                    }
-                    vel.0.y = 0.0;
-                    mom.0.y = 0.0;
-                }
+                // Update the AABB after resolution
+                player_aabb = player_collider.aabb.translated_by(player_pos.truncate());
             }
         }
     }

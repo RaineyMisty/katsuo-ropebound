@@ -43,6 +43,7 @@ members = [
     "prototype",
     "platform",
     "maploading",
+    "multiplayer",
     "slideshow",
     "xtask",
 ]

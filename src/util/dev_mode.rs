@@ -1,4 +1,5 @@
 use bevy::{prelude::*};
+use bevy::math::bounding::{ Aabb2d, BoundingVolume };
 use crate::map::Collider;
 use crate::app::MainCamera;
 
@@ -60,19 +61,20 @@ pub fn move_camera_with_arrows(
     }
 }
 
-fn draw_colliders(
+
+pub fn draw_colliders(
     mut gizmos: Gizmos,
     query: Query<(&Transform, &Collider)>,
 ) {
     for (transform, collider) in &query {
-        // Center of the rectangle in 2D
-        let position_2d = transform.translation.truncate() + collider.offset;
+        // Translate the local AABB into world space
+        let world_aabb = collider.aabb.translated_by(transform.translation.truncate());
 
-        // Draw a rectangle centered on the entity's position
+        // Draw the rectangle outline for visualization
         gizmos.rect_2d(
-            position_2d,
-            collider.size,
-            Color::srgba(1.0, 1.0, 1.0, 0.8),
+            world_aabb.center(),
+            world_aabb.half_size() * 2.0, // convert half extents to full size
+            Color::srgba(1.0, 0.0, 0.0, 0.8), // bright red for visibility
         );
     }
 }
@@ -87,8 +89,8 @@ impl Plugin for DevModePlugin {
             .add_systems(
                 Update,
                 (
-                    draw_colliders,
                     move_camera_with_arrows,
+                    draw_colliders,
                 ).run_if(debug_on)
             );
     }

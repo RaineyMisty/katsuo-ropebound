@@ -3206,6 +3206,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "mutliplayer"
+version = "0.1.0"
+dependencies = [
+ "bevy",
+ "rand 0.9.2",
+]
+
+[[package]]
 name = "naga"
 version = "24.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"

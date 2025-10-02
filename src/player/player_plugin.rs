@@ -63,9 +63,5 @@ fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>, spawn_po
         attached_entity_tail: p2,
     });
     
-    // Platform for the ground
-    commands.spawn((
-        Transform::from_xyz(0.0, 0.0, 0.0),
-        Collider::new(2000.0, 5.0, Vec2::ZERO),
-    ));
+    // Ground platform setup
 }

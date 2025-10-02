@@ -24,8 +24,8 @@
       },
       "collision": {
         "height": 27,
-        "startX": 288,
-        "startY": 138,
+        "startX": 128,
+        "startY": 1897,
         "width": 320
       },
       "type": "platform"
@@ -53,8 +53,8 @@
       },
       "collision": {
         "height": 24,
-        "startX": 384,
-        "startY": 588,
+        "startX": 319,
+        "startY": 1448,
         "width": 129
       },
       "type": "platform"
@@ -71,8 +71,8 @@
       },
       "collision": {
         "height": 59,
-        "startX": 64,
-        "startY": 354,
+        "startX": 2,
+        "startY": 1665,
         "width": 123
       },
       "type": "platform"
@@ -93,15 +93,15 @@
         "oneWay": false
       },
       "boundary": {
-        "height": 20.5,
+        "height": 20,
         "startX": 673,
         "startY": 516,
         "width": 319
       },
       "collision": {
         "height": 25,
-        "startX": 672,
-        "startY": 525,
+        "startX": 512,
+        "startY": 1511,
         "width": 320
       },
       "type": "platform"
@@ -118,8 +118,8 @@
       },
       "collision": {
         "height": 61,
-        "startX": 1216,
-        "startY": 289,
+        "startX": 1154,
+        "startY": 1729,
         "width": 124
       },
       "type": "platform"
@@ -135,9 +135,9 @@
         "width": 256
       },
       "collision": {
-        "height": 48.5,
-        "startX": 642,
-        "startY": 158,
+        "height": 48,
+        "startX": 490,
+        "startY": 1865,
         "width": 304
       },
       "type": "platform"
@@ -154,8 +154,8 @@
       },
       "collision": {
         "height": 62,
-        "startX": 705,
-        "startY": 353,
+        "startX": 642,
+        "startY": 1664,
         "width": 126
       },
       "type": "platform"
@@ -172,8 +172,8 @@
       },
       "collision": {
         "height": 64,
-        "startX": 930,
-        "startY": 288,
+        "startX": 834,
+        "startY": 1728,
         "width": 192
       },
       "type": "platform"
@@ -190,8 +190,8 @@
       },
       "collision": {
         "height": 67,
-        "startX": 799,
-        "startY": 1634,
+        "startX": 766,
+        "startY": 381,
         "width": 66
       },
       "type": "platform"

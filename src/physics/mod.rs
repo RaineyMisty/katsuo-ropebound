@@ -39,10 +39,10 @@ impl Plugin for PhysicsPlugin {
                 rope_force_to_system,
                 integrate_force_system,
                 integrate_momentum_system,
-                platform_collider_system,
-                player_collider_system,
-                update_coyote_timer_system,
                 integrate_velocity_system,
+                update_coyote_timer_system,
+                player_collider_system,
+                platform_collider_system,
                 boundary,
             ).chain()
         );

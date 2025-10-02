@@ -14,15 +14,18 @@ use crate::map::Collider;
 
 const PLATFORM_FRICTION: f32 = 0.88;
 
-/// Predict the player's AABB for the next frame
+// Predict the player's AABB for the next frame
 fn predicted_aabb(
     transform: &Transform,
     velocity: &Velocity,
     player_collider: &PlayerCollider,
     dt: f32,
 ) -> Aabb2d {
-    let future_pos = transform.translation.truncate() + velocity.0 * dt;
-    player_collider.aabb.translated_by(future_pos)
+    let current_pos = transform.translation.truncate();
+    let future_pos = current_pos + velocity.0 * dt;
+    let delta = future_pos - current_pos;
+
+    player_collider.aabb.translated_by(current_pos + delta)
 }
 
 fn resolve_collision(
@@ -34,19 +37,34 @@ fn resolve_collision(
 ) {
     if offset.x.abs() > offset.y.abs() {
         // Horizontal collision
+        player_pos.x -= offset.x;
+                                  // 
+        if offset.x > 0.0 {
+            // Collided from the left side of a wall → push player to the left
+            player_pos.x += 32.0;
+        } else {
+            // Collided from the right side of a wall → push player to the right
+            player_pos.x -= 32.0;
+        }
+
         velocity.x = 0.0;
         momentum.x = 0.0;
     } else {
         // Vertical collision
-        // ✅ Instead of applying offset.y blindly, only correct penetration
-
+        player_pos.y -= offset.y;
         velocity.y = 0.0;
         momentum.y = 0.0;
 
+        // colliding with top  
         if offset.y > 0.0 {
+            player_pos.y += 32.0;
             ground.is_grounded = true;
-            velocity.x *= PLATFORM_FRICTION;
+            // velocity.x *= PLATFORM_FRICTION;
             momentum.x *= PLATFORM_FRICTION;
+        }
+        // colliding with bottom
+        else {
+            player_pos.y -= 32.0;
         }
     }
 }
@@ -90,7 +108,8 @@ pub fn platform_collider_system(
                 );
 
                 // Update the AABB after resolution
-                // player_aabb = player_collider.aabb.translated_by(player_pos.truncate());
+                player_aabb = player_collider.aabb.translated_by(player_pos.truncate());
+                transform.translation = player_pos;
             }
         }
     }
@@ -151,22 +170,7 @@ pub fn player_collider_system(
                         mom2.0.x = total_momentum * 0.5;
                         vel1.0.x = 0.0;
                         vel2.0.x = 0.0;
-                    } else {
-                        // 🧭 Resolve vertically (top-down)
-                        if aabb1.center().y < aabb2.center().y {
-                            // obj1 is below obj2
-                            trans2.translation.y += overlap_y;
-
-                            vel2.0.x *= PLATFORM_FRICTION;
-                            mom2.0.x *= PLATFORM_FRICTION;
-                        } else {
-                            // obj1 is above obj2 (landing)
-                            trans1.translation.y += overlap_y;
-                            vel1.0.x *= PLATFORM_FRICTION;
-                            mom1.0.x *= PLATFORM_FRICTION;
-                        }
-                    }
-
+                    } 
                 }
             }
         }

@@ -2,8 +2,8 @@
 // Screen size resource.
 use bevy::prelude::*;
 use serde::Deserialize;
+use serde::de::Deserializer;
 use std::collections::HashMap;
-use serde::de::{Deserializer};
 
 pub fn from_int_to_f32<'de, D>(d: D) -> Result<f32, D::Error>
 where
@@ -11,11 +11,10 @@ where
 {
     let num = serde_json::Value::deserialize(d)?;
     match num {
-        serde_json::Value::Number(n) => {
-            n.as_f64()
-                .map(|v| v as f32)
-                .ok_or_else(|| serde::de::Error::custom("Expected number for f32"))
-        }
+        serde_json::Value::Number(n) => n
+            .as_f64()
+            .map(|v| v as f32)
+            .ok_or_else(|| serde::de::Error::custom("Expected number for f32")),
         _ => Err(serde::de::Error::custom("Expected number for f32")),
     }
 }
@@ -33,7 +32,6 @@ pub struct Metadata {
     pub tile_size_px: u32,
     pub rows: u32,
     pub cols: u32,
-
 }
 
 #[derive(Deserialize, Debug)]
@@ -58,7 +56,7 @@ pub struct EntityData {
 #[derive(Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct EntityAttrs {
-    oneWay: bool,
+    one_way: Option<bool>,
     pub moving: Option<Moving>,
 }
 
@@ -71,7 +69,7 @@ pub enum MoveType {
 }
 
 #[derive(Deserialize, Debug, Clone)]
-#[serde(rename_all = "camelCase")]  // 👈 important
+#[serde(rename_all = "camelCase")] // 👈 important
 pub struct Moving {
     pub start_x: i32,
     pub start_y: i32,
@@ -82,7 +80,6 @@ pub struct Moving {
     pub speed: f32,
     pub trigger: MovementTrigger,
 }
-
 
 #[derive(Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -112,4 +109,3 @@ pub struct MapFile {
     pub collision_areas: Vec<Boundary>,
     pub entities: HashMap<String, EntityData>,
 }
-

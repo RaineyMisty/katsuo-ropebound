@@ -9,6 +9,25 @@ use bevy::{prelude::*, transform};
 use crate::config::physics::GRAVITY;
 use crate::components::collision::Aabb;
 
+#[derive(Event, Debug)]
+pub struct PlayerCollisionEvent {
+    pub player: Entity,
+    pub game_object: Entity,
+}
+
+pub fn on_collision(
+    mut commands: Commands,
+    mut events: EventReader<PlayerCollisionEvent>,
+    coins: Query<(), With<crate::map::Coin>>,
+) {
+    for ev in events.read() {
+        if coins.get(ev.game_object).is_ok() {
+            println!("🤑🤑🤑");
+            commands.entity(ev.game_object).despawn();
+        }
+    }
+}
+
 use crate::components::motion::{GroundState, Momentum, Velocity};
 use crate::map::Collider;
 
@@ -73,23 +92,25 @@ fn resolve_collision(
 
 /// Main player–platform collision system
 pub fn platform_collider_system(
+    mut events: EventWriter<PlayerCollisionEvent>,
     time: Res<Time>,
     mut players: Query<(
+        Entity,
         &mut Transform,
         &mut Velocity,
         &mut Momentum,
         &PlayerCollider,
         &mut GroundState,
     ), With<Player>>,
-    colliders: Query<(&Transform, &Collider), Without<Player>>,
+    colliders: Query<(Entity, &Transform, &Collider), Without<Player>>,
 ) {
     let dt = time.delta_secs();
 
-    for (mut transform, mut velocity, mut momentum, player_collider, mut ground) in players.iter_mut() {
+    for (player, mut transform, mut velocity, mut momentum, player_collider, mut ground) in players.iter_mut() {
         let mut player_aabb = predicted_aabb(&transform, &velocity, player_collider, dt);
         ground.is_grounded = false;
 
-        for (collider_transform, collider) in colliders.iter() {
+        for (game_object, collider_transform, collider) in colliders.iter() {
             let collider_pos = collider_transform.translation.truncate();
             let collider_aabb = collider.aabb.translated_by(collider_pos);
 
@@ -106,6 +127,11 @@ pub fn platform_collider_system(
                     &mut ground,
                     offset,
                 );
+
+                events.write(PlayerCollisionEvent {
+                    player,
+                    game_object,
+                });
 
                 // Update the AABB after resolution
                 player_aabb = player_collider.aabb.translated_by(player_pos.truncate());

@@ -1,11 +1,10 @@
-use bevy::math::bounding::Aabb2d;
 // src/util/map/loader.rs
 use bevy::prelude::*;
 use std::path::Path;
 
-use super::atlas_layout::{AtlasLayoutResource, atlas_layout};
 use super::game_object_builder::GameObject;
-use super::platform::platform;
+use super::mapdata::{EntityKind};
+use super::util::*;
 use super::{MAP_NAME, MapFile};
 
 #[derive(Resource)]
@@ -20,43 +19,99 @@ pub struct MapTextureHandles {
     pub entity: Handle<Image>,
 }
 
-#[derive(Component)]
-pub struct FullscreenSprite;
+#[derive(Component, Default)]
+pub struct Platform;
 
-pub fn background_layer(
-    map_dimentions: &(u32, u32),
-    image_handle: &Handle<Image>,
-    z_layer: f32,
-) -> impl Bundle {
-    (
-        Sprite::from_image(image_handle.clone()),
-        // transform so that map image is loaded as the visual bottom of the screen / where the camera starts.
-        Transform::from_xyz(
-            map_dimentions.0 as f32 / 2.0,
-            map_dimentions.1 as f32 / 2.0,
-            z_layer,
-        ),
-        FullscreenSprite,
-    )
+#[derive(Component, Default)]
+pub struct Coin;
+
+// entrypoint for spawning different types of objects.
+// this should probably be its own file or folder even but we can keep it for now.
+fn game_objects(
+    image: &Handle<Image>,
+    atlas: &Res<AtlasLayoutResource>,
+    map_data: &Res<MapFile>,
+    map_height: u32,
+) -> Vec<GameObject> {
+    let mut bundles = Vec::new();
+
+    for (id, entity) in &map_data.entities {
+        // match for entity.kind, Platform or Coin enum
+        let index = atlas.indices[id];
+
+        let sprite = Sprite {
+            image: image.clone(),
+            texture_atlas: Some(TextureAtlas {
+                layout: atlas.layout.clone(),
+                index,
+            }),
+            ..Default::default()
+        };
+        let transform = Transform::from_xyz(entity.boundary.start_x, entity.boundary.start_y, 0.0);
+        let bundle = match entity.kind {
+            EntityKind::Platform => {
+                let collider = collider_from_boundary(entity.collision.as_ref(), &entity.boundary, map_height);
+                GameObject::new(id, sprite, transform, Visibility::default())
+                    .with_collider(collider)
+                    .with_marker::<Platform>()
+            }
+            EntityKind::Coin => {
+                let collider = collider_from_boundary(entity.collision.as_ref(), &entity.boundary, map_height);
+                GameObject::new(id, sprite, transform, Visibility::default())
+                    .with_collider(collider)
+                    .with_marker::<Coin>()
+            }
+        };
+
+        bundles.push(bundle);
+    }
+
+    bundles
 }
 
-fn json_map_data(map_name: &str) -> MapFile {
-    let json_path = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("assets")
-        .join(map_name)
-        .join(format!("{map_name}.json"));
+pub fn load_map(
+    mut commands: Commands,
+    map: Res<MapFile>,
+    images: Res<MapTextureHandles>,
+    atlas: Res<AtlasLayoutResource>,
+    map_dimensions: Res<MapDimensions>,
+) {
+    let map_entities = game_objects(&images.entity, &atlas, &map, map_dimensions.h);
 
-    let json_str = std::fs::read_to_string(&json_path).expect("Failed to read JSON file");
-
-    serde_json::from_str(&json_str).expect("Failed to parse JSON into MapFile")
+    for game_entity in map_entities {
+        game_entity.spawn(&mut commands);
+    }
+    let ground = ground();
+    ground.spawn(&mut commands);
 }
+
+pub fn load_background_layers(
+    mut commands: Commands,
+    images: Res<MapTextureHandles>,
+    map_dimensions: Res<MapDimensions>,
+) {
+    commands.spawn(background_layer(
+        &(map_dimensions.w, map_dimensions.h),
+        &(images.tile_fg),
+        -1.0,
+    ));
+}
+
 
 pub fn load_map_resouces(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
 ) {
-    let map: MapFile = json_map_data(MAP_NAME);
+
+    let json_path = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("assets")
+        .join(MAP_NAME)
+        .join(format!("{MAP_NAME}.json"));
+
+    let json_str = std::fs::read_to_string(&json_path).expect("Failed to read JSON file");
+
+    let map: MapFile = serde_json::from_str(&json_str).expect("Failed to parse JSON into MapFile");
 
     let tile_fg_handle = asset_server.load(&map.layer_images.tile_fg);
     let entity_handle = asset_server.load(&map.layer_images.entity);
@@ -78,70 +133,4 @@ pub fn load_map_resouces(
         tile_fg: tile_fg_handle,
         entity: entity_handle,
     });
-}
-
-// entrypoint for spawning different types of objects.
-fn game_objects(
-    image: &Handle<Image>,
-    atlas: &Res<AtlasLayoutResource>,
-    map_data: &Res<MapFile>,
-    map_height: u32,
-) -> Vec<GameObject> {
-    let mut bundles = Vec::new();
-
-    for (id, entity) in &map_data.entities {
-        // match for entity.kind, Platform or Coin enum
-        let bundle = platform(
-            id,
-            atlas.indices[id],
-            &entity,
-            &image,
-            &atlas.layout,
-            map_height,
-        );
-        bundles.push(bundle);
-    }
-
-    bundles
-}
-
-fn ground() -> GameObject {
-    let sprite = Sprite {
-        color: Color::srgb(0.3, 0.8, 0.3), // ✅ Optional debug color
-        custom_size: Some(Vec2::new(1280.0, 5.0)),
-        ..Default::default()
-    };
-
-    let transform = Transform::from_xyz(1280.0 / 2.0, -1.0, 0.0);
-    let visibility = Visibility::default();
-
-    let collider = super::Collider {
-        aabb: Aabb2d::new(Vec2::new(0.0, 0.0), Vec2::new(1280.0, 5.0) * 0.5),
-    };
-
-    // 👇 Builder replaces the bundle struct
-    GameObject::new("Ground", sprite, transform, visibility).with_collider(collider)
-}
-
-pub fn load_map(
-    mut commands: Commands,
-    map: Res<MapFile>,
-    images: Res<MapTextureHandles>,
-    atlas: Res<AtlasLayoutResource>,
-    map_dimensions: Res<MapDimensions>,
-) {
-    // load in the tileFG as one full image sprite.
-    commands.spawn(background_layer(
-        &(map_dimensions.w, map_dimensions.h),
-        &(images.tile_fg),
-        -1.0,
-    ));
-
-    let map_entities = game_objects(&images.entity, &atlas, &map, map_dimensions.h);
-
-    for game_entity in map_entities {
-        game_entity.spawn(&mut commands);
-    }
-    let ground = ground();
-    ground.spawn(&mut commands);
 }

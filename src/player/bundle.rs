@@ -1,7 +1,6 @@
 use bevy::prelude::*;
 use crate::config::player::*;
 use crate::components::motion::{ControlForce, Gravity, GroundState, JumpController, Mass, Momentum, NetForce, RopeForce, Velocity};
-use crate::components::collision::Aabb;
 use bevy::math::bounding::Aabb2d;
 
 #[derive(Component, Clone)]

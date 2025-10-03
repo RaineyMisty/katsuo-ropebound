@@ -1,17 +1,12 @@
-use bevy::prelude::*;
+use super::game_object_builder::{Collider, GameObject};
+use super::mapdata::{Boundary, EntityData};
 use bevy::math::bounding::Aabb2d;
-use super::{mapdata::{Boundary, EntityData}};
-use super::SCREEN;
+use bevy::prelude::*;
 
 // Questions Collider relative to game object
 // Setting optional properties.
 //
 // Bevy data structs
-#[derive(Component, Debug)]
-pub struct Collider {
-    pub aabb: Aabb2d,
-}
-
 
 // #[derive(Bundle)]
 // pub struct BaseGameEntity {
@@ -39,7 +34,7 @@ fn collider_from_boundary(
 
             let local_center = Vec2::new(
                 c.start_x - parent_boundary.start_x,
-                (map_height as f32) - (c.start_y+c.height) - parent_boundary.start_y,
+                (map_height as f32) - (c.start_y + c.height) - parent_boundary.start_y,
             ) + half_extents;
 
             Collider {
@@ -51,65 +46,11 @@ fn collider_from_boundary(
         })
 }
 
-pub struct Platform {
-    pub sprite: Sprite,
-    pub transform: Transform,
-    pub visibility: Visibility,
-    pub name: Name,
-    pub collider: Option<Collider>,
-    pub extra: Vec<Box<dyn FnOnce(&mut EntityCommands) + Send + Sync>>,
-}
-
-impl Platform {
-    pub fn new(
-        id: &str,
-        sprite: Sprite,
-        transform: Transform,
-        visibility: Visibility,
-    ) -> Self {
-        Self {
-            sprite,
-            transform,
-            visibility,
-            name: Name::new(id.to_string()),
-            collider: None,
-            extra: vec![],
-        }
-    }
-
-    pub fn with_collider(mut self, collider: Collider) -> Self {
-        self.collider = Some(collider);
-        self
-    }
-
-    pub fn with_component<C: Component>(mut self, component: C) -> Self {
-        self.extra.push(Box::new(move |ec| {
-            ec.insert(component);
-        }));
-        self
-    }
-
-    pub fn spawn(self, commands: &mut Commands) -> Entity {
-        let mut ec = commands.spawn((
-            self.sprite,
-            self.transform,
-            self.visibility,
-            self.name,
-        ));
-
-        if let Some(collider) = self.collider {
-            ec.insert(collider);
-        }
-
-        for extra in self.extra {
-            extra(&mut ec);
-        }
-
-        ec.id()
-    }
-}
+#[derive(Component, Default)]
+pub struct Platform;
 
 /// Build a platform entity with sprite + transform + optional collider
+/// most of this is probably reused for other entities.
 pub fn platform(
     id: &str,
     index: usize,
@@ -117,7 +58,7 @@ pub fn platform(
     image: &Handle<Image>,
     atlas_layout: &Handle<TextureAtlasLayout>,
     map_height: u32,
-) -> Platform {
+) -> GameObject {
     let collider = collider_from_boundary(entity.collision.as_ref(), &entity.boundary, map_height);
 
     let sprite = Sprite {
@@ -129,13 +70,10 @@ pub fn platform(
         ..Default::default()
     };
 
-    let transform = Transform::from_xyz(
-        entity.boundary.start_x,
-        entity.boundary.start_y,
-        0.0,
-    );
+    let transform = Transform::from_xyz(entity.boundary.start_x, entity.boundary.start_y, 0.0);
 
-    let platform = Platform::new(id, sprite, transform, Visibility::default())
-        .with_collider(collider);
+    let platform = GameObject::new(id, sprite, transform, Visibility::default())
+        .with_collider(collider)
+        .with_marker::<Platform>();
     platform
 }

@@ -1,11 +1,12 @@
 use bevy::prelude::*;
+mod atlas_layout;
+mod game_object_builder;
+mod loader;
 mod mapdata;
 mod platform;
-mod atlas_layout;
 
-pub use mapdata::{MapFile};
-pub use platform::{Collider};
-pub mod loader;
+pub use game_object_builder::Collider;
+pub use mapdata::MapFile;
 
 use loader::{load_map, load_map_resouces};
 const MAP_NAME: &str = "level1";
@@ -15,12 +16,6 @@ pub struct MapPlugin;
 
 impl Plugin for MapPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(
-            Startup,
-            (
-                load_map_resouces,
-                load_map
-            ).chain()
-        );
+        app.add_systems(Startup, (load_map_resouces, load_map).chain());
     }
 }

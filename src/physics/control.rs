@@ -5,13 +5,14 @@
 use bevy::prelude::*;
 use crate::config::physics::{PLAYER_MOVE_FORCE, PLAYER_JUMP_FORCE, PLAYER_CONTROL_SPEED_LIMIT};
 use crate::player::bundle::Player;
-use crate::components::motion::{Velocity, ControlForce, NetForce};
+use crate::components::motion::{ControlForce, GroundState, JumpController, NetForce, Velocity};
 
 pub fn player_movement_input_system(
     keyboard_input: Res<ButtonInput<KeyCode>>,
-    mut query: Query<(&mut Velocity, &mut ControlForce, &mut NetForce, &Player), With<Player>>,
+    time: Res<Time>,
+    mut query: Query<(&mut Velocity, &mut ControlForce, &mut NetForce, &Player, &mut JumpController, &mut GroundState), With<Player>>,
 ) {
-    for (mut velocity, mut control_force, mut net_force, player) in &mut query {
+    for (mut velocity, mut control_force, mut net_force, player, mut jump_controller, mut ground_state) in &mut query {
         // Calculate the resistance parameter
         // f = c*v => c = f/v
         let resistance = PLAYER_MOVE_FORCE / PLAYER_CONTROL_SPEED_LIMIT; 
@@ -39,10 +40,24 @@ pub fn player_movement_input_system(
                 }
             }
         }
+        let can_jump = ground_state.is_grounded || !ground_state.coyote_timer.finished();
 
         // Vertical force
-        if keyboard_input.just_pressed(player.controls.up) {
+        if keyboard_input.pressed(player.controls.up) && !jump_controller.is_jumping && can_jump {
             control_force.0.y = PLAYER_JUMP_FORCE;
+            jump_controller.is_jumping = true;
+            jump_controller.jump_time_elapsed = 0.0;
+        }
+        // Check if player is holding the jump key
+        if jump_controller.is_jumping && keyboard_input.pressed(player.controls.up) && jump_controller.jump_time_elapsed < jump_controller.max_jump_duration {
+            jump_controller.jump_time_elapsed += time.delta_secs();
+
+            // Apply smaller force while holding
+            control_force.0.y += PLAYER_JUMP_FORCE * jump_controller.jump_multiplier;
+        }
+        // End the jump either by letting go or time running out
+        if jump_controller.is_jumping && keyboard_input.just_released(player.controls.up) || jump_controller.jump_time_elapsed >= jump_controller.max_jump_duration {
+            jump_controller.is_jumping = false;
         }
 
         net_force.0 += control_force.0;

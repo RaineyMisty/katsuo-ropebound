@@ -1,0 +1,209 @@
+{
+  "collisionAreas": [],
+  "entities": {
+    "3GYQNX": {
+      "attributes": {
+        "moving": {
+          "endX": 400,
+          "endY": 1897,
+          "moveType": "linear",
+          "speed": 1,
+          "startX": 128,
+          "startY": 1897,
+          "trigger": {
+            "triggerType": "loop"
+          }
+        },
+        "oneWay": false
+      },
+      "boundary": {
+        "height": 27,
+        "startX": 288,
+        "startY": 138,
+        "width": 320
+      },
+      "collision": {
+        "height": 27,
+        "startX": 128,
+        "startY": 1897,
+        "width": 320
+      },
+      "type": "platform"
+    },
+    "8YOYHG": {
+      "attributes": {
+        "moving": {
+          "endX": 419,
+          "endY": 1648,
+          "moveType": "linear",
+          "speed": 1,
+          "startX": 319,
+          "startY": 1448,
+          "trigger": {
+            "triggerType": "loop"
+          }
+        },
+        "oneWay": false
+      },
+      "boundary": {
+        "height": 24,
+        "startX": 384,
+        "startY": 588,
+        "width": 129
+      },
+      "collision": {
+        "height": 24,
+        "startX": 319,
+        "startY": 1448,
+        "width": 129
+      },
+      "type": "platform"
+    },
+    "9W9t6u": {
+      "attributes": {
+        "oneWay": false
+      },
+      "boundary": {
+        "height": 59,
+        "startX": 64,
+        "startY": 354,
+        "width": 123
+      },
+      "collision": {
+        "height": 59,
+        "startX": 2,
+        "startY": 1665,
+        "width": 123
+      },
+      "type": "platform"
+    },
+    "AITsBy": {
+      "attributes": {
+        "moving": {
+          "endX": 613,
+          "endY": 400,
+          "moveType": "linear",
+          "speed": 0.5,
+          "startX": 513,
+          "startY": 1521,
+          "trigger": {
+            "triggerType": "loop"
+          }
+        },
+        "oneWay": false
+      },
+      "boundary": {
+        "height": 20,
+        "startX": 673,
+        "startY": 516,
+        "width": 319
+      },
+      "collision": {
+        "height": 25,
+        "startX": 512,
+        "startY": 1511,
+        "width": 320
+      },
+      "type": "platform"
+    },
+    "EQJkqh": {
+      "attributes": {
+        "oneWay": false
+      },
+      "boundary": {
+        "height": 61,
+        "startX": 1216,
+        "startY": 289,
+        "width": 124
+      },
+      "collision": {
+        "height": 61,
+        "startX": 1154,
+        "startY": 1729,
+        "width": 124
+      },
+      "type": "platform"
+    },
+    "L5K2kY": {
+      "attributes": {
+        "oneWay": false
+      },
+      "boundary": {
+        "height": 24,
+        "startX": 640,
+        "startY": 204,
+        "width": 256
+      },
+      "collision": {
+        "height": 48,
+        "startX": 490,
+        "startY": 1865,
+        "width": 304
+      },
+      "type": "platform"
+    },
+    "TfEips": {
+      "attributes": {
+        "oneWay": false
+      },
+      "boundary": {
+        "height": 62,
+        "startX": 705,
+        "startY": 353,
+        "width": 126
+      },
+      "collision": {
+        "height": 62,
+        "startX": 642,
+        "startY": 1664,
+        "width": 126
+      },
+      "type": "platform"
+    },
+    "rNNo4A": {
+      "attributes": {
+        "oneWay": false
+      },
+      "boundary": {
+        "height": 64,
+        "startX": 930,
+        "startY": 288,
+        "width": 192
+      },
+      "collision": {
+        "height": 64,
+        "startX": 834,
+        "startY": 1728,
+        "width": 192
+      },
+      "type": "platform"
+    },
+    "xctFB5": {
+      "attributes": {
+        "oneWay": false
+      },
+      "boundary": {
+        "height": 67,
+        "startX": 799,
+        "startY": 1634,
+        "width": 66
+      },
+      "collision": {
+        "height": 67,
+        "startX": 766,
+        "startY": 381,
+        "width": 66
+      },
+      "type": "platform"
+    }
+  },
+  "layerImages": {
+    "entity": "level1/entity.png",
+    "tileFg": "level1/tile_fg.png"
+  },
+  "metadata": {
+    "cols": 20,
+    "rows": 32,
+    "tileSizePx": 64
+  }
+}

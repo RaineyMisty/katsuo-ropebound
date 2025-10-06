@@ -3,6 +3,9 @@ mod game_object_builder;
 mod loader;
 mod mapdata;
 mod util;
+mod scroller;
+
+use scroller::{player_move, camera_follow};
 
 pub use game_object_builder::Collider;
 pub use loader::{Coin, Platform};
@@ -19,7 +22,7 @@ impl Plugin for MapPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(
             Startup,
-            (load_map_resouces, load_background_layers, load_map).chain(),
+            (load_map_resouces, load_background_layers, load_map,).chain(),
         );
     }
 }

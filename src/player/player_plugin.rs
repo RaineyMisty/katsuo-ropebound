@@ -6,15 +6,14 @@
 use bevy::math::VectorSpace;
 use bevy::prelude::*;
 
-use crate::player::bundle::{PlayerBundle, PlayerControls};
+use crate::config::PLAYER_SPAWN_MASS;
 use crate::config::PlayerSpawnPoint;
 use crate::config::PlayerSpawnVelocity;
-use crate::config::PLAYER_SPAWN_MASS;
+use crate::player::bundle::{PlayerBundle, PlayerControls };
 
 use crate::components::motion::{GroundState, JumpController, Mass, Velocity};
 use crate::components::rope::{Rope, RopeConstraint};
 
-use crate::map::Collider;
 use crate::app::FollowedPlayer;
 
 pub struct PlayerPlugin;
@@ -25,8 +24,14 @@ impl Plugin for PlayerPlugin {
     }
 }
 
-fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>, spawn_point: Res<PlayerSpawnPoint>, spawn_velocity: Res<PlayerSpawnVelocity>) {
+fn spawn_player(
+    mut commands: Commands,
+    #[cfg(feature = "client")] asset_server: Res<AssetServer>,
+    spawn_point: Res<PlayerSpawnPoint>,
+    spawn_velocity: Res<PlayerSpawnVelocity>,
+) {
     let transform = Transform::from_translation(spawn_point.position);
+    #[cfg(feature = "client")]
     let texture = asset_server.load("spriteguy.png");
     let controls = PlayerControls {
         up: KeyCode::KeyW,
@@ -38,12 +43,39 @@ fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>, spawn_po
     let ground_state = GroundState::default();
     let mass = Mass(PLAYER_SPAWN_MASS); // make the first player heavier (deleted for now but multiply mass)
     let velocity = Velocity(spawn_velocity.velocity);
-    let p1 = commands.spawn(PlayerBundle::new(controls, texture, transform, velocity, mass, jump_controller, ground_state)).insert(FollowedPlayer).id();
+
+    #[cfg(feature = "client")]
+    let p1 = commands
+        .spawn(PlayerBundle::new(
+            controls,
+            texture,
+            transform,
+            velocity,
+            mass,
+            jump_controller,
+            ground_state,
+        ))
+        .insert(FollowedPlayer)
+        .id();
+
+    #[cfg(feature = "server")]
+    let p1 = commands
+        .spawn(PlayerBundle::server_only(
+            controls,
+            transform,
+            velocity,
+            mass,
+            jump_controller,
+            ground_state,
+        ))
+        .insert(FollowedPlayer)
+        .id();
     // Spawn a second player for testing
     // This is temporary and will be removed later
     // Ideally we would have a better way
     // use load player assets
     let transform = Transform::from_translation(spawn_point.position + Vec3::new(300.0, 0.0, 0.0));
+    #[cfg(feature = "client")]
     let texture = asset_server.load("portrait_rainey.png");
     let controls = PlayerControls {
         up: KeyCode::ArrowUp,
@@ -54,7 +86,29 @@ fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>, spawn_po
     let jump_controller = JumpController::default();
     let ground_state = GroundState::default();
     let mass = Mass(PLAYER_SPAWN_MASS);
-    let p2 = commands.spawn(PlayerBundle::new(controls, texture, transform, velocity, mass, jump_controller, ground_state)).id();
+    #[cfg(feature = "client")]
+    let p2 = commands
+        .spawn(PlayerBundle::new(
+            controls,
+            texture,
+            transform,
+            velocity,
+            mass,
+            jump_controller,
+            ground_state,
+        ))
+        .id();
+    #[cfg(feature = "server")]
+    let p2 = commands
+        .spawn(PlayerBundle::server_only(
+            controls,
+            transform,
+            velocity,
+            mass,
+            jump_controller,
+            ground_state,
+        ))
+        .id();
 
     // Add p1 and p2 a rope component
     commands.spawn(Rope {
@@ -62,6 +116,6 @@ fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>, spawn_po
         attached_entity_head: p1,
         attached_entity_tail: p2,
     });
-    
+
     // Ground platform setup
 }

@@ -4,7 +4,7 @@
 // Description: <Systems for player control>
 use bevy::prelude::*;
 use crate::config::physics::{PLAYER_MOVE_FORCE, PLAYER_JUMP_FORCE, PLAYER_CONTROL_SPEED_LIMIT};
-use crate::player::bundle::Player;
+use crate::player::bundle::{Player};
 use crate::components::motion::{ControlForce, GroundState, JumpController, NetForce, Velocity};
 
 pub fn player_movement_input_system(

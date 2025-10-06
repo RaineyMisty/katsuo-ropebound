@@ -19,11 +19,23 @@ pub struct GameObject {
 }
 
 impl GameObject {
+    #[cfg(feature = "client")]
     pub fn new(id: &str, sprite: Sprite, transform: Transform, visibility: Visibility) -> Self {
         Self {
             sprite,
             transform,
             visibility,
+            name: Name::new(id.to_string()),
+            collider: None,
+            extra: vec![],
+        }
+    }
+    #[cfg(feature = "server")]
+    pub fn new(id: &str, _unit: (), transform: Transform, _unit2: ()) -> Self {
+        Self {
+            sprite: Sprite::default(), // unused on server
+            transform,
+            visibility: Visibility::Hidden, // no rendering
             name: Name::new(id.to_string()),
             collider: None,
             extra: vec![],

@@ -1,11 +1,11 @@
-mod util;
 mod app;
-mod map;
-mod player;
-mod config;
 mod components;
+mod config;
+mod map;
 mod physics;
-
+mod player;
+mod util;
+mod multiplayer;
 fn main() {
     app::run();
 }

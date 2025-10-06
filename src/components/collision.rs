@@ -33,3 +33,8 @@ pub struct CollisionEvent {
     pub normal: Vec2, // normal vector from a to b
     pub penetration: f32, // penetration depth
 }
+
+#[derive(Resource, Default)]
+pub struct CollisionPairs {
+    pub pairs: Vec<(Entity, Entity)>,
+}

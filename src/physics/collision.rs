@@ -42,7 +42,7 @@ pub fn player_player_coll_system (
                             obj1.3.0.x = obj2.3.0.x;
                             obj2.3.0.x = 0.;
                             obj2.1.0.x = 0.;
-                            info!("we hit");
+                            // info!("we hit");
                         }
                         else{
                             obj1.1.0.x = 0.;

@@ -1,5 +1,7 @@
 use bevy::prelude::*;
 use bevy::render::view::RenderLayers;
+use crate::player::Player;
+use crate::components::motion::Position;
 
 pub struct UIPlugin;
 
@@ -11,15 +13,38 @@ pub struct TotalCoin{
     pub amount: u32,
 }
 
+
+#[derive(Resource, Debug, Default, Clone, PartialEq, Eq)]
+pub struct MaxHeight{
+    pub amount: u32,
+}
+
 #[derive(Component)]
 pub struct CoinDisplay;
+
+
+#[derive(Component)]
+pub struct ScoreDisplay;
 
 impl Plugin for UIPlugin{
     fn build(&self, app: &mut App){
         app
             .insert_resource( TotalCoin {amount:0,})
+            .insert_resource(MaxHeight{amount:0,})
             .add_systems(Startup, loadUI)
+            .add_systems(Update, updateHeight)
             .add_systems(Update, updateUI);
+    }
+}
+
+pub fn updateHeight(
+    mut maxheight: ResMut<MaxHeight>,
+    players: Query<&Position, With<Player>>
+){
+    for player in players.iter(){
+        if player.0.y as u32 > maxheight.amount{
+            maxheight.amount = player.0.y as u32;
+        }
     }
 }
 
@@ -67,6 +92,25 @@ pub fn loadUI(
             RenderLayers::layer(1),
             CoinDisplay,
         ));
+        parent.spawn((
+                Node {
+                    width: Val::Percent(5.),
+                    ..Default::default()
+                },
+            
+            Text::new("Score: "), 
+            RenderLayers::layer(1),
+        ));
+        parent.spawn((
+                Node {
+                    width: Val::Percent(10.),
+                    ..Default::default()
+                },
+            
+            Text::new("score"), 
+            RenderLayers::layer(1),
+            ScoreDisplay,
+        ));
         
     });
     
@@ -74,12 +118,16 @@ pub fn loadUI(
 
 pub fn updateUI(
     coinCount: Res<TotalCoin>,
+    maxScore: Res<MaxHeight>,
     mut query_coin: Query<&mut Text, With<CoinDisplay>>,
+    mut query_score: Query<&mut Text, (With<ScoreDisplay>, Without<CoinDisplay>)>,
 ){
-  // let mut coins = Text::new(coinCount.amount.to_string());
-    //let mut text = query_coin.single().unwrap();
    
     for mut text in query_coin.iter_mut(){
         text.0 = coinCount.amount.to_string();
+    }
+
+    for mut text in query_score.iter_mut(){
+        text.0 = maxScore.amount.to_string();
     }
 }

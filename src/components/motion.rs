@@ -17,6 +17,9 @@ pub struct Momentum (pub Vec2);
 #[derive(Component, Clone, Copy, Debug)]
 pub struct Mass (pub f32);
 
+#[derive(Component, Clone, Copy, Debug)]
+pub struct Position (pub Vec2);
+
 impl Default for Mass {
     fn default() -> Self {
         Mass(1.0)

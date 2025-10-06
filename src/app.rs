@@ -11,6 +11,7 @@ use crate::config::*;
 
 use crate::map::{MapPlugin, SCREEN};
 use crate::util::{DevModePlugin};
+use crate::game_ui::{UIPlugin};
 
 // Example query for getting the platform colliders which are visible on screen
 // fn log_offscreen_entities(
@@ -87,6 +88,7 @@ pub fn run() {
         .add_plugins(DefaultPlugins)
         .add_plugins(PlayerPlugin)
         .add_plugins(PhysicsPlugin)
+        .add_plugins(UIPlugin)
 
         .add_systems(Update, update_camera)
         .run();

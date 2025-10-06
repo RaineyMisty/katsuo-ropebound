@@ -62,6 +62,7 @@ fn setup_udp_server(mut commands: Commands) {
                         }
                     }
                     Err(ref e) if e.kind() == std::io::ErrorKind::WouldBlock => {
+                        std::thread::yield_now();
                         continue;
                     }
                     Err(e) => {

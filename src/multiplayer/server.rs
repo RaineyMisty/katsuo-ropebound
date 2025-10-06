@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use bevy::tasks::AsyncComputeTaskPool;
+use bevy::tasks::IoTaskPool;
 use std::{
     collections::HashMap,
     net::{SocketAddr, UdpSocket},
@@ -42,7 +42,7 @@ fn setup_udp_server(mut commands: Commands) {
     let socket_clone = socket.try_clone().unwrap();
     commands.insert_resource(UdpServerSocket { socket });
 
-    let task_pool = AsyncComputeTaskPool::get();
+    let task_pool = IoTaskPool::get();
     task_pool
         .spawn(async move {
             let mut buf = [0u8; 1024];
@@ -62,7 +62,7 @@ fn setup_udp_server(mut commands: Commands) {
                         }
                     }
                     Err(ref e) if e.kind() == std::io::ErrorKind::WouldBlock => {
-                        std::thread::sleep(Duration::from_millis(2));
+                        continue;
                     }
                     Err(e) => {
                         eprintln!("[UDP Server] Error: {:?}", e);
@@ -86,27 +86,23 @@ fn handle_handshake(socket: &UdpSocket, clients: &mut HashMap<SocketAddr, Client
 }
 
 fn handle_input_event(data: &[u8], client: &mut ClientSession) {
-    if data.len() < 6 {
+    if data.len() < 5 {
         println!("[UDP Server] Malformed input event {:?}", data);
         return;
     }
 
     let seq = u32::from_be_bytes(data[0..4].try_into().unwrap());
-    let key_id = data[4];
-    let action = data[5]; // 1 = press, 0 = release
+    let mask = data[4];
 
-    // Update input state
-    match key_id {
-        0 => client.input.up = action == 1,
-        1 => client.input.left = action == 1,
-        2 => client.input.down = action == 1,
-        3 => client.input.right = action == 1,
-        _ => println!("[UDP Server] Unknown key id {}", key_id),
-    }
+    client.input.up    = mask & (1 << 0) != 0;
+    client.input.left  = mask & (1 << 1) != 0;
+    client.input.down  = mask & (1 << 2) != 0;
+    client.input.right = mask & (1 << 3) != 0;
 
     client.last_seen = Instant::now();
+
     println!(
-        "[UDP Server] seq={} key={} action={} -> {:?}",
-        seq, key_id, action, client.input
+        "[UDP Server] seq={} mask={:04b} -> {:?}",
+        seq, mask, client.input
     );
 }

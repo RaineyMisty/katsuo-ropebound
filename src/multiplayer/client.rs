@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use bevy::tasks::AsyncComputeTaskPool;
+use bevy::tasks::IoTaskPool;
 use std::net::UdpSocket;
 use std::time::Duration;
 
@@ -21,7 +21,7 @@ impl Plugin for UdpClientPlugin {
             .add_event::<ClientInputEvent>()
             .add_systems(Update, (
                 keyboard_input_system,
-                send_input_events_system.after(keyboard_input_system),
+                send_input_state_system.after(keyboard_input_system),
             ));
     }
 }
@@ -72,32 +72,27 @@ fn keyboard_input_system(
     }
 }
 
-fn send_input_events_system(
-    mut events: EventReader<ClientInputEvent>,
+fn send_input_state_system(
+    mut seq: Local<u32>,
+    keyboard: Res<ButtonInput<KeyCode>>,
     client: Option<Res<UdpClientSocket>>,
 ) {
     if client.is_none() { return; }
     let client = client.unwrap();
 
-    for ev in events.read() {
-        let action_byte = match ev.action {
-            InputAction::Pressed => 1u8,
-            InputAction::Released => 0u8,
-        };
+    let mut mask = 0u8;
+    if keyboard.pressed(KeyCode::KeyW) { mask |= 1 << 0; }
+    if keyboard.pressed(KeyCode::KeyA) { mask |= 1 << 1; }
+    if keyboard.pressed(KeyCode::KeyS) { mask |= 1 << 2; }
+    if keyboard.pressed(KeyCode::KeyD) { mask |= 1 << 3; }
 
-        let mut buf = Vec::with_capacity(6);
-        buf.extend_from_slice(&ev.sequence.to_be_bytes()); // 4 bytes seq
-        buf.push(ev.key_id);
-        buf.push(action_byte);
+    *seq += 1;
+    let mut buf = Vec::with_capacity(5);
+    buf.extend_from_slice(&seq.to_be_bytes());
+    buf.push(mask);
 
-        if let Err(e) = client.socket.send_to(&buf, client.server_addr) {
-            eprintln!("[Client] Failed to send input event: {}", e);
-        } else {
-            println!(
-                "[Client] Sent seq={} key={} action={:?}",
-                ev.sequence, ev.key_id, ev.action
-            );
-        }
+    if let Err(e) = client.socket.send_to(&buf, client.server_addr) {
+        eprintln!("[Client] Failed to send input state: {}", e);
     }
 }
 

@@ -13,17 +13,9 @@ use crate::map::{MapPlugin, SCREEN};
 use crate::util::{DevModePlugin};
 use crate::game_ui::{UIPlugin};
 
-// Example query for getting the platform colliders which are visible on screen
-// fn log_offscreen_entities(
-//     q: Query<(Entity, &ViewVisibility), (With<Collider>, With<Transform>)>,
-// ) {
-//     for (e, view) in &q {
-//         if !view.get() {
-//             info!("🛰 Entity {:?} with Collider is off-screen", e);
-//         }
-//     }
-// }
-
+use crate::physics::rope_force::{apply_rope_geometry, init_ropes, RopeGeometry, rope_tension_system, rope_force_to_system, compute_rope_geometry};
+use crate::player::player_plugin::spawn_player;
+// <- compute_rope_geometry 删除了
 
 // move a half screen right and a half screen up.
 // so that the origin is in the positive coordinate system
@@ -74,7 +66,7 @@ fn update_camera(
 
 pub fn run() {
     let mut app = App::new();
-    #[cfg(debug_assertions)] // not added in release mode.
+    #[cfg(debug_assertions)]
     app.add_plugins(DevModePlugin);
 
     app
@@ -91,6 +83,15 @@ pub fn run() {
         .add_plugins(UIPlugin)
 
         .add_systems(Update, update_camera)
+        .insert_resource(RopeGeometry::default())
+
+        // .add_systems(Startup, init_ropes)
+        .add_systems(Startup, init_ropes.after(spawn_player))
+        .add_systems(Update, rope_tension_system)
+        .add_systems(Update, rope_force_to_system)
+        .add_systems(Update, compute_rope_geometry)
+
+        .add_systems(Update, apply_rope_geometry)
+        
         .run();
 }
-

@@ -1,6 +1,6 @@
 use crate::components::motion::{
-    ControlForce, Gravity, GroundState, JumpController, Mass, Momentum, NetForce, RopeForce,
-    Velocity,
+    ControlForce, Gravity, GroundState, JumpController, Mass, Momentum, NetForce, Position,
+    RopeForce, Velocity,
 };
 use crate::config::player::*;
 use bevy::math::bounding::Aabb2d;
@@ -10,7 +10,6 @@ use bevy::prelude::*;
 pub struct Player {
     pub controls: PlayerControls,
 }
-
 
 #[derive(Clone)]
 pub struct PlayerControls {
@@ -43,6 +42,7 @@ pub struct PlayerBundle {
 }
 
 impl PlayerBundle {
+    #[cfg(feature = "client")]
     pub fn new(
         controls: PlayerControls,
         texture: Handle<Image>,

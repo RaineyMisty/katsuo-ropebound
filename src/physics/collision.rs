@@ -8,6 +8,7 @@ use crate::player::bundle::Player;
 use bevy::{prelude::*, transform};
 use crate::config::physics::GRAVITY;
 use crate::components::collision::Aabb;
+use crate::game_ui::ui::TotalCoin;
 
 #[derive(Event, Debug)]
 pub struct PlayerCollisionEvent {
@@ -19,11 +20,14 @@ pub fn on_collision(
     mut commands: Commands,
     mut events: EventReader<PlayerCollisionEvent>,
     coins: Query<(), With<crate::map::Coin>>,
+    mut coinCount: ResMut<TotalCoin>,
 ) {
     for ev in events.read() {
         if coins.get(ev.game_object).is_ok() {
             println!("🤑🤑🤑");
             commands.entity(ev.game_object).despawn();
+            //let mut coinCount = coinCount.unwrap();
+            coinCount.amount += 1;
         }
     }
 }

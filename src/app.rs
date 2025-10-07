@@ -11,6 +11,7 @@ use crate::config::*;
 
 use crate::map::{MapPlugin, SCREEN};
 use crate::util::{DevModePlugin};
+use crate::game_ui::{UIPlugin};
 
 use crate::physics::rope_force::{apply_rope_geometry, init_ropes, RopeGeometry, rope_tension_system, rope_force_to_system, compute_rope_geometry};
 use crate::player::player_plugin::spawn_player;
@@ -79,6 +80,7 @@ pub fn run() {
         .add_plugins(DefaultPlugins)
         .add_plugins(PlayerPlugin)
         .add_plugins(PhysicsPlugin)
+        .add_plugins(UIPlugin)
 
         .add_systems(Update, update_camera)
         .insert_resource(RopeGeometry::default())

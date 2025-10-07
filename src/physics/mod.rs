@@ -14,6 +14,7 @@ use self::integrate::clean_force_system;
 use self::integrate::integrate_force_system;
 use self::integrate::integrate_momentum_system;
 use self::integrate::integrate_velocity_system;
+use self::integrate::update_position;
 use self::integrate::boundary;
 use self::control::player_movement_input_system;
 use self::gravity::gravity_system;
@@ -50,6 +51,7 @@ impl Plugin for PhysicsPlugin {
                     on_collision,
                     boundary,
                 ).chain()
-            );
+            )
+            .add_systems(Update, update_position);
     }
 }

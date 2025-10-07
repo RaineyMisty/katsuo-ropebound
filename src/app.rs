@@ -56,12 +56,16 @@ pub struct MainCamera;
 #[derive(Component)]
 pub struct FollowedPlayer;
 
+#[derive(Component)]
+pub struct MainPlayer;
+
+
 const CAMERA_DECAY_RATE: f32 = 3.;
 
 // System for the camera movement
 fn update_camera(
-    mut camera: Single<&mut Transform, (With<MainCamera>, Without<FollowedPlayer>)>,
-    player: Single<&Transform, (With<FollowedPlayer>, Without<Camera2d>)>,
+    mut camera: Single<&mut Transform, (With<MainCamera>, Without<MainPlayer>)>,
+    player: Single<&Transform, (With<MainPlayer>, Without<Camera2d>)>,
     time: Res<Time>,
 ) {
     let Vec3 { y, .. } = player.translation;
@@ -89,13 +93,9 @@ pub fn run() {
 
         .add_plugins(MapPlugin)
         .add_plugins(DefaultPlugins)
-        .add_systems(Startup, setup_total_coin)
         .add_plugins(PlayerPlugin)
         .add_plugins(PhysicsPlugin)
-        // .add_plugins(RopePlugin)
         .add_plugins(UIPlugin)
-
-
 
         .add_systems(Update, update_camera)
         .insert_resource(RopeGeometry::default())
@@ -107,6 +107,6 @@ pub fn run() {
         .add_systems(Update, compute_rope_geometry)
 
         .add_systems(Update, apply_rope_geometry)
+        
         .run();
 }
-

@@ -25,16 +25,9 @@ pub struct ClientRegistry {
     pub clients: HashMap<SocketAddr, ClientSession>,
 }
 
-pub struct UdpServerPlugin;
 
-impl Plugin for UdpServerPlugin {
-    fn build(&self, app: &mut App) {
-        app.insert_resource(ClientRegistry::default())
-            .add_systems(Startup, setup_udp_server);
-    }
-}
 
-fn setup_udp_server(mut commands: Commands) {
+pub fn setup_udp_server(mut commands: Commands) {
     let socket = UdpSocket::bind("0.0.0.0:5000").expect("Failed to bind UDP socket");
     socket.set_nonblocking(true).unwrap();
     println!("[UDP Server] Listening on 0.0.0.0:5000");

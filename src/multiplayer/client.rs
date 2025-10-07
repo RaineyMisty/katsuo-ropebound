@@ -10,21 +10,6 @@ pub struct UdpClientSocket {
     pub server_addr: std::net::SocketAddr,
 }
 
-pub struct UdpClientPlugin {
-    pub server_addr: String,
-}
-
-impl Plugin for UdpClientPlugin {
-    fn build(&self, app: &mut App) {
-        app.insert_resource(ServerAddress(self.server_addr.clone()))
-            .add_systems(Startup, client_handshake)
-            .add_event::<ClientInputEvent>()
-            .add_systems(Update, (
-                keyboard_input_system,
-                send_input_state_system.after(keyboard_input_system),
-            ));
-    }
-}
 
 #[derive(Debug)]
 pub enum InputAction {
@@ -39,7 +24,7 @@ pub struct ClientInputEvent {
     pub sequence: u32,
 }
 
-fn keyboard_input_system(
+pub fn keyboard_input_system(
     keyboard: Res<ButtonInput<KeyCode>>,
     mut input_events: EventWriter<ClientInputEvent>,
     mut seq_counter: Local<u32>,
@@ -72,7 +57,7 @@ fn keyboard_input_system(
     }
 }
 
-fn send_input_state_system(
+pub fn send_input_state_system(
     mut seq: Local<u32>,
     keyboard: Res<ButtonInput<KeyCode>>,
     client: Option<Res<UdpClientSocket>>,
@@ -98,9 +83,9 @@ fn send_input_state_system(
 
 /// Resource to temporarily store the server address before handshake
 #[derive(Resource)]
-struct ServerAddress(String);
+pub struct ServerAddress(pub String);
 
-fn client_handshake(mut commands: Commands, server_addr: Res<ServerAddress>) {
+pub fn client_handshake(mut commands: Commands, server_addr: Res<ServerAddress>) {
     let server_addr: std::net::SocketAddr = server_addr
         .0
         .parse()

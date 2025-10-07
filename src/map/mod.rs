@@ -2,9 +2,7 @@ use bevy::prelude::*;
 mod game_object_builder;
 mod loader;
 mod mapdata;
-pub mod scroller;
 mod util;
-use scroller::camera_follow;
 
 pub use game_object_builder::Collider;
 pub use loader::Coin;
@@ -28,7 +26,7 @@ impl Plugin for MapPlugin {
                 load_background_layers,
                 load_game_objects,
             )
-                .chain(),
+            .chain(),
         );
         #[cfg(feature = "server")]
         app.add_systems(Startup, (load_map_data, load_game_objects).chain());

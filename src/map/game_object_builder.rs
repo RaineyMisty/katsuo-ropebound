@@ -1,6 +1,8 @@
 use bevy::math::bounding::Aabb2d;
 use bevy::prelude::*;
 
+use super::mapdata::Boundary;
+
 #[derive(Component, Debug)]
 pub struct Collider {
     pub aabb: Aabb2d,
@@ -19,6 +21,7 @@ pub struct GameObject {
 }
 
 impl GameObject {
+
     #[cfg(feature = "client")]
     pub fn new(id: &str, sprite: Sprite, transform: Transform, visibility: Visibility) -> Self {
         Self {
@@ -35,7 +38,7 @@ impl GameObject {
         Self {
             sprite: Sprite::default(), // unused on server
             transform,
-            visibility: Visibility::Hidden, // no rendering
+            visibility: Visibility::Hidden,
             name: Name::new(id.to_string()),
             collider: None,
             extra: vec![],

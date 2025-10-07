@@ -76,7 +76,7 @@ pub fn ground() -> GameObject {
     };
 
     // 👇 Uses macro to pick correct constructor depending on feature flag
-    crate::make_game_object!("Ground", sprite, transform, visibility).with_collider(collider)
+    crate::new_game_object!("Ground", sprite, transform, visibility).with_collider(collider)
 }
 // game objects -> slice of the entity layer image
 // create the AtlasLayoutResource that we defined

@@ -23,7 +23,8 @@ use crate::physics::rope_force::{
     RopeGeometry, apply_rope_geometry, compute_rope_geometry, init_ropes, rope_force_to_system,
     rope_tension_system,
 };
-use crate::player::player_plugin::spawn_player;
+use crate::player::load_players::spawn_players;
+
 // <- compute_rope_geometry 删除了
 
 // move a half screen right and a half screen up.
@@ -72,32 +73,6 @@ fn update_camera(
         .smooth_nudge(&target, CAMERA_DECAY_RATE, time.delta_secs());
 }
 
-#[derive(Resource)]
-struct SimulateKeyTimer(Timer);
-
-fn simulate_keys(
-    time: Res<Time>,
-    mut timer: ResMut<SimulateKeyTimer>,
-    mut keys: ResMut<ButtonInput<KeyCode>>,
-) {
-    // Tick the timer each frame
-    timer.0.tick(time.delta());
-
-    if !timer.0.finished() {
-        // While timer is still running, press the keys
-        keys.press(KeyCode::ArrowRight);
-        keys.press(KeyCode::KeyD);
-    } else {
-        // Once the timer is done, release the keys once
-        keys.release(KeyCode::ArrowRight);
-        keys.release(KeyCode::KeyD);
-    }
-}
-
-pub fn setup_timer(mut commands: Commands) {
-    commands.insert_resource(SimulateKeyTimer(Timer::from_seconds(1.0, TimerMode::Once)));
-}
-
 pub fn run() {
     let mut app = App::new();
     #[cfg(debug_assertions)]
@@ -111,9 +86,7 @@ pub fn run() {
     #[cfg(feature = "server")]
     app.add_plugins(MinimalPlugins)
         .add_plugins(UdpServerPlugin)
-        .add_plugins(bevy::input::InputPlugin)
-        .add_systems(Startup, setup_timer)
-        .add_systems(Update, simulate_keys);
+        .add_plugins(bevy::input::InputPlugin);
 
     app.insert_resource(Time::<Fixed>::from_hz(60.0))
         .insert_resource(PlayerSpawnPoint {
@@ -123,14 +96,14 @@ pub fn run() {
             velocity: PLAYER_INITIAL_VELOCITY,
         })
         .add_systems(Startup, init_player_camera)
+        .add_systems(FixedUpdate, update_camera)
         .add_plugins(MapPlugin)
         .add_plugins(PlayerPlugin)
         .add_plugins(PhysicsPlugin)
         .add_plugins(UIPlugin)
-        .add_systems(Update, update_camera)
         .insert_resource(RopeGeometry::default())
         // .add_systems(Startup, init_ropes)
-        .add_systems(Startup, init_ropes.after(spawn_player))
+        .add_systems(Startup, init_ropes.after(spawn_players))
         .add_systems(Update, rope_tension_system)
         .add_systems(Update, rope_force_to_system)
         .add_systems(Update, compute_rope_geometry)

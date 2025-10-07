@@ -1,5 +1,20 @@
+use bevy::prelude::*;
 pub mod bundle;
-pub mod player_plugin;
+pub mod load_players;
+pub mod player_control;
 
-pub use player_plugin::PlayerPlugin;
-pub use bundle::{Player, PlayerControls, PlayerBundle, PlayerCollider};
+use self::player_control::{player_movement_input_system, player_input_collection_system, PlayerInputEvent};
+
+use load_players::spawn_players;
+pub use bundle::{Player, PlayerCollider};
+
+pub struct PlayerPlugin;
+
+impl Plugin for PlayerPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_event::<PlayerInputEvent>();
+        app.add_systems(Startup, spawn_players);
+        app.add_systems(Update, player_input_collection_system);
+        app.add_systems(FixedUpdate, (player_movement_input_system).chain());
+    }
+}

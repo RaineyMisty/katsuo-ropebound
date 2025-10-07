@@ -2,7 +2,7 @@
 use bevy::prelude::*;
 use std::path::Path;
 
-use super::game_object_builder::GameObject;
+use super::game_object_builder::{GameObject};
 use super::mapdata::EntityKind;
 use super::util::*;
 use super::{MAP_NAME, MapFile};
@@ -26,7 +26,7 @@ pub struct Platform;
 pub struct Coin;
 
 #[macro_export]
-macro_rules! make_game_object {
+macro_rules! new_game_object {
     ($id:expr, $sprite:expr, $transform:expr, $vis:expr) => {{
         #[cfg(feature = "client")]
         {
@@ -38,6 +38,7 @@ macro_rules! make_game_object {
         }
     }};
 }
+
 // entrypoint for spawning different types of objects.
 // this should probably be its own file or folder even but we can keep it for now.
 fn game_objects(
@@ -65,16 +66,14 @@ fn game_objects(
         let transform = Transform::from_xyz(entity.boundary.start_x, entity.boundary.start_y, 0.0);
         let bundle = match entity.kind {
             EntityKind::Platform => {
-                let collider =
-                    collider_from_boundary(entity.collision.as_ref(), &entity.boundary, map_height);
-                make_game_object!(id, sprite, transform, Visibility::default())
+                let collider = collider_from_boundary(entity.collision.as_ref(), &entity.boundary, map_height);
+                new_game_object!(id, sprite, transform, Visibility::default())
                     .with_collider(collider)
                     .with_marker::<Platform>()
             }
             EntityKind::Coin => {
-                let collider =
-                    collider_from_boundary(entity.collision.as_ref(), &entity.boundary, map_height);
-                make_game_object!(id, sprite, transform, Visibility::default())
+                let collider = collider_from_boundary(entity.collision.as_ref(), &entity.boundary, map_height);
+                new_game_object!(id, sprite, transform, Visibility::default())
                     .with_collider(collider)
                     .with_marker::<Coin>()
             }

@@ -1,3 +1,4 @@
+use crate::app::FollowedPlayer;
 use crate::components::motion::{
     ControlForce, Gravity, GroundState, JumpController, Mass, Momentum, NetForce,
     RopeForce, Velocity,
@@ -39,6 +40,7 @@ pub struct PlayerBundle {
     pub size: PlayerCollider,
     pub jump_controller: JumpController,
     pub ground_state: GroundState,
+    pub follow: FollowedPlayer,
 }
 
 impl PlayerBundle {
@@ -72,11 +74,12 @@ impl PlayerBundle {
             },
             jump_controller,
             ground_state,
+            follow: FollowedPlayer{},
         }
     }
 
     #[cfg(feature = "server")]
-    pub fn server_only(
+    pub fn new(
         controls: PlayerControls,
         transform: Transform,
         velocity: Velocity,
@@ -103,6 +106,7 @@ impl PlayerBundle {
             },
             jump_controller,
             ground_state,
+            follow: FollowedPlayer{},
         }
     }
 }

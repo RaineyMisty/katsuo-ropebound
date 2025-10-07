@@ -25,7 +25,7 @@ impl Plugin for PlayerPlugin {
     }
 }
 
-fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>, spawn_point: Res<PlayerSpawnPoint>, spawn_velocity: Res<PlayerSpawnVelocity>) {
+pub fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>, spawn_point: Res<PlayerSpawnPoint>, spawn_velocity: Res<PlayerSpawnVelocity>) {
     let transform = Transform::from_translation(spawn_point.position);
     let texture = asset_server.load("spriteguy.png");
     let controls = PlayerControls {
@@ -54,7 +54,7 @@ fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>, spawn_po
     let jump_controller = JumpController::default();
     let ground_state = GroundState::default();
     let mass = Mass(PLAYER_SPAWN_MASS);
-    let p2 = commands.spawn(PlayerBundle::new(controls, texture, transform, velocity, mass, jump_controller, ground_state)).id();
+    let p2 = commands.spawn(PlayerBundle::new(controls, texture, transform, velocity, mass, jump_controller, ground_state)).insert(FollowedPlayer).id();
 
     // Add p1 and p2 a rope component
     commands.spawn(Rope {

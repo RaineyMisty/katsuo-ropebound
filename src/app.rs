@@ -45,12 +45,16 @@ pub struct MainCamera;
 #[derive(Component)]
 pub struct FollowedPlayer;
 
+#[derive(Component)]
+pub struct MainPlayer;
+
+
 const CAMERA_DECAY_RATE: f32 = 3.;
 
 // System for the camera movement
 fn update_camera(
-    mut camera: Single<&mut Transform, (With<MainCamera>, Without<FollowedPlayer>)>,
-    player: Single<&Transform, (With<FollowedPlayer>, Without<Camera2d>)>,
+    mut camera: Single<&mut Transform, (With<MainCamera>, Without<MainPlayer>)>,
+    player: Single<&Transform, (With<MainPlayer>, Without<Camera2d>)>,
     time: Res<Time>,
 ) {
     let Vec3 { y, .. } = player.translation;

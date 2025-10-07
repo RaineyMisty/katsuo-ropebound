@@ -3,8 +3,8 @@ mod game_object_builder;
 mod loader;
 mod mapdata;
 mod util;
-// pub mod scroller;
-// use scroller::camera_follow;
+pub mod scroller;
+use scroller::camera_follow;
 
 
 pub use game_object_builder::Collider;
@@ -24,6 +24,6 @@ impl Plugin for MapPlugin {
             Startup,
             (load_map_resouces, load_background_layers, load_map,).chain(),
         )
-        //.add_systems(PostUpdate, camera_follow);
+        .add_systems(PostUpdate, camera_follow);
     }
 }

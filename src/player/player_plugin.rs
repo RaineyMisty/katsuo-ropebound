@@ -15,7 +15,7 @@ use crate::components::motion::{GroundState, JumpController, Mass, Velocity, Pos
 use crate::components::rope::{Rope, RopeConstraint};
 
 use crate::map::Collider;
-use crate::app::FollowedPlayer;
+use crate::app::{FollowedPlayer, MainPlayer};
 
 pub struct PlayerPlugin;
 
@@ -40,7 +40,7 @@ pub fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>, spaw
     let velocity = Velocity(spawn_velocity.velocity);
 
     let position= Position(spawn_point.position.truncate());
-    let p1 = commands.spawn(PlayerBundle::new(controls, texture, transform, velocity, mass, jump_controller, ground_state, position)).insert(FollowedPlayer).id();
+    let p1 = commands.spawn(PlayerBundle::new(controls, texture, transform, velocity, mass, jump_controller, ground_state, position)).insert(FollowedPlayer).insert(MainPlayer).id();
 
     // Spawn a second player for testing
     // This is temporary and will be removed later

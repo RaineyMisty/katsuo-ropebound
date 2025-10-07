@@ -21,12 +21,6 @@ use crate::player::player_plugin::spawn_player;
 use crate::game_ui::UIPlugin;
 // // <- compute_rope_geometry 删除了
 
-#[derive(Resource, Default)]
-pub struct TotalCoin(pub u32);
-
-fn setup_total_coin(mut commands: Commands) {
-    commands.insert_resource(TotalCoin::default());
-}
 
 // move a half screen right and a half screen up.
 // so that the origin is in the positive coordinate system
@@ -81,7 +75,7 @@ fn update_camera(
 
 pub fn run() {
     let mut app = App::new();
-    #[cfg(debug_assertions)] // not added in release mode.
+    #[cfg(debug_assertions)]
     app.add_plugins(DevModePlugin);
 
     app

@@ -11,7 +11,7 @@ use crate::config::PlayerSpawnPoint;
 use crate::config::PlayerSpawnVelocity;
 use crate::config::PLAYER_SPAWN_MASS;
 
-use crate::components::motion::{GroundState, JumpController, Mass, Velocity};
+use crate::components::motion::{GroundState, JumpController, Mass, Velocity, Position};
 use crate::components::rope::{Rope, RopeConstraint};
 
 use crate::map::Collider;
@@ -62,8 +62,8 @@ pub fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>, spaw
     commands.spawn(Rope {
         constraint: RopeConstraint::default(),
         attached_entity_head: p1,
-        attached_entity_tail: p2,
-    });
-    
-    // Ground platform setup
+attached_entity_tail: p2,
+});
+
+// Ground platform setup
 }

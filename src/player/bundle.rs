@@ -1,5 +1,5 @@
 use crate::components::motion::{
-    ControlForce, Gravity, GroundState, JumpController, Mass, Momentum, NetForce, Position,
+    ControlForce, Gravity, GroundState, JumpController, Mass, Momentum, NetForce,
     RopeForce, Velocity,
 };
 use crate::config::player::*;

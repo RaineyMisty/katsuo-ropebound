@@ -11,7 +11,7 @@ use crate::config::PlayerSpawnPoint;
 use crate::config::PlayerSpawnVelocity;
 use crate::player::bundle::{PlayerBundle, PlayerControls};
 
-use crate::components::motion::{GroundState, JumpController, Mass, Position, Velocity};
+use crate::components::motion::{GroundState, JumpController, Mass, Velocity};
 use crate::components::rope::{Rope, RopeConstraint};
 
 use crate::app::{FollowedPlayer, MainPlayer};
@@ -46,7 +46,6 @@ pub fn spawn_player(
     let mass = Mass(PLAYER_SPAWN_MASS); // make the first player heavier (deleted for now but multiply mass)
     let velocity = Velocity(spawn_velocity.velocity);
 
-    let position = Position(spawn_point.position.truncate());
     #[cfg(feature = "client")]
     let p1 = commands
         .spawn(PlayerBundle::new(
@@ -57,7 +56,6 @@ pub fn spawn_player(
             mass,
             jump_controller,
             ground_state,
-            position,
         ))
         .insert(FollowedPlayer)
         .insert(MainPlayer)
@@ -72,7 +70,6 @@ pub fn spawn_player(
             mass,
             jump_controller,
             ground_state,
-            position,
         ))
         .insert(FollowedPlayer)
         .insert(MainPlayer)
@@ -95,7 +92,6 @@ pub fn spawn_player(
     let ground_state = GroundState::default();
     let mass = Mass(PLAYER_SPAWN_MASS);
 
-    let position = Position((spawn_point.position + Vec3::new(300.0, 0.0, 0.0)).truncate());
     #[cfg(feature = "client")]
     let p2 = commands
         .spawn(PlayerBundle::new(
@@ -106,9 +102,9 @@ pub fn spawn_player(
             mass,
             jump_controller,
             ground_state,
-            position,
         ))
         .insert(FollowedPlayer)
+        .insert(MainPlayer)
         .id();
 
     #[cfg(feature = "server")]
@@ -120,7 +116,6 @@ pub fn spawn_player(
             mass,
             jump_controller,
             ground_state,
-            position,
         ))
         .insert(FollowedPlayer)
         .insert(MainPlayer)

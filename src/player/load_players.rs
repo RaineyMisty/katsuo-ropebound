@@ -17,8 +17,7 @@ use crate::app::{MainPlayer};
 
 
 pub fn spawn_players(
-    mut commands: Commands,
-    #[cfg(feature = "client")] asset_server: Res<AssetServer>,
+    mut commands: Commands, #[cfg(feature = "client")] asset_server: Res<AssetServer>,
     spawn_point: Res<PlayerSpawnPoint>,
     spawn_velocity: Res<PlayerSpawnVelocity>,
 ) {

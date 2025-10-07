@@ -108,12 +108,37 @@ pub fn client_handshake(mut commands: Commands, server_addr: Res<ServerAddress>)
             let msg = &buf[..len];
             if msg == b"ACK" {
                 println!("[Client] Handshake successful with server {}", addr);
+
+                // Clone socket so it can live in both sending and receiving tasks
+                let socket_clone = socket.try_clone().expect("Failed to clone client socket");
+
+                // Spawn async task to receive snapshots
+                let task_pool = IoTaskPool::get();
+                task_pool.spawn(async move {
+                    let mut buf = [0u8; 1500];
+                    loop {
+                        match socket_clone.recv_from(&mut buf) {
+                            Ok((len, from)) => {
+                                // handle snapshot payload here
+                                let snapshot = &buf[..len];
+                                println!("[Client] Received snapshot from {}: {:?}", from, snapshot);
+                            }
+                            Err(ref e) if e.kind() == std::io::ErrorKind::WouldBlock => {
+                                std::thread::yield_now();
+                                continue;
+                            }
+                            Err(e) => {
+                                eprintln!("[Client] Snapshot recv error: {}", e);
+                                break;
+                            }
+                        }
+                    }
+                }).detach();
+
                 commands.insert_resource(UdpClientSocket {
                     socket,
                     server_addr,
                 });
-            } else {
-                println!("[Client] Unexpected handshake response: {:?}", msg);
             }
         }
         Err(e) => {

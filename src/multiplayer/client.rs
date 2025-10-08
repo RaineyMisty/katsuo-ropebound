@@ -6,6 +6,9 @@ use async_channel::{Sender, Receiver};
 
 use crate::{app::MainPlayer, player::Player};
 
+// toggle to false and run to create player 2
+const IS_MAIN_PLAYER_HACK: bool = true;
+
 /// Resource to hold the client socket after handshake
 #[derive(Resource)]
 pub struct UdpClientSocket {
@@ -115,9 +118,16 @@ pub fn client_handshake(mut commands: Commands, server_addr: Res<ServerAddress>)
     let tx_snapshots_clone = tx_snapshots.clone();
 
     println!("[Client] Sending HELLO to {}", server_addr);
+
+    let msg = if IS_MAIN_PLAYER_HACK {
+        b"MAIN"
+    } else {
+        b"PLAY"
+    };
+
     socket
-        .send_to(b"HELLO", server_addr)
-        .expect("Failed to send HELLO");
+        .send_to(msg, server_addr)
+        .expect("Failed to send handshake message");
 
     let mut buf = [0u8; 1024];
     match socket.recv_from(&mut buf) {
@@ -204,16 +214,15 @@ pub fn apply_snapshot_system(
             continue;
         }
 
-        // Let's assume snapshot[0] = main player, snapshot[1] = other
         if let Ok(mut main_transform) = main_query.single_mut() {
-            if let Some((x, y)) = snapshot.positions.get(1) {
+            if let Some((x, y)) = snapshot.positions.get(0) {
                 main_transform.translation.x = *x;
                 main_transform.translation.y = *y;
             }
         }
 
         if let Ok(mut other_transform) = other_query.single_mut() {
-            if let Some((x, y)) = snapshot.positions.get(0) {
+            if let Some((x, y)) = snapshot.positions.get(1) {
                 other_transform.translation.x = *x;
                 other_transform.translation.y = *y;
             }

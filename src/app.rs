@@ -78,15 +78,11 @@ pub fn run() {
     #[cfg(debug_assertions)]
     app.add_plugins(DevModePlugin);
 
+
     #[cfg(feature = "client")]
-    app.add_plugins(DefaultPlugins)
-        .add_plugins(UdpClientPlugin {
-            server_addr: "127.0.0.1:5000".to_string(),
-        });
+    app.add_plugins(DefaultPlugins);
     #[cfg(feature = "server")]
-    app.add_plugins(MinimalPlugins)
-        .add_plugins(UdpServerPlugin)
-        .add_plugins(bevy::input::InputPlugin);
+    app.add_plugins(MinimalPlugins).add_plugins(bevy::input::InputPlugin);
 
     app.insert_resource(Time::<Fixed>::from_hz(60.0))
         .insert_resource(PlayerSpawnPoint {
@@ -107,6 +103,13 @@ pub fn run() {
         .add_systems(Update, rope_tension_system)
         .add_systems(Update, rope_force_to_system)
         .add_systems(Update, compute_rope_geometry)
-        .add_systems(Update, apply_rope_geometry)
-        .run();
+        .add_systems(Update, apply_rope_geometry);
+
+    #[cfg(feature = "client")]
+        app.add_plugins(UdpClientPlugin {
+            server_addr: "127.0.0.1:5000".to_string(),
+        });
+    #[cfg(feature = "server")]
+        app.add_plugins(UdpServerPlugin);
+    app.run();
 }

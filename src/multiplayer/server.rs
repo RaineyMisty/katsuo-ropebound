@@ -24,6 +24,7 @@ enum NetControlMsg {
 #[derive(Debug)]
 pub struct ClientSession {
     pub last_seen: Instant,
+    pub player: Entity,
     pub prev_mask: u8,
 }
 
@@ -38,25 +39,39 @@ pub struct UdpServerSocket {
 }
 
 #[derive(Debug)]
+// not actually an event very bad name oops.
 pub struct RemoteInputEvent {
     // For now, we'll ignore `entity` since you said there's only one player.
     pub left: bool,
     pub right: bool,
     pub jump_pressed: bool,
     pub jump_just_released: bool,
+    pub player: Entity,
 }
-/// Channels used to communicate with the background network task
+
+// snapshots for recieving snapshots and sending them to main bevy ecs
+// Reciever for getting the game state back from the ecs game loop.
 #[derive(Resource)]
 pub struct NetChannels {
     pub tx_snapshots: Sender<SnapshotMsg>,
     pub rx_inputs: Receiver<RemoteInputEvent>,
 }
+
 #[derive(Resource)]
 pub struct NetSnapshotTx {
     pub tx_snapshots: async_channel::Sender<SnapshotMsg>,
 }
 
-pub fn setup_udp_server(mut commands: Commands) {
+fn players_exist(
+    q_main: Query<(), With<MainPlayer>>,
+    q_other: Query<(), (With<Player>, Without<MainPlayer>)>,
+) -> bool {
+    !q_main.is_empty() && !q_other.is_empty()
+}
+
+pub fn setup_udp_server(mut commands: Commands, main_player_q: Query<Entity, With<MainPlayer>>, other_player_q: Query<Entity, (With<Player>, Without<MainPlayer>)>,
+    ) {
+     // get the only player
     let socket = UdpSocket::bind("0.0.0.0:5000").expect("Failed to bind UDP socket");
     socket.set_nonblocking(true).unwrap();
     println!("[UDP Server] Listening on 0.0.0.0:5000");
@@ -74,8 +89,10 @@ pub fn setup_udp_server(mut commands: Commands) {
     let (tx_inputs, rx_inputs) = async_channel::unbounded::<RemoteInputEvent>();
 
     let tx_inputs = tx_inputs.clone();
-
+    let main_player_entity = main_player_q.single().expect("Expected a MainPlayer entity");
+    let other_player_entity = other_player_q.single().expect("Expected a secondary Player entity");
     // Recieve from client
+    // send inputs to main ecs thread.
     {
         let recv_socket = socket_clone.try_clone().unwrap();
         let recv_clients = registry.clone();
@@ -86,9 +103,17 @@ pub fn setup_udp_server(mut commands: Commands) {
                     Ok((len, addr)) => {
                         let data = &buf[..len];
 
-                        if data == b"HELLO" {
-                            handle_handshake(&recv_socket, &recv_clients, addr);
-                        } else {
+                        if data == b"MAIN" || data == b"PLAY" {
+                            handle_handshake(
+                                &recv_socket,
+                                &recv_clients,
+                                addr,
+                                data,
+                                main_player_entity,
+                                other_player_entity,
+                            );
+                        }
+                        else {
                             if let Some(event) = parse_input_packet(addr, data, &recv_clients) {
                                 // Send input event to ECS thread
                                 if let Err(e) = tx_inputs.try_send(event) {
@@ -141,17 +166,11 @@ pub fn truncate_f32(v: f32, decimals: u32) -> f32 {
 pub fn process_remote_inputs_system(
     channels: Res<NetChannels>,
     mut writer: EventWriter<PlayerInputEvent>,
-    player_query: Query<Entity, With<MainPlayer>>, // get the only player
 ) {
-    let player_entity = if let Ok(e) = player_query.single() {
-        e
-    } else {
-        return;
-    };
 
     while let Ok(remote) = channels.rx_inputs.try_recv() {
         writer.write(PlayerInputEvent {
-            entity: player_entity,
+            entity: remote.player,
             left: remote.left,
             right: remote.right,
             jump_pressed: remote.jump_pressed,
@@ -196,21 +215,34 @@ fn build_snapshot_packet(tick: u32) -> Vec<u8> {
     buf
 }
 
-fn handle_handshake(socket: &UdpSocket, registry: &ClientRegistry, addr: SocketAddr) {
-    println!("[UDP Server] Handshake from {}", addr);
-    let mut map = registry.clients.write().unwrap();
+fn handle_handshake(
+    socket: &UdpSocket,
+    registry: &ClientRegistry,
+    addr: SocketAddr,
+    msg: &[u8],
+    main_entity: Entity,
+    other_entity: Entity,
+) {
+    let player_entity = if msg == b"MAIN" {
+        println!("[Server] {} identified as MAIN player", addr);
+        main_entity
+    } else {
+        println!("[Server] {} identified as regular PLAYER", addr);
+        other_entity
+    };
 
+    let mut map = registry.clients.write().unwrap();
     map.insert(
         addr,
         ClientSession {
             last_seen: Instant::now(),
             prev_mask: 0,
+            player: player_entity,
         },
     );
 
     let _ = socket.send_to(b"ACK", addr);
 }
-
 fn parse_input_packet(
     addr: SocketAddr,
     data: &[u8],
@@ -223,24 +255,28 @@ fn parse_input_packet(
     let _seq = u32::from_be_bytes(data[0..4].try_into().unwrap());
     let mask = data[4];
 
-    // Get client session
     let mut map = clients.clients.write().unwrap();
+    // get client via their address.
     let client = map.get_mut(&addr)?;
 
     let prev_mask = client.prev_mask;
 
-    // Detect changes
+    // detect changes between prev packet and this packet to detect if you should
+    // emit a PlayerInputEvent when receiving inputs from the thread to ecs loop via the channel.
     let jump_pressed = mask & (1 << 0) != 0;
     let jump_prev_pressed = prev_mask & (1 << 0) != 0;
 
+    // not needed yet.
     let jump_just_pressed = jump_pressed && !jump_prev_pressed;
     let jump_just_released = !jump_pressed && jump_prev_pressed;
 
-    // Update session
+    // update session in client registry. 
+    // maybe this prev data should be stored somewhere else.
     client.prev_mask = mask;
     client.last_seen = Instant::now();
 
     Some(RemoteInputEvent {
+        player: client.player,
         left:  mask & (1 << 1) != 0,
         right: mask & (1 << 3) != 0,
         jump_pressed,

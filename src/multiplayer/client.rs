@@ -55,13 +55,24 @@ pub fn send_input_state_system(
 pub struct ServerAddress(pub String);
 
 pub fn client_handshake(mut commands: Commands, server_addr: Res<ServerAddress>, is_main_player: Res<IsMainPlayer>) {
+
+    // Hostname resolution
+    // let addr_str = &server_addr.0;
+    // let mut addrs_iter = addr_str
+    //     .to_socket_addrs()
+    //     .expect("Failed to resolve hostname via DNS");
+    //
+    // let server_addr = addrs_iter
+    //     .next()
+    //     .expect("No addresses returned for server hostname");
     let server_addr: std::net::SocketAddr = server_addr
         .0
         .parse()
         .expect("Failed to parse server address");
 
     // create client UDP socket and bind to a random available port on localhost
-    let socket = UdpSocket::bind("0.0.0.0:0").expect("Failed to bind UDP client socket");
+    let bind_port = if is_main_player.0 { 60000 } else { 60001 };
+    let socket = UdpSocket::bind(format!( "0.0.0.0:{}", bind_port)).expect("Failed to bind UDP client socket");
     socket
         .set_read_timeout(Some(Duration::from_secs(2)))
         .expect("Failed to set read timeout");

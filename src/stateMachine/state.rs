@@ -11,10 +11,13 @@ enum BotState{
     jump_l,
 }
 
+
+
 #[derive(Component)]
 struct StateMachine {
     current: BotState,
     previous: BotState,
+    //action: 
 }
 
 impl StateMachine {
@@ -30,7 +33,7 @@ impl StateMachine {
         self.previous = self.current;
         self.current = new_state;
     }
-
+    //delete m aybe
     fn current(&self) -> BotState {
         self.current
     }

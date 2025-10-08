@@ -18,7 +18,7 @@ use crate::components::motion::{
     Velocity,
 };
 
-/// Discrete per-frame input state for one player entity.
+/// discrete per-frame input state for one player entity.
 #[derive(Event)]
 pub struct PlayerInputEvent {
     pub entity: Entity,
@@ -28,7 +28,6 @@ pub struct PlayerInputEvent {
     pub jump_just_released: bool,
 }
 
-/// Runs during `FixedUpdate`, applies forces based on latest input events.
 pub fn player_movement_input_system(
     time: Res<Time>,
     mut reader: EventReader<PlayerInputEvent>,
@@ -62,18 +61,22 @@ pub fn player_movement_input_system(
 
 /// Collects keyboard input every `Update` frame and emits `PlayerInputEvent`s.
 /// This ensures we never miss `just_released` frames.
+/// this could potentially be replaced with a state based system.
+/// where we still write every frame but instead of reading events we pass in the input state.
+/// The previous solution also checked all of these 'key' properties every frame.
+/// Any improvement I tried to make to this made it worse.
 pub fn player_input_collection_system(
     keyboard_input: Res<ButtonInput<KeyCode>>,
-    query: Query<(Entity, &Player)>,
+    query: Query<(Entity, &Player, &super::bundle::PlayerControls)>,
     mut writer: EventWriter<PlayerInputEvent>,
 ) {
-    for (entity, player) in &query {
+    for (entity, _, player_controls) in &query {
         writer.write(PlayerInputEvent {
             entity,
-            left: keyboard_input.pressed(player.controls.left),
-            right: keyboard_input.pressed(player.controls.right),
-            jump_pressed: keyboard_input.pressed(player.controls.up),
-            jump_just_released: keyboard_input.just_released(player.controls.up),
+            left: keyboard_input.pressed(player_controls.left),
+            right: keyboard_input.pressed(player_controls.right),
+            jump_pressed: keyboard_input.pressed(player_controls.up),
+            jump_just_released: keyboard_input.just_released(player_controls.up),
         });
     }
 }

@@ -78,7 +78,7 @@ pub struct IsMainPlayer(pub bool);
 
 pub fn run(is_main_player: bool) {
     let mut app = App::new();
-    #[cfg(debug_assertions)]
+    #[cfg(all(feature = "client", debug_assertions))]
     app.add_plugins(DevModePlugin);
 
 
@@ -87,7 +87,7 @@ pub fn run(is_main_player: bool) {
     app.insert_resource(IsMainPlayer(is_main_player));
 
     #[cfg(feature = "server")]
-    app.add_plugins(MinimalPlugins).add_plugins(bevy::input::InputPlugin);
+    app.add_plugins(MinimalPlugins);
 
     app.insert_resource(Time::<Fixed>::from_hz(60.0))
         .insert_resource(PlayerSpawnPoint {

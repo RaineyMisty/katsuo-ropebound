@@ -8,11 +8,9 @@ use bevy::math::bounding::Aabb2d;
 use bevy::prelude::*;
 
 #[derive(Component, Clone)]
-pub struct Player {
-    pub controls: PlayerControls,
-}
+pub struct Player { }
 
-#[derive(Clone)]
+#[derive(Clone, Component)]
 pub struct PlayerControls {
     pub up: KeyCode,
     pub down: KeyCode,
@@ -46,7 +44,6 @@ pub struct PlayerBundle {
 impl PlayerBundle {
     #[cfg(feature = "client")]
     pub fn new(
-        controls: PlayerControls,
         texture: Handle<Image>,
         transform: Transform,
         velocity: Velocity,
@@ -60,7 +57,7 @@ impl PlayerBundle {
                 custom_size: Some(PLAYER_SIZE),
                 ..Default::default()
             },
-            player: Player { controls },
+            player: Player {},
             gravity: Gravity(true),
             control_force: ControlForce(Vec2::ZERO),
             rope_force: RopeForce(Vec2::ZERO),
@@ -80,7 +77,6 @@ impl PlayerBundle {
 
     #[cfg(feature = "server")]
     pub fn new(
-        controls: PlayerControls,
         transform: Transform,
         velocity: Velocity,
         mass: Mass,
@@ -88,11 +84,11 @@ impl PlayerBundle {
         ground_state: GroundState,
     ) -> Self {
         Self {
+            player: Player {},
             sprite: Sprite {
                 custom_size: Some(PLAYER_SIZE),
                 ..Default::default()
             },
-            player: Player { controls },
             gravity: Gravity(true),
             control_force: ControlForce(Vec2::ZERO),
             rope_force: RopeForce(Vec2::ZERO),

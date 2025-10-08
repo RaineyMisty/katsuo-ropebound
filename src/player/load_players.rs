@@ -17,10 +17,23 @@ use crate::app::{MainPlayer};
 
 
 pub fn spawn_players(
-    mut commands: Commands, #[cfg(feature = "client")] asset_server: Res<AssetServer>,
+    mut commands: Commands, 
+    #[cfg(feature = "client")] asset_server: Res<AssetServer>,
     spawn_point: Res<PlayerSpawnPoint>,
     spawn_velocity: Res<PlayerSpawnVelocity>,
 ) {
+    let p1_main_controls = PlayerControls {
+        up: KeyCode::KeyW,
+        down: KeyCode::KeyS,
+        left: KeyCode::KeyA,
+        right: KeyCode::KeyD,
+    };
+    let p2_main_controls = PlayerControls {
+        up: KeyCode::ArrowUp,
+        down: KeyCode::ArrowDown,
+        left: KeyCode::ArrowLeft,
+        right: KeyCode::ArrowRight,
+    };
     // --- Spawn first player ---
     let p1 = spawn_single_player(
         &mut commands,
@@ -28,12 +41,8 @@ pub fn spawn_players(
         &asset_server,
         Transform::from_translation(spawn_point.position),
         spawn_velocity.velocity,
-        PlayerControls {
-            up: KeyCode::KeyW,
-            down: KeyCode::KeyS,
-            left: KeyCode::KeyA,
-            right: KeyCode::KeyD,
-        },
+        #[cfg(feature = "client")]
+        p1_main_controls,
         #[cfg(feature = "client")]
         "spriteguy.png",
         true,
@@ -46,18 +55,13 @@ pub fn spawn_players(
         &asset_server,
         Transform::from_translation(spawn_point.position + Vec3::new(300.0, 0.0, 0.0)),
         spawn_velocity.velocity,
-        PlayerControls {
-            up: KeyCode::ArrowUp,
-            down: KeyCode::ArrowDown,
-            left: KeyCode::ArrowLeft,
-            right: KeyCode::ArrowRight,
-        },
+        #[cfg(feature = "client")]
+        p2_main_controls,
         #[cfg(feature = "client")]
         "portrait_rainey.png",
-        false, // mark as MainPlayer
+        false, // not main_player
     );
 
-    // Rope between the two players
     commands.spawn(Rope {
         constraint: RopeConstraint::default(),
         attached_entity_head: p1,
@@ -70,6 +74,7 @@ fn spawn_single_player(
     #[cfg(feature = "client")] asset_server: &AssetServer,
     transform: Transform,
     velocity: Vec2,
+    #[cfg(feature = "client")]
     controls: PlayerControls,
     #[cfg(feature = "client")] texture_path: &str,
     is_main: bool,
@@ -80,7 +85,6 @@ fn spawn_single_player(
     let velocity = Velocity(velocity);
 
     let mut entity_commands = commands.spawn(PlayerBundle::new(
-        controls,
         #[cfg(feature = "client")]
         asset_server.load(texture_path),
         transform,
@@ -93,6 +97,9 @@ fn spawn_single_player(
     if is_main {
         entity_commands.insert(MainPlayer);
     }
+
+    #[cfg(feature = "client")]
+    entity_commands.insert(controls);
 
     entity_commands.id()
 }

@@ -7,6 +7,23 @@ mod multiplayer;
 mod physics;
 mod player;
 mod util;
+
+use std::env;
 fn main() {
-    app::run();
+    let mut is_main_player = false;
+
+    for arg in env::args().skip(1) { // skip binary name
+        match arg.as_str() {
+            "--main" => {
+                is_main_player = true;
+            }
+            "--player" => {
+                is_main_player = false;
+            }
+            _ => {
+                eprintln!("Unknown argument: {arg}");
+            }
+        }
+    }
+    app::run(is_main_player);
 }

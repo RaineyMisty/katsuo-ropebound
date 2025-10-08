@@ -4,10 +4,7 @@ use std::net::UdpSocket;
 use std::time::Duration;
 use async_channel::{Sender, Receiver};
 
-use crate::{app::MainPlayer, player::Player};
-
-// toggle to false and run to create player 2
-const IS_MAIN_PLAYER_HACK: bool = true;
+use crate::{app::{IsMainPlayer, MainPlayer}, player::Player};
 
 /// Resource to hold the client socket after handshake
 #[derive(Resource)]
@@ -102,7 +99,7 @@ pub fn send_input_state_system(
 #[derive(Resource)]
 pub struct ServerAddress(pub String);
 
-pub fn client_handshake(mut commands: Commands, server_addr: Res<ServerAddress>) {
+pub fn client_handshake(mut commands: Commands, server_addr: Res<ServerAddress>, is_main_player: Res<IsMainPlayer>) {
     let server_addr: std::net::SocketAddr = server_addr
         .0
         .parse()
@@ -119,7 +116,7 @@ pub fn client_handshake(mut commands: Commands, server_addr: Res<ServerAddress>)
 
     println!("[Client] Sending HELLO to {}", server_addr);
 
-    let msg = if IS_MAIN_PLAYER_HACK {
+    let msg = if is_main_player.as_ref().0 {
         b"MAIN"
     } else {
         b"PLAY"

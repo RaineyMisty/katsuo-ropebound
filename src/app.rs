@@ -73,7 +73,10 @@ fn update_camera(
         .smooth_nudge(&target, CAMERA_DECAY_RATE, time.delta_secs());
 }
 
-pub fn run() {
+#[derive(Resource)]
+pub struct IsMainPlayer(pub bool);
+
+pub fn run(is_main_player: bool) {
     let mut app = App::new();
     #[cfg(debug_assertions)]
     app.add_plugins(DevModePlugin);
@@ -81,6 +84,8 @@ pub fn run() {
 
     #[cfg(feature = "client")]
     app.add_plugins(DefaultPlugins);
+    app.insert_resource(IsMainPlayer(is_main_player));
+
     #[cfg(feature = "server")]
     app.add_plugins(MinimalPlugins).add_plugins(bevy::input::InputPlugin);
 

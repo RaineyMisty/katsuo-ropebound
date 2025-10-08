@@ -2,6 +2,9 @@ use bevy::prelude::*;
 use bevy::tasks::IoTaskPool;
 use std::net::UdpSocket;
 use std::time::Duration;
+use async_channel::{Sender, Receiver};
+
+use crate::{app::MainPlayer, player::Player};
 
 /// Resource to hold the client socket after handshake
 #[derive(Resource)]
@@ -22,6 +25,17 @@ pub struct ClientInputEvent {
     pub key_id: u8,           // 0=W, 1=A, 2=S, 3=D
     pub action: InputAction,
     pub sequence: u32,
+}
+
+#[derive(Debug)]
+pub struct SnapshotUpdate {
+    pub tick: u32,
+    pub positions: Vec<(f32, f32)>,
+}
+
+#[derive(Resource)]
+pub struct ClientNetChannels {
+    pub rx_snapshots: Receiver<SnapshotUpdate>,
 }
 
 pub fn keyboard_input_system(
@@ -97,6 +111,9 @@ pub fn client_handshake(mut commands: Commands, server_addr: Res<ServerAddress>)
         .set_read_timeout(Some(Duration::from_secs(2)))
         .expect("Failed to set read timeout");
 
+    let (tx_snapshots, rx_snapshots) = async_channel::unbounded::<SnapshotUpdate>();
+    let tx_snapshots_clone = tx_snapshots.clone();
+
     println!("[Client] Sending HELLO to {}", server_addr);
     socket
         .send_to(b"HELLO", server_addr)
@@ -119,10 +136,39 @@ pub fn client_handshake(mut commands: Commands, server_addr: Res<ServerAddress>)
                     loop {
                         match socket_clone.recv_from(&mut buf) {
                             Ok((len, from)) => {
-                                // handle snapshot payload here
                                 let snapshot = &buf[..len];
-                                println!("[Client] Received snapshot from {}: {:?}", from, snapshot);
+                                if snapshot.len() < 6 {
+                                    eprintln!("[Client] Invalid snapshot length {}", snapshot.len());
+                                    continue;
+                                }
+
+                                let tick = u32::from_be_bytes(snapshot[0..4].try_into().unwrap());
+                                let player_count = u16::from_be_bytes(snapshot[4..6].try_into().unwrap()) as usize;
+
+                                let mut offset = 6;
+                                println!("Tick {} with {} players", tick, player_count);
+
+                                let mut positions = Vec::with_capacity(player_count);
+
+                                for i in 0..player_count {
+                                    if offset + 8 > snapshot.len() {
+                                        eprintln!("[Client] Truncated snapshot for player {}", i);
+                                        break;
+                                    }
+
+                                    let x = f32::from_be_bytes(snapshot[offset..offset+4].try_into().unwrap());
+                                    let y = f32::from_be_bytes(snapshot[offset+4..offset+8].try_into().unwrap());
+                                    offset += 8;
+
+                                    println!("  Player {}: x={:.1}, y={:.1}", i, x, y);
+
+                                    positions.push((x, y));
+                                }
+                                if let Err(e) = tx_snapshots_clone.try_send(SnapshotUpdate { tick, positions }) {
+                                    eprintln!("[Client] Failed to enqueue snapshot: {}", e);
+                                }
                             }
+
                             Err(ref e) if e.kind() == std::io::ErrorKind::WouldBlock => {
                                 std::thread::yield_now();
                                 continue;
@@ -139,10 +185,38 @@ pub fn client_handshake(mut commands: Commands, server_addr: Res<ServerAddress>)
                     socket,
                     server_addr,
                 });
+                commands.insert_resource(ClientNetChannels { rx_snapshots });
             }
         }
         Err(e) => {
             eprintln!("[Client] Handshake failed: {}", e);
+        }
+    }
+}
+
+pub fn apply_snapshot_system(
+    channels: Res<ClientNetChannels>,
+    mut main_query: Query<&mut Transform, (With<Player>, With<MainPlayer>)>,
+    mut other_query: Query<&mut Transform, (With<Player>, Without<MainPlayer>)>,
+) {
+    while let Ok(snapshot) = channels.rx_snapshots.try_recv() {
+        if snapshot.positions.is_empty() {
+            continue;
+        }
+
+        // Let's assume snapshot[0] = main player, snapshot[1] = other
+        if let Ok(mut main_transform) = main_query.single_mut() {
+            if let Some((x, y)) = snapshot.positions.get(1) {
+                main_transform.translation.x = *x;
+                main_transform.translation.y = *y;
+            }
+        }
+
+        if let Ok(mut other_transform) = other_query.single_mut() {
+            if let Some((x, y)) = snapshot.positions.get(0) {
+                other_transform.translation.x = *x;
+                other_transform.translation.y = *y;
+            }
         }
     }
 }

@@ -1,16 +1,30 @@
 use bevy::prelude::*;
 use bevy::tasks::IoTaskPool;
+use async_channel::{Sender, Receiver};
 use std::{
     collections::HashMap,
     net::{SocketAddr, UdpSocket},
     sync::{Arc, RwLock},
     time::{Duration, Instant},
 };
+use crate::{app::MainPlayer, player::{player_control::PlayerInputEvent, Player}};
+
+/// A snapshot message built on the ECS thread and sent to network task
+#[derive(Debug)]
+pub struct SnapshotMsg {
+    pub data: Vec<u8>,
+}
+
+/// Control messages if needed (not used yet)
+#[derive(Debug)]
+enum NetControlMsg {
+    Shutdown,
+}
 
 #[derive(Debug)]
 pub struct ClientSession {
     pub last_seen: Instant,
-    // You can add player_id, entity, etc. later if needed
+    pub prev_mask: u8,
 }
 
 #[derive(Resource, Default, Clone)]
@@ -21,6 +35,25 @@ pub struct ClientRegistry {
 #[derive(Resource)]
 pub struct UdpServerSocket {
     pub socket: UdpSocket,
+}
+
+#[derive(Debug)]
+pub struct RemoteInputEvent {
+    // For now, we'll ignore `entity` since you said there's only one player.
+    pub left: bool,
+    pub right: bool,
+    pub jump_pressed: bool,
+    pub jump_just_released: bool,
+}
+/// Channels used to communicate with the background network task
+#[derive(Resource)]
+pub struct NetChannels {
+    pub tx_snapshots: Sender<SnapshotMsg>,
+    pub rx_inputs: Receiver<RemoteInputEvent>,
+}
+#[derive(Resource)]
+pub struct NetSnapshotTx {
+    pub tx_snapshots: async_channel::Sender<SnapshotMsg>,
 }
 
 pub fn setup_udp_server(mut commands: Commands) {
@@ -36,6 +69,12 @@ pub fn setup_udp_server(mut commands: Commands) {
 
     let task_pool = IoTaskPool::get();
 
+
+    let (tx_snapshots, rx_snapshots) = async_channel::unbounded::<SnapshotMsg>();
+    let (tx_inputs, rx_inputs) = async_channel::unbounded::<RemoteInputEvent>();
+
+    let tx_inputs = tx_inputs.clone();
+
     // Recieve from client
     {
         let recv_socket = socket_clone.try_clone().unwrap();
@@ -50,7 +89,12 @@ pub fn setup_udp_server(mut commands: Commands) {
                         if data == b"HELLO" {
                             handle_handshake(&recv_socket, &recv_clients, addr);
                         } else {
-                            handle_client_input(&recv_clients, addr, data);
+                            if let Some(event) = parse_input_packet(addr, data, &recv_clients) {
+                                // Send input event to ECS thread
+                                if let Err(e) = tx_inputs.try_send(event) {
+                                    eprintln!("[Server] Failed to send input event to ECS: {}", e);
+                                }
+                            }
                         }
                     }
                     Err(ref e) if e.kind() == std::io::ErrorKind::WouldBlock => {
@@ -66,27 +110,81 @@ pub fn setup_udp_server(mut commands: Commands) {
         }).detach();
     }
 
-    // Broadcast to all clients task (20 Hz)
     {
         let broadcast_socket = socket_clone;
         let broadcast_clients = registry.clone();
+
         task_pool.spawn(async move {
-            let tick_rate = Duration::from_millis(50);
-            let mut tick: u32 = 0;
-            loop {
-                std::thread::sleep(tick_rate);
-                tick += 1;
-
-                let snapshot_data = build_snapshot_packet(tick);
-
+            // Wait for snapshot messages from ECS thread
+            while let Ok(msg) = rx_snapshots.recv().await {
                 let clients_guard = broadcast_clients.clients.read().unwrap();
                 for addr in clients_guard.keys() {
-                    if let Err(e) = broadcast_socket.send_to(&snapshot_data, addr) {
+                    if let Err(e) = broadcast_socket.send_to(&msg.data, addr) {
                         eprintln!("[UDP Server] Failed to send snapshot to {}: {}", addr, e);
                     }
                 }
             }
         }).detach();
+    }
+    commands.insert_resource(NetChannels {
+        tx_snapshots,
+        rx_inputs,
+    });
+
+}
+
+pub fn truncate_f32(v: f32, decimals: u32) -> f32 {
+    let factor = 10f32.powi(decimals as i32);
+    (v * factor).trunc() / factor
+}
+
+pub fn process_remote_inputs_system(
+    channels: Res<NetChannels>,
+    mut writer: EventWriter<PlayerInputEvent>,
+    player_query: Query<Entity, With<MainPlayer>>, // get the only player
+) {
+    let player_entity = if let Ok(e) = player_query.single() {
+        e
+    } else {
+        return;
+    };
+
+    while let Ok(remote) = channels.rx_inputs.try_recv() {
+        writer.write(PlayerInputEvent {
+            entity: player_entity,
+            left: remote.left,
+            right: remote.right,
+            jump_pressed: remote.jump_pressed,
+            jump_just_released: remote.jump_just_released,
+        });
+    }
+}
+
+pub fn send_snapshots_system(
+    players: Query<&Transform, With<Player>>,
+    channels: Res<NetChannels>,
+    mut tick: Local<u32>,
+) {
+    *tick += 1;
+
+    let decimals = 1; // truncate to 1 decimal place
+    let player_count = players.iter().len() as u16;
+
+    // tick (4 bytes) + player_count (2 bytes) + N*(x:4, y:4)
+    let mut buf = Vec::with_capacity(4 + 2 + player_count as usize * 8);
+    buf.extend_from_slice(&tick.to_be_bytes());
+    buf.extend_from_slice(&player_count.to_be_bytes());
+
+    for transform in players.iter() {
+        let x = truncate_f32(transform.translation.x, decimals);
+        let y = truncate_f32(transform.translation.y, decimals);
+
+        buf.extend_from_slice(&x.to_be_bytes());
+        buf.extend_from_slice(&y.to_be_bytes());
+    }
+
+    if let Err(e) = channels.tx_snapshots.try_send(SnapshotMsg { data: buf }) {
+        eprintln!("[Server] Failed to send snapshot to net task: {}", e);
     }
 }
 
@@ -106,42 +204,46 @@ fn handle_handshake(socket: &UdpSocket, registry: &ClientRegistry, addr: SocketA
         addr,
         ClientSession {
             last_seen: Instant::now(),
+            prev_mask: 0,
         },
     );
 
     let _ = socket.send_to(b"ACK", addr);
 }
 
-fn handle_client_input(registry: &ClientRegistry, addr: SocketAddr, data: &[u8]) {
-    let clients_read = registry.clients.read().unwrap();
-    if clients_read.contains_key(&addr) {
-        // Here you'd parse and immediately apply input to the ECS world,
-        // instead of storing it on the session.
-        handle_input_event(data);
-    } else {
-        println!("[UDP Server] Unknown client {} sent {:?}", addr, data);
-    }
-}
-
-/// Immediate input processing
-fn handle_input_event(data: &[u8]) {
+fn parse_input_packet(
+    addr: SocketAddr,
+    data: &[u8],
+    clients: &ClientRegistry,
+) -> Option<RemoteInputEvent> {
     if data.len() < 5 {
-        println!("[UDP Server] Malformed input event {:?}", data);
-        return;
+        return None;
     }
 
-    let seq = u32::from_be_bytes(data[0..4].try_into().unwrap());
+    let _seq = u32::from_be_bytes(data[0..4].try_into().unwrap());
     let mask = data[4];
 
-    let up    = mask & (1 << 0) != 0;
-    let left  = mask & (1 << 1) != 0;
-    let down  = mask & (1 << 2) != 0;
-    let right = mask & (1 << 3) != 0;
+    // Get client session
+    let mut map = clients.clients.write().unwrap();
+    let client = map.get_mut(&addr)?;
 
-    println!(
-        "[UDP Server] seq={} mask={:04b} (up={} left={} down={} right={})",
-        seq, mask, up, left, down, right
-    );
+    let prev_mask = client.prev_mask;
 
-    // Apply to authoritative ECS here if needed.
+    // Detect changes
+    let jump_pressed = mask & (1 << 0) != 0;
+    let jump_prev_pressed = prev_mask & (1 << 0) != 0;
+
+    let jump_just_pressed = jump_pressed && !jump_prev_pressed;
+    let jump_just_released = !jump_pressed && jump_prev_pressed;
+
+    // Update session
+    client.prev_mask = mask;
+    client.last_seen = Instant::now();
+
+    Some(RemoteInputEvent {
+        left:  mask & (1 << 1) != 0,
+        right: mask & (1 << 3) != 0,
+        jump_pressed,
+        jump_just_released,
+    })
 }

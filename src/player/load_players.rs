@@ -36,7 +36,7 @@ pub fn spawn_players(
         },
         #[cfg(feature = "client")]
         "spriteguy.png",
-        false, // not main player
+        true,
     );
 
     // --- Spawn second player (test) ---
@@ -54,7 +54,7 @@ pub fn spawn_players(
         },
         #[cfg(feature = "client")]
         "portrait_rainey.png",
-        true, // mark as MainPlayer
+        false, // mark as MainPlayer
     );
 
     // Rope between the two players

@@ -10,6 +10,7 @@ mp-stop = "tmux kill-session -t bevy-mp"
 mp-win = "pwsh ./scripts/mp-win.ps1"
 
 [dependencies]
+async-channel = "2.5.0"
 bevy.workspace = true
 rand.workspace = true
 rustls = "0.23.32"

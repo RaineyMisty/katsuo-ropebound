@@ -83,7 +83,6 @@ fn apply_horizontal_movement(
     control_force: &mut ControlForce,
     event: &PlayerInputEvent,
 ) {
-    // reset horizontal force every frame
     control_force.0.x = 0.0;
 
     let resistance = PLAYER_MOVE_FORCE / PLAYER_CONTROL_SPEED_LIMIT;

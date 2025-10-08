@@ -6,13 +6,13 @@ struct Bot {
 }
 
 impl Bot{
-    fn new() -> Self {
+    pub fn new() -> Self {
         Self {
             state_machine: StateMachine::new(BotState::Idle),
         }
     }
 
-    fn change(&mut self, input: &Input){
+    pub fn change(&mut self, input: &Input) -> (Bot,Input){
 
         let next = match self.state_machine.current(){
             //idle change to 

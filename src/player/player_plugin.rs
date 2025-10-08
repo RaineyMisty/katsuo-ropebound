@@ -5,7 +5,7 @@
 
 use bevy::math::VectorSpace;
 use bevy::prelude::*;
-
+use rand::Rng;
 use crate::player::bundle::{PlayerBundle, PlayerControls};
 use crate::config::PlayerSpawnPoint;
 use crate::config::PlayerSpawnVelocity;

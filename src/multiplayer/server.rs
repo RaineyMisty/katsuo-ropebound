@@ -9,18 +9,13 @@ use std::{
 };
 use crate::{app::MainPlayer, player::{player_control::PlayerInputEvent, Player}};
 
-/// A snapshot message built on the ECS thread and sent to network task
+// A snapshot message built on the ECS thread and sent to network task
 #[derive(Debug)]
 pub struct SnapshotMsg {
     pub data: Vec<u8>,
 }
 
-/// Control messages if needed (not used yet)
-#[derive(Debug)]
-enum NetControlMsg {
-    Shutdown,
-}
-
+// data associated with a socket mapping.
 #[derive(Debug)]
 pub struct ClientSession {
     pub last_seen: Instant,
@@ -28,6 +23,8 @@ pub struct ClientSession {
     pub prev_mask: u8,
 }
 
+// we might not need a lock here, we build the client registry relatively Synchronously
+// we do mutate the client session though. and possibly indirectly read from in from multiple threads.
 #[derive(Resource, Default, Clone)]
 pub struct ClientRegistry {
     pub clients: Arc<RwLock<HashMap<SocketAddr, ClientSession>>>,
@@ -41,37 +38,27 @@ pub struct UdpServerSocket {
 #[derive(Debug)]
 // not actually an event very bad name oops.
 pub struct RemoteInputEvent {
-    // For now, we'll ignore `entity` since you said there's only one player.
+    pub player: Entity,
     pub left: bool,
     pub right: bool,
     pub jump_pressed: bool,
     pub jump_just_released: bool,
-    pub player: Entity,
 }
 
-// snapshots for recieving snapshots and sending them to main bevy ecs
-// Reciever for getting the game state back from the ecs game loop.
+
+// tx_snapshots for getting state out of the simulation -> UDP thread
+// rx_inputs for sending input events | UDP thread -> main game loop (inputs)
 #[derive(Resource)]
 pub struct NetChannels {
     pub tx_snapshots: Sender<SnapshotMsg>,
     pub rx_inputs: Receiver<RemoteInputEvent>,
 }
 
-#[derive(Resource)]
-pub struct NetSnapshotTx {
-    pub tx_snapshots: async_channel::Sender<SnapshotMsg>,
-}
 
-fn players_exist(
-    q_main: Query<(), With<MainPlayer>>,
-    q_other: Query<(), (With<Player>, Without<MainPlayer>)>,
-) -> bool {
-    !q_main.is_empty() && !q_other.is_empty()
-}
-
+// make registry
+// init async_channels
 pub fn setup_udp_server(mut commands: Commands, main_player_q: Query<Entity, With<MainPlayer>>, other_player_q: Query<Entity, (With<Player>, Without<MainPlayer>)>,
     ) {
-     // get the only player
     let socket = UdpSocket::bind("0.0.0.0:5000").expect("Failed to bind UDP socket");
     socket.set_nonblocking(true).unwrap();
     println!("[UDP Server] Listening on 0.0.0.0:5000");
@@ -88,12 +75,16 @@ pub fn setup_udp_server(mut commands: Commands, main_player_q: Query<Entity, Wit
     let (tx_snapshots, rx_snapshots) = async_channel::unbounded::<SnapshotMsg>();
     let (tx_inputs, rx_inputs) = async_channel::unbounded::<RemoteInputEvent>();
 
+    // this could cause race conditions I need to think a bit more about it.
     let tx_inputs = tx_inputs.clone();
+
     let main_player_entity = main_player_q.single().expect("Expected a MainPlayer entity");
     let other_player_entity = other_player_q.single().expect("Expected a secondary Player entity");
     // Recieve from client
-    // send inputs to main ecs thread.
+    // send inputs from clients to main ecs thread.
     {
+        // shouldn't cause race issues; I am only setting on connection
+        // and not mutating at all.
         let recv_socket = socket_clone.try_clone().unwrap();
         let recv_clients = registry.clone();
         task_pool.spawn(async move {
@@ -104,6 +95,7 @@ pub fn setup_udp_server(mut commands: Commands, main_player_q: Query<Entity, Wit
                         let data = &buf[..len];
 
                         if data == b"MAIN" || data == b"PLAY" {
+                            // builds client session and creates mapping in ClientRegistry
                             handle_handshake(
                                 &recv_socket,
                                 &recv_clients,
@@ -114,8 +106,9 @@ pub fn setup_udp_server(mut commands: Commands, main_player_q: Query<Entity, Wit
                             );
                         }
                         else {
+                            // we received some packet which was not a hankshake acknowledgement
                             if let Some(event) = parse_input_packet(addr, data, &recv_clients) {
-                                // Send input event to ECS thread
+                                // send input event to ECS thread through the async_channel.
                                 if let Err(e) = tx_inputs.try_send(event) {
                                     eprintln!("[Server] Failed to send input event to ECS: {}", e);
                                 }
@@ -123,6 +116,8 @@ pub fn setup_udp_server(mut commands: Commands, main_player_q: Query<Entity, Wit
                         }
                     }
                     Err(ref e) if e.kind() == std::io::ErrorKind::WouldBlock => {
+                        // if I could use a library for async udp socket we wouldn't have to yield
+                        // here explicitly.
                         std::thread::yield_now();
                         continue;
                     }
@@ -135,12 +130,15 @@ pub fn setup_udp_server(mut commands: Commands, main_player_q: Query<Entity, Wit
         }).detach();
     }
 
+    // wait for game state / snapshot messages from ECS thread
+    // brodcast changes to all clients.
+    // there could be sepatate threads for each client. (but maybe this was is easier and less
+    // complicated)
     {
         let broadcast_socket = socket_clone;
         let broadcast_clients = registry.clone();
 
         task_pool.spawn(async move {
-            // Wait for snapshot messages from ECS thread
             while let Ok(msg) = rx_snapshots.recv().await {
                 let clients_guard = broadcast_clients.clients.read().unwrap();
                 for addr in clients_guard.keys() {
@@ -163,6 +161,8 @@ pub fn truncate_f32(v: f32, decimals: u32) -> f32 {
     (v * factor).trunc() / factor
 }
 
+// listen for structs (RemoteInputEvent) sent through the channel in the (async receiving task).
+// apply input state to player via events (meh solution maybe needs refactor).
 pub fn process_remote_inputs_system(
     channels: Res<NetChannels>,
     mut writer: EventWriter<PlayerInputEvent>,
@@ -207,14 +207,6 @@ pub fn send_snapshots_system(
     }
 }
 
-/// Example snapshot payload
-fn build_snapshot_packet(tick: u32) -> Vec<u8> {
-    let mut buf = Vec::new();
-    buf.extend_from_slice(&tick.to_be_bytes());
-    buf.extend_from_slice(b"SNAPSHOT");
-    buf
-}
-
 fn handle_handshake(
     socket: &UdpSocket,
     registry: &ClientRegistry,
@@ -243,6 +235,8 @@ fn handle_handshake(
 
     let _ = socket.send_to(b"ACK", addr);
 }
+
+// validates packet and returns player input state struct to send to the bevy ecs thread.
 fn parse_input_packet(
     addr: SocketAddr,
     data: &[u8],

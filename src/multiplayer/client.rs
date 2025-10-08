@@ -15,19 +15,6 @@ pub struct UdpClientSocket {
 
 
 #[derive(Debug)]
-pub enum InputAction {
-    Pressed,
-    Released,
-}
-
-#[derive(Event, Debug)]
-pub struct ClientInputEvent {
-    pub key_id: u8,           // 0=W, 1=A, 2=S, 3=D
-    pub action: InputAction,
-    pub sequence: u32,
-}
-
-#[derive(Debug)]
 pub struct SnapshotUpdate {
     pub tick: u32,
     pub positions: Vec<(f32, f32)>,
@@ -38,39 +25,7 @@ pub struct ClientNetChannels {
     pub rx_snapshots: Receiver<SnapshotUpdate>,
 }
 
-pub fn keyboard_input_system(
-    keyboard: Res<ButtonInput<KeyCode>>,
-    mut input_events: EventWriter<ClientInputEvent>,
-    mut seq_counter: Local<u32>,
-) {
-    let keys = [
-        (KeyCode::KeyW, 0),
-        (KeyCode::KeyA, 1),
-        (KeyCode::KeyS, 2),
-        (KeyCode::KeyD, 3),
-    ];
-
-    for (code, id) in keys {
-        if keyboard.just_pressed(code) {
-            *seq_counter += 1;
-            input_events.write(ClientInputEvent {
-                key_id: id,
-                action: InputAction::Pressed,
-                sequence: *seq_counter,
-            });
-        }
-
-        if keyboard.just_released(code) {
-            *seq_counter += 1;
-            input_events.write(ClientInputEvent {
-                key_id: id,
-                action: InputAction::Released,
-                sequence: *seq_counter,
-            });
-        }
-    }
-}
-
+// send input to the socket in the main bevy ecs thread. Synchronously.
 pub fn send_input_state_system(
     mut seq: Local<u32>,
     keyboard: Res<ButtonInput<KeyCode>>,
@@ -95,7 +50,7 @@ pub fn send_input_state_system(
     }
 }
 
-/// Resource to temporarily store the server address before handshake
+/// resource to temporarily store the server address before handshake
 #[derive(Resource)]
 pub struct ServerAddress(pub String);
 
@@ -105,7 +60,7 @@ pub fn client_handshake(mut commands: Commands, server_addr: Res<ServerAddress>,
         .parse()
         .expect("Failed to parse server address");
 
-    // Create UDP socket and bind to a random available port on localhost
+    // create client UDP socket and bind to a random available port on localhost
     let socket = UdpSocket::bind("0.0.0.0:0").expect("Failed to bind UDP client socket");
     socket
         .set_read_timeout(Some(Duration::from_secs(2)))
@@ -127,23 +82,29 @@ pub fn client_handshake(mut commands: Commands, server_addr: Res<ServerAddress>,
         .expect("Failed to send handshake message");
 
     let mut buf = [0u8; 1024];
+    // asynchronously recieve snapshots from the server
     match socket.recv_from(&mut buf) {
         Ok((len, addr)) => {
             let msg = &buf[..len];
             if msg == b"ACK" {
                 println!("[Client] Handshake successful with server {}", addr);
 
-                // Clone socket so it can live in both sending and receiving tasks
+                // clone socket so it can live in both sending and receiving tasks
+                // shouldn't cause race conditions because I am sending inputs and recieving
+                // positions
+                // this data should have a tick number attached so we can check if it stale or not.
                 let socket_clone = socket.try_clone().expect("Failed to clone client socket");
 
-                // Spawn async task to receive snapshots
                 let task_pool = IoTaskPool::get();
+                // send keys. 
                 task_pool.spawn(async move {
                     let mut buf = [0u8; 1500];
                     loop {
                         match socket_clone.recv_from(&mut buf) {
                             Ok((len, from)) => {
                                 let snapshot = &buf[..len];
+
+                                // parse the state out of the snapshot packet recieved from the server
                                 if snapshot.len() < 6 {
                                     eprintln!("[Client] Invalid snapshot length {}", snapshot.len());
                                     continue;
@@ -153,10 +114,11 @@ pub fn client_handshake(mut commands: Commands, server_addr: Res<ServerAddress>,
                                 let player_count = u16::from_be_bytes(snapshot[4..6].try_into().unwrap()) as usize;
 
                                 let mut offset = 6;
-                                println!("Tick {} with {} players", tick, player_count);
+                                // println!("Tick {} with {} players", tick, player_count);
 
                                 let mut positions = Vec::with_capacity(player_count);
 
+                                // iterate through list of players and their positions.
                                 for i in 0..player_count {
                                     if offset + 8 > snapshot.len() {
                                         eprintln!("[Client] Truncated snapshot for player {}", i);
@@ -166,8 +128,6 @@ pub fn client_handshake(mut commands: Commands, server_addr: Res<ServerAddress>,
                                     let x = f32::from_be_bytes(snapshot[offset..offset+4].try_into().unwrap());
                                     let y = f32::from_be_bytes(snapshot[offset+4..offset+8].try_into().unwrap());
                                     offset += 8;
-
-                                    println!("  Player {}: x={:.1}, y={:.1}", i, x, y);
 
                                     positions.push((x, y));
                                 }
@@ -188,10 +148,13 @@ pub fn client_handshake(mut commands: Commands, server_addr: Res<ServerAddress>,
                     }
                 }).detach();
 
+                // insert client socket for later use; (sending inputs to the socket)
                 commands.insert_resource(UdpClientSocket {
                     socket,
                     server_addr,
                 });
+                // channel for receiving snapshots from the server into the main thread and
+                // processing with apply_snapshot_system
                 commands.insert_resource(ClientNetChannels { rx_snapshots });
             }
         }

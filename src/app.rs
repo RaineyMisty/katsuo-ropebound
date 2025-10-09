@@ -7,20 +7,15 @@ use bevy::prelude::*;
 use bevy::time::Fixed;
 use crate::player::PlayerPlugin;
 use crate::physics::PhysicsPlugin;
-use crate::rope::RopePlugin;
 use crate::config::*;
 
 use crate::map::{MapPlugin, SCREEN};
 use crate::util::{DevModePlugin};
+use crate::game_ui::{UIPlugin};
 
-// use crate::physics::rope_force::{apply_rope_geometry, init_ropes, RopeGeometry, rope_tension_system, rope_force_to_system, compute_rope_geometry};
-use crate::components::rope::RopeGeometry;
-use crate::rope::rope_visualization::{apply_rope_geometry, init_ropes, compute_rope_geometry};
-use crate::physics::rope_force::{rope_tension_system, rope_force_to_system};
+use crate::physics::rope_force::{apply_rope_geometry, init_ropes, RopeGeometry, rope_tension_system, rope_force_to_system, compute_rope_geometry};
 use crate::player::player_plugin::spawn_player;
-use crate::game_ui::UIPlugin;
-// // <- compute_rope_geometry 删除了
-
+// <- compute_rope_geometry 删除了
 
 // move a half screen right and a half screen up.
 // so that the origin is in the positive coordinate system

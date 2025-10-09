@@ -5,6 +5,7 @@ use std::{
     collections::HashMap,
     net::{SocketAddr, UdpSocket},
     sync::{Arc, RwLock},
+    thread,
     time::{Duration, Instant},
 };
 use crate::{app::MainPlayer, player::{player_control::PlayerInputEvent, Player}};
@@ -60,7 +61,7 @@ pub struct NetChannels {
 pub fn setup_udp_server(mut commands: Commands, main_player_q: Query<Entity, With<MainPlayer>>, other_player_q: Query<Entity, (With<Player>, Without<MainPlayer>)>,
     ) {
     let socket = UdpSocket::bind("0.0.0.0:5000").expect("Failed to bind UDP socket");
-    socket.set_nonblocking(true).unwrap();
+    socket.set_nonblocking(false).unwrap();
     println!("[UDP Server] Listening on 0.0.0.0:5000");
 
     let registry = ClientRegistry::default();
@@ -68,9 +69,6 @@ pub fn setup_udp_server(mut commands: Commands, main_player_q: Query<Entity, Wit
 
     commands.insert_resource(UdpServerSocket { socket });
     commands.insert_resource(registry.clone());
-
-    let task_pool = IoTaskPool::get();
-
 
     let (tx_snapshots, rx_snapshots) = async_channel::unbounded::<SnapshotMsg>();
     let (tx_inputs, rx_inputs) = async_channel::unbounded::<RemoteInputEvent>();
@@ -87,7 +85,7 @@ pub fn setup_udp_server(mut commands: Commands, main_player_q: Query<Entity, Wit
         // and not mutating at all.
         let recv_socket = socket_clone.try_clone().unwrap();
         let recv_clients = registry.clone();
-        task_pool.spawn(async move {
+        thread::spawn(move || {
             let mut buf = [0u8; 1024];
             loop {
                 match recv_socket.recv_from(&mut buf) {
@@ -115,19 +113,13 @@ pub fn setup_udp_server(mut commands: Commands, main_player_q: Query<Entity, Wit
                             }
                         }
                     }
-                    Err(ref e) if e.kind() == std::io::ErrorKind::WouldBlock => {
-                        // if I could use a library for async udp socket we wouldn't have to yield
-                        // here explicitly.
-                        std::thread::yield_now();
-                        continue;
-                    }
                     Err(e) => {
                         eprintln!("[UDP Server] Recv error: {:?}", e);
                         break;
                     }
                 }
             }
-        }).detach();
+        });
     }
 
     // wait for game state / snapshot messages from ECS thread
@@ -138,8 +130,8 @@ pub fn setup_udp_server(mut commands: Commands, main_player_q: Query<Entity, Wit
         let broadcast_socket = socket_clone;
         let broadcast_clients = registry.clone();
 
-        task_pool.spawn(async move {
-            while let Ok(msg) = rx_snapshots.recv().await {
+        thread::spawn(move || {
+            while let Ok(msg) = rx_snapshots.recv_blocking() {
                 let clients_guard = broadcast_clients.clients.read().unwrap();
                 for addr in clients_guard.keys() {
                     if let Err(e) = broadcast_socket.send_to(&msg.data, addr) {
@@ -147,7 +139,7 @@ pub fn setup_udp_server(mut commands: Commands, main_player_q: Query<Entity, Wit
                     }
                 }
             }
-        }).detach();
+        });
     }
     commands.insert_resource(NetChannels {
         tx_snapshots,

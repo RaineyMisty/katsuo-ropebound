@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 use bevy::render::view::RenderLayers;
 use crate::player::Player;
+use crate::components::motion::Position;
 
 pub struct UIPlugin;
 
@@ -38,11 +39,11 @@ impl Plugin for UIPlugin{
 
 pub fn updateHeight(
     mut maxheight: ResMut<MaxHeight>,
-    players: Query<&Transform, With<Player>>
+    players: Query<&Position, With<Player>>
 ){
     for player in players.iter(){
-        if player.translation.y as u32 > maxheight.amount{
-            maxheight.amount = player.translation.y as u32;
+        if player.0.y as u32 > maxheight.amount{
+            maxheight.amount = player.0.y as u32;
         }
     }
 }

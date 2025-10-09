@@ -28,14 +28,3 @@ pub struct Rope {
     pub attached_entity_head: Entity,
     pub attached_entity_tail: Entity,
 }
-
-/// 临时存放 rope 的几何信息
-#[derive(Resource, Default)]
-pub struct RopeGeometry {
-    pub updates: Vec<(Entity, Vec3, f32, f32)>, // (rope_entity, 中点, 角度, 长度)
-}
-
-#[derive(Component)]
-pub struct RopeSprite {
-    pub rope_entity: Entity,
-}

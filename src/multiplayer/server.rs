@@ -156,14 +156,60 @@ pub fn setup_udp_server(
         let broadcast_clients = registry.clone();
 
         thread::spawn(move || {
+            let mut tick_count: u64 = 0;
+            println!("[Thread] UDP broadcast thread started");
+
             while let Ok(msg) = rx_snapshots.recv_blocking() {
+                tick_count += 1;
+
+                // Decode tick number if present
+                let tick = if msg.data.len() >= 4 {
+                    u32::from_be_bytes(msg.data[0..4].try_into().unwrap_or_default())
+                } else {
+                    0
+                };
+
                 let clients_guard = broadcast_clients.clients.read().unwrap();
-                for addr in clients_guard.keys() {
-                    if let Err(e) = broadcast_socket.send_to(&msg.data, addr) {
-                        eprintln!("[UDP Server] Failed to send snapshot to {}: {}", addr, e);
+                let client_count = clients_guard.len();
+
+                println!(
+                    "[Broadcast] tick={} | snapshot_size={} bytes | connected_clients={}",
+                    tick,
+                    msg.data.len(),
+                    client_count
+                );
+
+                if client_count == 0 {
+                    println!("[Broadcast] No clients yet — skipping tick={}", tick);
+                    continue;
+                }
+
+                for (i, addr) in clients_guard.keys().enumerate() {
+                    println!("  [{}] Sending snapshot tick={} to {}", i, tick, addr);
+
+                    match broadcast_socket.send_to(&msg.data, addr) {
+                        Ok(sent) => {
+                            println!(
+                                "  [{}] ✅ Sent {} bytes successfully to {}",
+                                i, sent, addr
+                            );
+                        }
+                        Err(e) => {
+                            eprintln!(
+                                "  [{}] ❌ Failed to send snapshot to {}: {}",
+                                i, addr, e
+                            );
+                        }
                     }
                 }
+
+                println!(
+                    "[Broadcast] Finished tick={} ({} clients)\n",
+                    tick, client_count
+                );
             }
+
+            println!("[Thread] UDP broadcast thread exited unexpectedly!");
         });
     }
     commands.insert_resource(NetChannels {

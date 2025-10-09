@@ -1,6 +1,10 @@
+use crate::{
+    app::MainPlayer,
+    player::{Player, player_control::PlayerInputEvent},
+};
+use async_channel::{Receiver, Sender};
 use bevy::prelude::*;
-use bevy::tasks::IoTaskPool;
-use async_channel::{Sender, Receiver};
+use bevy::tasks::{IoTaskPool, TaskPool, TaskPoolBuilder};
 use std::{
     collections::HashMap,
     net::{SocketAddr, UdpSocket},
@@ -8,7 +12,6 @@ use std::{
     thread,
     time::{Duration, Instant},
 };
-use crate::{app::MainPlayer, player::{player_control::PlayerInputEvent, Player}};
 
 // A snapshot message built on the ECS thread and sent to network task
 #[derive(Debug)]
@@ -46,7 +49,6 @@ pub struct RemoteInputEvent {
     pub jump_just_released: bool,
 }
 
-
 // tx_snapshots for getting state out of the simulation -> UDP thread
 // rx_inputs for sending input events | UDP thread -> main game loop (inputs)
 #[derive(Resource)]
@@ -55,11 +57,31 @@ pub struct NetChannels {
     pub rx_inputs: Receiver<RemoteInputEvent>,
 }
 
+fn custom_network_pool() -> TaskPool {
+    let threads = std::thread::available_parallelism()
+        .map(|n| n.get())
+        .unwrap_or(2)
+        .max(4);
+
+    let pool = TaskPoolBuilder::default()
+        .num_threads(threads)
+        .thread_name("udp-network".into())
+        .build();
+
+    println!(
+        "[Init] Custom network pool with {} threads",
+        pool.thread_num()
+    );
+    pool
+}
 
 // make registry
 // init async_channels
-pub fn setup_udp_server(mut commands: Commands, main_player_q: Query<Entity, With<MainPlayer>>, other_player_q: Query<Entity, (With<Player>, Without<MainPlayer>)>,
-    ) {
+pub fn setup_udp_server(
+    mut commands: Commands,
+    main_player_q: Query<Entity, With<MainPlayer>>,
+    other_player_q: Query<Entity, (With<Player>, Without<MainPlayer>)>,
+) {
     let socket = UdpSocket::bind("0.0.0.0:5000").expect("Failed to bind UDP socket");
     socket.set_nonblocking(false).unwrap();
     println!("[UDP Server] Listening on 0.0.0.0:5000");
@@ -76,8 +98,12 @@ pub fn setup_udp_server(mut commands: Commands, main_player_q: Query<Entity, Wit
     // this could cause race conditions I need to think a bit more about it.
     let tx_inputs = tx_inputs.clone();
 
-    let main_player_entity = main_player_q.single().expect("Expected a MainPlayer entity");
-    let other_player_entity = other_player_q.single().expect("Expected a secondary Player entity");
+    let main_player_entity = main_player_q
+        .single()
+        .expect("Expected a MainPlayer entity");
+    let other_player_entity = other_player_q
+        .single()
+        .expect("Expected a secondary Player entity");
     // Recieve from client
     // send inputs from clients to main ecs thread.
     {
@@ -102,8 +128,7 @@ pub fn setup_udp_server(mut commands: Commands, main_player_q: Query<Entity, Wit
                                 main_player_entity,
                                 other_player_entity,
                             );
-                        }
-                        else {
+                        } else {
                             // we received some packet which was not a hankshake acknowledgement
                             if let Some(event) = parse_input_packet(addr, data, &recv_clients) {
                                 // send input event to ECS thread through the async_channel.
@@ -145,7 +170,6 @@ pub fn setup_udp_server(mut commands: Commands, main_player_q: Query<Entity, Wit
         tx_snapshots,
         rx_inputs,
     });
-
 }
 
 pub fn truncate_f32(v: f32, decimals: u32) -> f32 {
@@ -159,7 +183,6 @@ pub fn process_remote_inputs_system(
     channels: Res<NetChannels>,
     mut writer: EventWriter<PlayerInputEvent>,
 ) {
-
     while let Ok(remote) = channels.rx_inputs.try_recv() {
         writer.write(PlayerInputEvent {
             entity: remote.player,
@@ -168,6 +191,15 @@ pub fn process_remote_inputs_system(
             jump_pressed: remote.jump_pressed,
             jump_just_released: remote.jump_just_released,
         });
+    }
+}
+
+pub fn has_clients(registry: Option<Res<ClientRegistry>>) -> bool {
+    if let Some(reg) = registry {
+        let map = reg.clients.read().unwrap();
+        !map.is_empty()
+    } else {
+        false
     }
 }
 
@@ -256,14 +288,14 @@ fn parse_input_packet(
     let jump_just_pressed = jump_pressed && !jump_prev_pressed;
     let jump_just_released = !jump_pressed && jump_prev_pressed;
 
-    // update session in client registry. 
+    // update session in client registry.
     // maybe this prev data should be stored somewhere else.
     client.prev_mask = mask;
     client.last_seen = Instant::now();
 
     Some(RemoteInputEvent {
         player: client.player,
-        left:  mask & (1 << 1) != 0,
+        left: mask & (1 << 1) != 0,
         right: mask & (1 << 3) != 0,
         jump_pressed,
         jump_just_released,

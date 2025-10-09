@@ -8,6 +8,7 @@ use bevy::time::Fixed;
 use crate::player::PlayerPlugin;
 use crate::physics::PhysicsPlugin;
 use crate::config::*;
+use crate::stateMachine::*;
 
 use crate::map::{MapPlugin, SCREEN};
 use crate::util::{DevModePlugin};
@@ -70,6 +71,12 @@ fn update_camera(
     camera
         .translation
         .smooth_nudge(&target, CAMERA_DECAY_RATE, time.delta_secs());
+}
+// going to implement the replacement for the controls
+fn bot_update(
+    players: Query<(Entity, &Transform), With<StateMachine>>,
+){
+    
 }
 
 pub fn run() {

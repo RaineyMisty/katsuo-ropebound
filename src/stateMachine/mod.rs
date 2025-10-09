@@ -1,4 +1,6 @@
+pub mod move_State;
+pub mod state;
 use bevy::prelude::*;
 
-use self::moveState::new;
-use self::moveState::change;
+pub use state::*;
+pub use move_State::*;

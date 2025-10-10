@@ -5,6 +5,7 @@
 
 use bevy::prelude::*;
 use bevy::time::Fixed;
+use bevy::transform;
 use crate::player::PlayerPlugin;
 use crate::physics::PhysicsPlugin;
 use crate::config::*;
@@ -73,11 +74,37 @@ fn update_camera(
         .smooth_nudge(&target, CAMERA_DECAY_RATE, time.delta_secs());
 }
 // going to implement the replacement for the controls
+#[derive(Event)]
+struct ToggleBotEvent;
+
+#[derive(Resource)]
+struct BotActive(bool);
+
+fn bot_update_toggle(
+    mut bot_active: ResMut<BotActive>,
+    keyboard: Res<ButtonInput<KeyCode>>,
+){
+    //toggle logic
+    if keyboard.just_pressed(KeyCode::Space) {
+        bot_active.0 = !bot_active.0;
+    }
+}
+
 fn bot_update(
     players: Query<(Entity, &Transform), With<StateMachine>>,
+    bot_active: Res<BotActive>,
+    mut keys: ResMut<ButtonInput<KeyCode>>,
 ){
-    
+    if bot_active.1 == false{
+        return;
+    }
+    else{
+        for(entity, transform) in players.iter(){
+            
+        }
+    }
 }
+
 
 pub fn run() {
     let mut app = App::new();

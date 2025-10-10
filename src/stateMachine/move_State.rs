@@ -8,11 +8,12 @@ pub struct Bot {
 
 #[derive(Event)]
 pub struct PlayerEvent{
-    pub enetity: Entity,
+    pub entity: Entity,
     pub left: bool,
     pub right: bool,
     pub jump: bool,
 }
+
 
 impl Bot{
     pub fn new() -> Self {
@@ -20,25 +21,40 @@ impl Bot{
             state_machine: StateMachine::new(BotState::idel),
         }
     }
+// brach this 
+    pub fn playerToEvent(
+        player_events: EventReader<PlayerEvent>,
+        mut state_query: Query<&mut StateMachine>,
+    ){
 
-    pub fn Change(&mut self, /*input: &Input*/) -> BotState{
+    }
+
+    pub fn change(
+        &mut self, /*input: &Input*/
+        mut keys: ResMut<ButtonInput<KeyCode>>,
+    ) -> (BotState, i32){
         //temporary random movement to change state
         let rng = rand::rng();
+        let mut input;
         //remove when done please
         let next = match self.state_machine.current{
             //idel change to 
             BotState::idel =>{
-                let input = rand::rng().random_range(0..3);
+                input = rand::rng().random_range(0..3);
                 if input == 0{
+                    keys.press(KeyCode::ArrowRight);
                     BotState::right
                 }
                 else if input == 1{
+                    keys.press(KeyCode::ArrowLeft);
                     BotState::left
                 }
                 else if input == 2{
+                    keys.press(KeyCode::ArrowUp);
                     BotState::jump
                 }
                 else if input == 3{
+                    keys.press(KeyCode::ArrowDown);
                     BotState::idel
                 }
                 else{
@@ -47,89 +63,115 @@ impl Bot{
             }
 
             BotState::right =>{
-                let input = rand::rng().random_range(0..3);
+                input = rand::rng().random_range(0..3);
                 if input == 0{
+                    keys.press(KeyCode::ArrowRight);
                     BotState::right
                 }
                 else if input == 1{
+                    keys.press(KeyCode::ArrowLeft);
                     BotState::left
                 }
                 else if input == 2{
+                     keys.press(KeyCode::ArrowUp);
+                     keys.press(KeyCode::ArrowRight);
                     BotState::jump_r
                 }
                 else if input == 3{
+                    keys.press(KeyCode::ArrowDown);
                     BotState::idel
                 }
                 else{
+                    keys.press(KeyCode::ArrowDown);
                     BotState::idel
                 }
             }
 
              BotState::left =>{
-                let input = rand::rng().random_range(0..3);
+                input = rand::rng().random_range(0..3);
                 if input == 0{
+                    keys.press(KeyCode::ArrowRight);
                     BotState::right
                 }
                 else if input == 1{
+                    keys.press(KeyCode::ArrowLeft);
                     BotState::left
                 }
                 else if input == 2{
+                    keys.press(KeyCode::ArrowUp);
+                    keys.press(KeyCode::ArrowLeft);
                     BotState::jump_l
                 }
                 else if input == 3{
+                    keys.press(KeyCode::ArrowDown);
                     BotState::idel
                 }
                 else{
+                    keys.press(KeyCode::ArrowDown);
                     BotState::idel
                 }
             }
              BotState::jump =>{
-                let input = rand::rng().random_range(0..2);
+                input = rand::rng().random_range(0..2);
                 if input == 0{
+                    keys.press(KeyCode::ArrowUp);
+                    keys.press(KeyCode::ArrowRight);
                     BotState::jump_r
                 }
                 else if input == 1{
+                    keys.press(KeyCode::ArrowUp);
+                    keys.press(KeyCode::ArrowLeft);
                     BotState::jump_l
                 }
                 else if input == 2{
+                    keys.press(KeyCode::ArrowDown);
                     BotState::idel
                 }
                 else{
+                    keys.press(KeyCode::ArrowDown);
                     BotState::idel
                 }
             }
             BotState::jump_r =>{
-                let input = rand::rng().random_range(0..2);
+                input = rand::rng().random_range(0..2);
                 if input == 0{
+                    keys.press(KeyCode::ArrowRight);
                     BotState::right
                 }
                 else if input == 1{
+                    keys.press(KeyCode::ArrowLeft);
                     BotState::left
                 }
                 else if input == 2{
+                    keys.press(KeyCode::ArrowDown);
                     BotState::idel
                 }
                 else{
+                    keys.press(KeyCode::ArrowDown);
                     BotState::idel
                 }
             }
             BotState::jump_l =>{
-                let input = rand::rng().random_range(0..2);
+                input = rand::rng().random_range(0..2);
                 if input == 0{
+                    keys.press(KeyCode::ArrowRight);
                     BotState::right
                 }
                 else if input == 1{
+                    keys.press(KeyCode::ArrowLeft);
                     BotState::left
                 }
                 else if input == 2{
+                    keys.press(KeyCode::ArrowDown);
                     BotState::idel
                 }
                 else{
+                    keys.press(KeyCode::ArrowDown);
                     BotState::idel
                 }
             }
             };
-            return next;
+            return (next,input);
             
         }
     }

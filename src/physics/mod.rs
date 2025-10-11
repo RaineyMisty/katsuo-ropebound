@@ -5,18 +5,16 @@
 use bevy::prelude::*;
 
 pub mod integrate;
-pub mod control;
 pub mod gravity;
 pub mod rope_force;
 pub mod collision;
+
 
 use self::integrate::clean_force_system;
 use self::integrate::integrate_force_system;
 use self::integrate::integrate_momentum_system;
 use self::integrate::integrate_velocity_system;
-use self::integrate::update_position;
 use self::integrate::boundary;
-use self::control::player_movement_input_system;
 use self::gravity::gravity_system;
 use self::rope_force::clean_rope_force_system;
 use self::rope_force::rope_tension_system;
@@ -38,7 +36,6 @@ impl Plugin for PhysicsPlugin {
                 (
                     clean_force_system,
                     gravity_system,
-                    player_movement_input_system,
                     clean_rope_force_system,
                     rope_tension_system,
                     rope_force_to_system,
@@ -51,7 +48,6 @@ impl Plugin for PhysicsPlugin {
                     on_collision,
                     boundary,
                 ).chain()
-            )
-            .add_systems(Update, update_position);
+            );
     }
 }

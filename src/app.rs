@@ -91,20 +91,28 @@ fn bot_update_toggle(
 }
 
 fn bot_update(
-    players: Query<(Entity, &Transform), With<StateMachine>>,
-    bot_active: Res<BotActive>,
+    mut players: Query<(Entity, &Transform,&mut Bot), With<Bot>>,
+    botActive: Res<BotActive>,
     mut keys: ResMut<ButtonInput<KeyCode>>,
 ){
-    if bot_active.1 == false{
+    if botActive.0 == false{
         return;
     }
     else{
-        for(entity, transform) in players.iter(){
-            
+        for (entity, transform, mut Bot) in players.iter_mut(){
+            let (newState, _) = Bot.change(&mut keys);
         }
+        
     }
 }
-
+fn trigger_bot_input(
+    mut toggle_events: EventWriter<ToggleBotEvent>,
+    keyboard: Res<ButtonInput<KeyCode>>,
+) {
+    if keyboard.just_pressed(KeyCode::KeyB) {
+        toggle_events.write(ToggleBotEvent);
+    }
+}
 
 pub fn run() {
     let mut app = App::new();
@@ -115,7 +123,7 @@ pub fn run() {
         .insert_resource(Time::<Fixed>::from_hz(60.0))
         .insert_resource(PlayerSpawnPoint { position: PLAYER_INITIAL_POSITION })
         .insert_resource(PlayerSpawnVelocity { velocity: PLAYER_INITIAL_VELOCITY })
-
+        .insert_resource(BotActive(false))
         .add_systems(Startup, init_player_camera)
 
         .add_plugins(MapPlugin)
@@ -125,6 +133,9 @@ pub fn run() {
         .add_plugins(UIPlugin)
 
         .add_systems(Update, update_camera)
+        .add_systems(Update, (bot_update,bot_update_toggle,trigger_bot_input,
+        ))
+        .add_event::<ToggleBotEvent>()
         .run();
 }
 

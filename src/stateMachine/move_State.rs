@@ -2,8 +2,9 @@ use bevy::prelude::*;
 use rand::prelude::*;
 use super::state::*;
 
+#[derive(Component)]
 pub struct Bot {
-    state_machine: StateMachine,
+    pub state_machine: StateMachine,
 }
 
 #[derive(Event)]
@@ -31,7 +32,7 @@ impl Bot{
 
     pub fn change(
         &mut self, /*input: &Input*/
-        mut keys: ResMut<ButtonInput<KeyCode>>,
+        mut keys: &mut ButtonInput<KeyCode>,
     ) -> (BotState, i32){
         //temporary random movement to change state
         let rng = rand::rng();

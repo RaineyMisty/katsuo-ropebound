@@ -26,3 +26,30 @@ impl Default for PhysicsBundle {
         }
     }
 }
+
+impl PhysicsBundle {
+    pub fn new(mass: f32, gravity: bool) -> Self {
+        PhysicsBundle {
+            velocity: Velocity::default(),
+            net_force: NetForce::default(),
+            gravity: Gravity(gravity),
+            mass: Mass(mass),
+            momentum: Momentum::default(),
+        }
+    }
+    pub fn get_mass(&self) -> f32 {
+        self.mass.0
+    }
+    pub fn get_gravity(&self) -> bool {
+        self.gravity.0
+    }
+    pub fn get_velocity(&self) -> Vec2 {
+        self.velocity.0
+    }
+    pub fn get_net_force(&self) -> Vec2 {
+        self.net_force.0
+    }
+    pub fn get_momentum(&self) -> Vec2 {
+        self.momentum.0
+    }
+}

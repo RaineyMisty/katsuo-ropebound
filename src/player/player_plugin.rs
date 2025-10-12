@@ -6,12 +6,12 @@
 use bevy::prelude::*;
 
 use crate::player::bundle::{PlayerBundle, PlayerControls};
-use crate::config::player::PlayerSpawnPoint;
-use crate::config::player::PlayerSpawnVelocity;
-use crate::config::player::PLAYER_SPAWN_MASS;
+use crate::player::config::PlayerSpawnPoint;
+use crate::player::config::PlayerSpawnVelocity;
+use crate::player::config::PLAYER_SPAWN_MASS;
 
-use crate::components::motion::{Velocity, Mass};
-use crate::components::rope::{Rope, RopeConstraint};
+use crate::physics::component::{Velocity, Mass};
+// use crate::rope::component::{Rope};
 
 pub struct PlayerPlugin;
 
@@ -47,9 +47,9 @@ fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>, spawn_po
     let p2 = commands.spawn(PlayerBundle::new(controls, texture, transform, velocity, mass)).id();
 
     // Add p1 and p2 a rope component
-    commands.spawn(Rope {
-        constraint: RopeConstraint::default(),
-        attached_entity_head: p1,
-        attached_entity_tail: p2,
-    });
+    // commands.spawn(Rope {
+    //     constraint: RopeConstraint::default(),
+    //     attached_entity_head: p1,
+    //     attached_entity_tail: p2,
+    // });
 }

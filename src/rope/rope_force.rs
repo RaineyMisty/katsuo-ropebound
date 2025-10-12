@@ -3,7 +3,7 @@
 // Author: Tingxu Chen <tic128@pitt.edu>
 // Description: <Rope force system>
 use bevy::prelude::*;
-use super::components::{Rope};
+use super::component::{Rope};
 use crate::event::{ForceEvent, ForceKind};
 
 pub(super) fn rope_tension_system(

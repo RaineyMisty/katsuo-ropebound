@@ -3,8 +3,8 @@
 // Author: Tingxu Chen <tic128@pitt.edu>
 // Description: <Gravity system>
 use bevy::prelude::*;
-use self::config::GRAVITY;
-use self::components::{NetForce, Gravity, Mass};
+use super::config::GRAVITY;
+use super::component::{NetForce, Gravity, Mass};
 
 pub(super) fn gravity_system(
     mut query: Query<(&mut NetForce, &Gravity, &Mass)>,

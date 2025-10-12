@@ -1,6 +1,6 @@
 use bevy::prelude::*;
-use crate::config::player::*;
-use crate::components::motion::{Velocity, NetForce, ControlForce, Gravity, RopeForce, Mass, Momentum};
+use crate::player::config::*;
+use crate::physics::component::{Velocity, NetForce, Gravity, Mass, Momentum};
 
 #[derive(Component, Clone)]
 pub struct Player {
@@ -23,7 +23,6 @@ pub struct PlayerBundle {
     pub player: Player,
     pub gravity: Gravity,
     pub control_force: ControlForce,
-    pub rope_force: RopeForce,
     pub net_force: NetForce,
     pub mass: Mass,
     pub momentum: Momentum,
@@ -42,7 +41,6 @@ impl PlayerBundle {
             player: Player { controls },
             gravity: Gravity(true),
             control_force: ControlForce(Vec2::ZERO),
-            rope_force: RopeForce(Vec2::ZERO),
             net_force: NetForce(Vec2::ZERO),
             mass,
             momentum: Momentum(Vec2::ZERO),

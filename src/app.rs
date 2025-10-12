@@ -7,7 +7,7 @@ use bevy::prelude::*;
 use bevy::time::Fixed;
 use crate::player::PlayerPlugin;
 use crate::physics::PhysicsPlugin;
-use crate::config::player::{PLAYER_INITIAL_POSITION, PLAYER_INITIAL_VELOCITY, PlayerSpawnPoint, PlayerSpawnVelocity};
+use crate::player::config::{PLAYER_INITIAL_POSITION, PLAYER_INITIAL_VELOCITY, PlayerSpawnPoint, PlayerSpawnVelocity};
 
 pub fn run() {
     App::new()

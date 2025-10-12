@@ -3,7 +3,7 @@
 // Author: Tingxu Chen <tic128@pitt.edu>
 // Description: <Rope component>
 use bevy::prelude::*;
-use super::{ROPE_REST_LENGTH, ROPE_MAX_EXTENSION, SPRING_CONSTANT};
+use super::config::{ROPE_REST_LENGTH, ROPE_MAX_EXTENSION, SPRING_CONSTANT};
 
 #[derive(Clone, Copy, Debug)]
 struct RopeConstraint {

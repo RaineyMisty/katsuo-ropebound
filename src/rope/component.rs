@@ -36,9 +36,3 @@ pub(super) struct EndPoints {
     pub(super) head: EndPoint,
     pub(super) tail: EndPoint,
 }
-
-//  {
-//     pub(super) constraint: RopeConstraint,
-//     pub(super) attached_entity_head: Entity,
-//     pub(super) attached_entity_tail: Entity,
-// }

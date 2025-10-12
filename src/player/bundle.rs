@@ -1,21 +1,5 @@
 use bevy::prelude::*;
 use crate::player::config::*;
-use crate::physics::component::{Velocity, NetForce, Gravity, Mass, Momentum};
-
-#[derive(Component, Clone)]
-pub struct Player {
-    pub controls: PlayerControls,
-}
-
-#[derive(Clone)]
-pub struct PlayerControls {
-    pub up: KeyCode,
-    pub left: KeyCode,
-    pub right: KeyCode,
-}
-
-#[derive(Component, Default, Clone, Copy, Debug)]
-pub struct ControlForce (pub Vec2);
 
 #[derive(Bundle)]
 pub struct PlayerBundle {

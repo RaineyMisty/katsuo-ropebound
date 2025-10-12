@@ -11,9 +11,6 @@ mod net_force;
 mod config;
 mod components;
 
-pub(in crate::physics) use self::components::*;
-pub(in crate::physics) use self::config::*;
-
 use self::gravity::gravity_system;
 use self::integrate::integrate_momentum_system;
 use self::integrate::integrate_velocity_system;

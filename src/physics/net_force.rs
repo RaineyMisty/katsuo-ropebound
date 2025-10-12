@@ -8,7 +8,7 @@ use self::components::NetForce;
 use crate::event::{ForceEvent, ForceKind};
 
 
-pub fn clean_force_system(
+pub(super) fn clean_force_system(
     mut query: Query<&mut NetForce>,
 ) {
     for mut net_force in query.iter_mut() {
@@ -16,7 +16,7 @@ pub fn clean_force_system(
     }
 }
 
-pub fn collect_force_events_system(
+pub(super) fn collect_force_events_system(
     mut events: EventReader<ForceEvent>,
     mut query: Query<&mut NetForce>,
 ) {
@@ -27,7 +27,7 @@ pub fn collect_force_events_system(
     }
 }
 
-pub fn integrate_force_system(
+pub(super) fn integrate_force_system(
     time: Res<Time>,
     mut query: Query<(&mut Momentum, &NetForce)>,
 ) {

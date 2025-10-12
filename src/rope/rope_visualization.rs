@@ -7,7 +7,7 @@ use crate::app::FollowedPlayer;          // 用于 query 玩家实体
 
 // ==================== 绳子可视化部分 ====================
 
-pub fn spawn_rope_sprite(
+pub(super) fn spawn_rope_sprite(
     mut commands: Commands,
     rope_entity: Entity,
     initial_length: f32,
@@ -32,7 +32,7 @@ pub fn spawn_rope_sprite(
     sprite_entity
 }
 
-pub fn init_ropes(
+pub(super) fn init_ropes(
     mut commands: Commands,
     q_players: Query<Entity, With<FollowedPlayer>>, // 或者用你标记主玩家的组件
 ) {
@@ -67,7 +67,7 @@ let p2 = player_entities[1];
 }
 
 /// 系统 2：应用几何信息（只写 rope sprite 的 transform + sprite）
-pub fn apply_rope_geometry(
+pub(super) fn apply_rope_geometry(
     rope_geometry: Res<RopeGeometry>,
     mut q_rope_sprites: Query<(&mut Transform, &mut Sprite, &RopeSprite)>,
 ) {
@@ -84,7 +84,7 @@ pub fn apply_rope_geometry(
 }
 
 /// 每帧计算 rope sprite 所需的 transform
-pub fn compute_rope_geometry(
+pub(super) fn compute_rope_geometry(
     q_ropes: Query<(Entity, &Rope)>,
     q_transforms: Query<&Transform>,
     mut rope_geometry: ResMut<RopeGeometry>,

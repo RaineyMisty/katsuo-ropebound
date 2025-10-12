@@ -5,7 +5,7 @@
 use bevy::prelude::*;
 use self::components::{Velocity, NetForce, Momentum, Mass};
 
-pub fn integrate_momentum_system(
+pub(super) fn integrate_momentum_system(
     mut query: Query<(&mut Velocity, &Momentum, &Mass)>,
 ) {
     for (mut velocity, momentum, mass) in query.iter_mut() {
@@ -13,7 +13,7 @@ pub fn integrate_momentum_system(
     }
 }
 
-pub fn integrate_velocity_system(
+pub(super) fn integrate_velocity_system(
     time: Res<Time<Fixed>>,
     mut query: Query<(&mut Transform, &Velocity)>,
 ) {
@@ -25,7 +25,7 @@ pub fn integrate_velocity_system(
 }
 
 // Force to give a windows boundary
-pub fn boundary(
+pub(super) fn boundary(
     mut query: Query<(&mut Transform, &mut Velocity, &mut Momentum)>,
 ) {
     let width = 1280.0 - 64.0; // minus player width

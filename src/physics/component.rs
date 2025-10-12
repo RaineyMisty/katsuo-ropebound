@@ -32,5 +32,3 @@ impl Default for Gravity {
     }
 }
 
-#[derive(Component, Default, Clone, Copy, Debug)]
-pub struct ControlForce (pub Vec2);

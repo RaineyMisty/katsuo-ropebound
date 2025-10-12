@@ -3,20 +3,20 @@
 // Author: Tingxu Chen <tic128@pitt.edu>
 // Description: <Rope force system>
 use bevy::prelude::*;
-use super::{Rope};
+use super::components::{Rope};
 use crate::event::{ForceEvent, ForceKind};
 
-pub fn rope_tension_system(
-    events: &mut EventWriter<ForceEvent>,
+pub(super) fn rope_tension_system(
+    mut events: EventWriter<ForceEvent>,
     q_transforms: Query<&GlobalTransform>,
-    q_rope: Query<Entity, &Rope>,
+    q_rope: Query<(Entity, &Rope)>,
 ) {
     for (entity, rope) in &q_rope {
         let Ok([head_transform, tail_transform]) =
             q_transforms.get_many([rope.attached_entity_head, rope.attached_entity_tail])
         else { continue; };
 
-        let direction = (tail_transform.translation - head_transform.translation).truncate(); // to Vec2
+        let direction = (tail_transform.translation() - head_transform.translation()).truncate(); // to Vec2
         let current_length = direction.length();
 
         let force = if current_length > rope.constraint.rest_length {

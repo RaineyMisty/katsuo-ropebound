@@ -6,7 +6,7 @@ use bevy::prelude::*;
 use self::config::GRAVITY;
 use self::components::{NetForce, Gravity, Mass};
 
-pub fn gravity_system(
+pub(super) fn gravity_system(
     mut query: Query<(&mut NetForce, &Gravity, &Mass)>,
 ) {
     for (mut net_force, gravity, mass) in &mut query {

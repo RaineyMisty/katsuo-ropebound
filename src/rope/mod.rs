@@ -6,9 +6,6 @@ mod rope_visualization;
 mod component;
 mod config;
 
-pub(in crate::rope) use self::component::*;
-pub(in crate::rope) use self::config::*;
-
 use self::rope_force::rope_tension_system;
 use self::rope_visualization::apply_rope_geometry;
 use self::rope_visualization::init_ropes, compute_rope_geometry;

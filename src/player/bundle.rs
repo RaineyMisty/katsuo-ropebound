@@ -14,6 +14,9 @@ pub struct PlayerControls {
     pub right: KeyCode,
 }
 
+#[derive(Component, Default, Clone, Copy, Debug)]
+pub struct ControlForce (pub Vec2);
+
 #[derive(Bundle)]
 pub struct PlayerBundle {
     pub sprite: Sprite,

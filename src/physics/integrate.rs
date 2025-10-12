@@ -5,24 +5,6 @@
 use bevy::prelude::*;
 use self::components::{Velocity, NetForce, Momentum, Mass};
 
-pub fn clean_force_system(
-    mut query: Query<&mut NetForce>,
-) {
-    for mut net_force in query.iter_mut() {
-        net_force.0 = Vec2::ZERO;
-    }
-}
-
-pub fn integrate_force_system(
-    time: Res<Time>,
-    mut query: Query<(&mut Momentum, &NetForce)>,
-) {
-    let delta_seconds = time.delta_secs();
-    for (mut momentum, net_force) in query.iter_mut() {
-        momentum.0 += net_force.0 * delta_seconds;
-    }
-}
-
 pub fn integrate_momentum_system(
     mut query: Query<(&mut Velocity, &Momentum, &Mass)>,
 ) {

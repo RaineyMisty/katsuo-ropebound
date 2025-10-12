@@ -3,21 +3,15 @@
 // Author: Tingxu Chen <tic128@pitt.edu>
 // Description: <Rope force system>
 use bevy::prelude::*;
-use crate::components::rope::Rope;
-use crate::physics::components::{RopeForce, NetForce};
-
-pub fn clean_rope_force_system(mut q_rope_force: Query<&mut RopeForce>) {
-    for mut rope_force in &mut q_rope_force {
-        rope_force.0 = Vec2::ZERO;
-    }
-}
+use super::{Rope};
+use crate::event::{ForceEvent, ForceKind};
 
 pub fn rope_tension_system(
-    q_transforms: Query<&Transform>,
-    mut q_rope_force: Query<&mut RopeForce>,
-    q_rope: Query<&Rope>,
+    events: &mut EventWriter<ForceEvent>,
+    q_transforms: Query<&GlobalTransform>,
+    q_rope: Query<Entity, &Rope>,
 ) {
-    for rope in &q_rope {
+    for (entity, rope) in &q_rope {
         let Ok([head_transform, tail_transform]) =
             q_transforms.get_many([rope.attached_entity_head, rope.attached_entity_tail])
         else { continue; };
@@ -36,20 +30,16 @@ pub fn rope_tension_system(
             Vec2::ZERO
         };
 
-        // Apply the force directly to the RopeForce components of both player entities
-        if let Ok([mut head_rope_force, mut tail_rope_force]) = 
-            q_rope_force.get_many_mut([rope.attached_entity_head, rope.attached_entity_tail])
-        {
-            head_rope_force.0 += force;
-            tail_rope_force.0 -= force;
-        }
-    }
-}
-
-pub fn rope_force_to_system(
-    mut query: Query<(&RopeForce, &mut NetForce)>,
-) {
-    for (rope_force, mut net_force) in &mut query {
-        net_force.0 += rope_force.0;
+        // Write events to apply Rope Force
+        events.send(ForceEvent {
+            target: rope.attached_entity_head,
+            force,
+            kind: ForceKind::RopeTension { rope: entity },
+        });
+        events.send(ForceEvent {
+            target: rope.attached_entity_tail,
+            force: -force,
+            kind: ForceKind::RopeTension { rope: entity },
+        });
     }
 }

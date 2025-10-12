@@ -1,9 +1,11 @@
 use bevy::prelude::*;
-use crate::components::rope::{RopeGeometry};
 
-pub mod rope_visualization;
-pub mod component;
-pub mod config;
+mod component;
+mod config;
+mod rope_force;
+mod rope_visualization;
+
+pub(in crate::rope) use self::component::{Rope};
 
 use self::rope_visualization::{apply_rope_geometry, init_ropes, compute_rope_geometry};
 use crate::physics::rope_force::{rope_tension_system, rope_force_to_system};

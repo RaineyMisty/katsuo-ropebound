@@ -7,9 +7,9 @@ use bevy::prelude::*;
 use self::config::{PLAYER_MOVE_FORCE, PLAYER_JUMP_FORCE, PLAYER_CONTROL_SPEED_LIMIT};
 use self::component::{Player, ControlScheme, PlayerIntent};
 
-use crate::event::ForceEvent;
+use crate::event::{ForceEvent, ForceKind};
 
-pub fn player_input_system(
+pub(super) fn player_input_system(
     keyboard_input: Res<ButtonInput<KeyCode>>,
     mut query: Query<(&ControlScheme, &mut PlayerIntent), With<Player>>,
 ) {
@@ -20,10 +20,29 @@ pub fn player_input_system(
     }
 }
 
-pub fn player_control_system(
+pub(super) fn player_control_system(
     mut event: EventWriter<ForceEvent>,
-    mut query: Query<&PlayerIntent, With<Player>>,
+    mut query: Query<(Entity, &PlayerIntent), With<Player>>,
 ){
+    for (entity, intent) in query.iter_mut() {
+        let mut force = Vec2::ZERO;
+        if intent.move_left {
+            force.x -= PLAYER_MOVE_FORCE;
+        }
+        if intent.move_right {
+            force.x += PLAYER_MOVE_FORCE;
+        }
+        if intent.jump {
+            force.y += PLAYER_JUMP_FORCE;
+        }
+        if force != Vec2::ZERO {
+            event.write(ForceEvent {
+                target: entity,
+                force,
+                kind: ForceKind::PlayerPush { player: entity },
+            });
+        }
+    }
 }
 
 

@@ -10,4 +10,5 @@ pub struct PlayerSpawnEvent {
     pub texture: Handle<Image>,
     pub position: Vec2,
     pub controls: ControlScheme,
+    pub mass: Option<f32>,
 }

@@ -1,7 +1,6 @@
 use bevy::prelude::*;
 use crate::player::config::*;
 use crate::physics::bundle::PhysicsBundle;
-use this
 
 #[derive(Bundle)]
 pub struct PlayerBundle {

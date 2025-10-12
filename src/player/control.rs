@@ -4,7 +4,7 @@
 // Description: <Systems for player control>
 use bevy::prelude::*;
 
-use self::config::{PLAYER_MOVE_FORCE, PLAYER_JUMP_FORCE, PLAYER_CONTROL_SPEED_LIMIT};
+use self::config::{PLAYER_MOVE_FORCE, PLAYER_JUMP_FORCE};
 use self::component::{Player, ControlScheme, PlayerIntent};
 
 use crate::event::{ForceEvent, ForceKind};

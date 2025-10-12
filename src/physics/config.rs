@@ -10,3 +10,6 @@ pub(super) const SCALE: f32 = 64.0; // 64 pixels = 1 meter
 
 // Gravity constant
 pub(super) const GRAVITY: Vec2 = Vec2::new(0.0, -9.81 * SCALE); // in pixel/s^2
+
+// Player control speed limit
+pub(super) const PLAYER_CONTROL_SPEED_LIMIT: f32 = 10.0 * SCALE; // in pixel/s

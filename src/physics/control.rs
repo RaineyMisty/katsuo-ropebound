@@ -40,13 +40,27 @@ pub fn player_movement_input_system(
                 }
             }
         }
-        let can_jump = ground_state.is_grounded || !ground_state.coyote_timer.finished();
+        let can_ground_jump = ground_state.is_grounded || !ground_state.coyote_timer.finished();
+        let can_wall_jump = !ground_state.is_grounded && jump_controller.can_wall_jump && !jump_controller.wall_jump_timer.finished();
 
         // Vertical force
-        if keyboard_input.pressed(player.controls.up) && !jump_controller.is_jumping && can_jump {
-            control_force.0.y = PLAYER_JUMP_FORCE;
-            jump_controller.is_jumping = true;
-            jump_controller.jump_time_elapsed = 0.0;
+        if keyboard_input.pressed(player.controls.up) && !jump_controller.is_jumping {
+            // Check grounded jump first
+            if can_ground_jump {
+                control_force.0.y = PLAYER_JUMP_FORCE;
+                jump_controller.is_jumping = true;
+                jump_controller.jump_time_elapsed = 0.0;
+            }
+            else if can_wall_jump {
+                control_force.0.y = PLAYER_JUMP_FORCE;
+
+                // Consume wall jump 
+                jump_controller.can_wall_jump = false;
+
+                // Start variable jump height tracking
+                jump_controller.is_jumping = true;
+                jump_controller.jump_time_elapsed = 0.0;
+            }
         }
         // Check if player is holding the jump key
         if jump_controller.is_jumping && keyboard_input.pressed(player.controls.up) && jump_controller.jump_time_elapsed < jump_controller.max_jump_duration {

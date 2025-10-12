@@ -14,5 +14,6 @@ pub struct ForceEvent {
 #[derive(Debug, Clone)]
 pub enum ForceKind {
     RopeTension { rope: Entity },
-    PlayerPush { player: Entity },
+    PlayerMove { player: Entity },
+    PlayerJump { player: Entity },
 }

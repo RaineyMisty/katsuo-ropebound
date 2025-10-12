@@ -32,14 +32,18 @@ pub(super) fn player_control_system(
         if intent.move_right {
             force.x += PLAYER_MOVE_FORCE;
         }
-        if intent.jump {
-            force.y += PLAYER_JUMP_FORCE;
-        }
         if force != Vec2::ZERO {
             event.write(ForceEvent {
                 target: entity,
                 force,
-                kind: ForceKind::PlayerPush { player: entity },
+                kind: ForceKind::PlayerMove { player: entity },
+            });
+        }
+        if intent.jump {
+            event.write(ForceEvent {
+                target: entity,
+                force: Vec2::Y * PLAYER_JUMP_FORCE,
+                kind: ForceKind::PlayerJump { player: entity },
             });
         }
     }

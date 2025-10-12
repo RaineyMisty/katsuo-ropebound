@@ -1,14 +1,17 @@
 use bevy::prelude::*;
 
-mod component;
-mod config;
 mod rope_force;
 mod rope_visualization;
 
-pub(in crate::rope) use self::component::{Rope};
+mod component;
+mod config;
 
-use self::rope_visualization::{apply_rope_geometry, init_ropes, compute_rope_geometry};
-use crate::physics::rope_force::{rope_tension_system, rope_force_to_system};
+pub(in crate::rope) use self::component::*;
+pub(in crate::rope) use self::config::*;
+
+use self::rope_force::rope_tension_system;
+use self::rope_visualization::apply_rope_geometry;
+use self::rope_visualization::init_ropes, compute_rope_geometry;
 use crate::player::player_plugin::spawn_player;
 
 pub struct RopePlugin;
@@ -19,7 +22,6 @@ impl Plugin for RopePlugin {
         .add_systems(Startup, init_ropes.after(spawn_player))
         // .add_systems(Startup, init_ropes)
         .add_systems(Update, rope_tension_system)
-        .add_systems(Update, rope_force_to_system)
         .add_systems(Update, compute_rope_geometry)
         .add_systems(Update, apply_rope_geometry);
     }

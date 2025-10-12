@@ -3,7 +3,7 @@
 // Author: Tingxu Chen <tic128@pitt.edu>
 // Description: <Systems for physics integration>
 use bevy::prelude::*;
-use crate::components::motion::{Velocity, NetForce, Momentum, Mass};
+use self::components::{Velocity, NetForce, Momentum, Mass};
 
 pub fn clean_force_system(
     mut query: Query<&mut NetForce>,

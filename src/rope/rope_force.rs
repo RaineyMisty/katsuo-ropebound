@@ -4,7 +4,7 @@
 // Description: <Rope force system>
 use bevy::prelude::*;
 use crate::components::rope::Rope;
-use crate::components::motion::{RopeForce, NetForce};
+use crate::physics::components::{RopeForce, NetForce};
 
 pub fn clean_rope_force_system(mut q_rope_force: Query<&mut RopeForce>) {
     for mut rope_force in &mut q_rope_force {

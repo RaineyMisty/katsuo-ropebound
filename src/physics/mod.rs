@@ -8,6 +8,8 @@ pub mod integrate;
 pub mod control;
 pub mod gravity;
 pub mod rope_force;
+pub mod config;
+pub mod components;
 
 use self::integrate::clean_force_system;
 use self::integrate::integrate_force_system;

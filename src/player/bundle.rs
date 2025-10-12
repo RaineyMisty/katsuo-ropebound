@@ -10,7 +10,6 @@ pub struct Player {
 #[derive(Clone)]
 pub struct PlayerControls {
     pub up: KeyCode,
-    pub down: KeyCode,
     pub left: KeyCode,
     pub right: KeyCode,
 }

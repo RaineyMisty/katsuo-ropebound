@@ -8,7 +8,7 @@ use crate::config::physics::{ROPE_REST_LENGTH, ROPE_MAX_EXTENSION, SPRING_CONSTA
 #[derive(Clone, Copy, Debug)]
 pub struct RopeConstraint {
     pub rest_length: f32,
-    pub max_extension: f32,
+    pub _max_extension: f32,
     pub spring_constant: f32,
 }
 
@@ -16,7 +16,7 @@ impl Default for RopeConstraint {
     fn default() -> Self {
         RopeConstraint {
             rest_length: ROPE_REST_LENGTH,
-            max_extension: ROPE_MAX_EXTENSION,
+            _max_extension: ROPE_MAX_EXTENSION,
             spring_constant: SPRING_CONSTANT,
         }
     }

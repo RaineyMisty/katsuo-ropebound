@@ -3,7 +3,7 @@
 // Author: Tingxu Chen <tic128@pitt.edu>
 // Description: <Rope force system>
 use bevy::prelude::*;
-use crate::components::rope::{Rope, RopeConstraint};
+use crate::components::rope::Rope;
 use crate::components::motion::{RopeForce, NetForce};
 
 pub fn clean_rope_force_system(mut q_rope_force: Query<&mut RopeForce>) {

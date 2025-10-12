@@ -9,9 +9,9 @@ use crate::components::motion::{Velocity, ControlForce, NetForce};
 
 pub fn player_movement_input_system(
     keyboard_input: Res<ButtonInput<KeyCode>>,
-    mut query: Query<(&mut Velocity, &mut ControlForce, &mut NetForce, &Player), With<Player>>,
+    mut query: Query<(&Velocity, &mut ControlForce, &mut NetForce, &Player), With<Player>>,
 ) {
-    for (mut velocity, mut control_force, mut net_force, player) in &mut query {
+    for (velocity, mut control_force, mut net_force, player) in &mut query {
         // Calculate the resistance parameter
         // f = c*v => c = f/v
         let resistance = PLAYER_MOVE_FORCE / PLAYER_CONTROL_SPEED_LIMIT; 

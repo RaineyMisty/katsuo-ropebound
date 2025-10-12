@@ -6,9 +6,9 @@
 use bevy::prelude::*;
 
 use crate::player::bundle::{PlayerBundle, PlayerControls};
-use crate::config::PlayerSpawnPoint;
-use crate::config::PlayerSpawnVelocity;
-use crate::config::PLAYER_SPAWN_MASS;
+use crate::config::player::PlayerSpawnPoint;
+use crate::config::player::PlayerSpawnVelocity;
+use crate::config::player::PLAYER_SPAWN_MASS;
 
 use crate::components::motion::{Velocity, Mass};
 use crate::components::rope::{Rope, RopeConstraint};
@@ -26,7 +26,6 @@ fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>, spawn_po
     let texture = asset_server.load("spriteguy.png");
     let controls = PlayerControls {
         up: KeyCode::KeyW,
-        down: KeyCode::KeyS,
         left: KeyCode::KeyA,
         right: KeyCode::KeyD,
     };
@@ -41,7 +40,6 @@ fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>, spawn_po
     let texture = asset_server.load("portrait_rainey.png");
     let controls = PlayerControls {
         up: KeyCode::ArrowUp,
-        down: KeyCode::ArrowDown,
         left: KeyCode::ArrowLeft,
         right: KeyCode::ArrowRight,
     };

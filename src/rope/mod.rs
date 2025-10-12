@@ -3,6 +3,7 @@ use bevy::prelude::*;
 mod rope_force;
 // mod rope_visualization;
 
+mod bundle;
 mod component;
 mod config;
 

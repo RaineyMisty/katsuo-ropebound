@@ -5,16 +5,19 @@
 use bevy::prelude::*;
 use super::config::{ROPE_REST_LENGTH, ROPE_MAX_EXTENSION, SPRING_CONSTANT};
 
+#[derive(Component, Debug)]
+pub(super) struct Rope;
+
 #[derive(Clone, Copy, Debug)]
-pub(super) struct RopeConstraint {
+pub(super) struct SpringJoint {
     pub(super) rest_length: f32,
     pub(super) _max_extension: f32,
     pub(super) spring_constant: f32,
 }
 
-impl Default for RopeConstraint {
+impl Default for SpringJoint {
     fn default() -> Self {
-        RopeConstraint {
+        SpringJoint {
             rest_length: ROPE_REST_LENGTH,
             _max_extension: ROPE_MAX_EXTENSION,
             spring_constant: SPRING_CONSTANT,
@@ -22,9 +25,20 @@ impl Default for RopeConstraint {
     }
 }
 
-#[derive(Component, Debug)]
-pub(super) struct Rope {
-    pub(super) constraint: RopeConstraint,
-    pub(super) attached_entity_head: Entity,
-    pub(super) attached_entity_tail: Entity,
+#[derive(Clone, Copy, Debug)]
+pub(super) enum EndPoint {
+    Body(Entity),
+    Fixed(Vec2),
 }
+
+#[derive(Component, Debug)]
+pub(super) struct EndPoints {
+    pub(super) head: EndPoint,
+    pub(super) tail: EndPoint,
+}
+
+//  {
+//     pub(super) constraint: RopeConstraint,
+//     pub(super) attached_entity_head: Entity,
+//     pub(super) attached_entity_tail: Entity,
+// }

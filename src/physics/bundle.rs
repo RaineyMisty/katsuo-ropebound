@@ -14,3 +14,15 @@ pub struct PhysicsBundle {
     pub mass: Mass,
     pub momentum: Momentum,
 }
+
+impl Default for PhysicsBundle {
+    fn default() -> Self {
+        PhysicsBundle {
+            velocity: Velocity::default(),
+            net_force: NetForce::default(),
+            gravity: Gravity::default(),
+            mass: Mass::default(),
+            momentum: Momentum::default(),
+        }
+    }
+}

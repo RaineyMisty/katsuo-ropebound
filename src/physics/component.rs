@@ -6,16 +6,16 @@
 use bevy::prelude::*;
 
 #[derive(Component, Default, Clone, Copy, Debug)]
-pub struct Velocity (pub Vec2);
+pub(super) struct Velocity (pub Vec2);
 
 #[derive(Component, Default, Clone, Copy, Debug)]
-pub struct NetForce (pub Vec2);
+pub(super) struct NetForce (pub Vec2);
 
 #[derive(Component, Default, Clone, Copy, Debug)]
-pub struct Momentum (pub Vec2);
+pub(super) struct Momentum (pub Vec2);
 
 #[derive(Component, Clone, Copy, Debug)]
-pub struct Mass (pub f32);
+pub(super) struct Mass (pub f32);
 
 impl Default for Mass {
     fn default() -> Self {
@@ -24,7 +24,7 @@ impl Default for Mass {
 }
 
 #[derive(Component, Clone, Copy, Debug)]
-pub struct Gravity (pub bool);
+pub(super) struct Gravity (pub bool);
 
 impl Default for Gravity {
     fn default() -> Self {

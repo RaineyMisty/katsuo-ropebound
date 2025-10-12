@@ -8,8 +8,9 @@ mod gravity;
 mod integrate;
 mod net_force;
 
+pub mod bundle;
 mod config;
-pub mod component;
+mod component;
 
 use self::gravity::gravity_system;
 use self::integrate::integrate_force_system;

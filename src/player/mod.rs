@@ -1,5 +1,13 @@
-pub mod bundle;
-pub mod player_plugin;
-pub mod config;
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2025 Tingxu Chen
+// Author: Tingxu Chen <tic128@pitt.edu>
+// Description: <Player mod>
+use bevy::prelude::*;
 
-pub use player_plugin::PlayerPlugin;
+mod control;
+mod spawn;
+
+mod bundle;
+mod config;
+mod component;
+

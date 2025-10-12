@@ -1,21 +1,19 @@
 use bevy::prelude::*;
 use crate::player::config::*;
+use crate::physics::bundle::PhysicsBundle;
+use this
 
 #[derive(Bundle)]
 pub struct PlayerBundle {
     pub sprite: Sprite,
     pub player: Player,
-    pub gravity: Gravity,
-    pub control_force: ControlForce,
-    pub net_force: NetForce,
-    pub mass: Mass,
-    pub momentum: Momentum,
-    pub velocity: Velocity,
+    pub physics: PhysicsBundle,
     pub transform: Transform,
+    pub control: ControlScheme,
 }
 
 impl PlayerBundle {
-    pub fn new(controls: PlayerControls, texture: Handle<Image>, transform: Transform, velocity: Velocity, mass: Mass) -> Self {
+    pub fn new(controls: ControlScheme, texture: Handle<Image>, transform: Transform) -> Self {
         Self {
             sprite: Sprite {
                 image: texture,
@@ -23,12 +21,7 @@ impl PlayerBundle {
                 ..Default::default()
             },
             player: Player { controls },
-            gravity: Gravity(true),
-            control_force: ControlForce(Vec2::ZERO),
-            net_force: NetForce(Vec2::ZERO),
-            mass,
-            momentum: Momentum(Vec2::ZERO),
-            velocity,
+            physics: PhysicsBundle::default(),
             transform,
         }
     }

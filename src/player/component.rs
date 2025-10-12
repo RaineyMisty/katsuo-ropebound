@@ -7,9 +7,16 @@ use bevy::prelude::*;
 #[derive(Component, Clone)]
 pub(super) struct Player;
 
-#[derive(Clone)]
+#[derive(Component, Clone)]
 pub(super) struct ControlScheme {
     pub up: KeyCode,
     pub left: KeyCode,
     pub right: KeyCode,
+}
+
+#[derive(Component, Clone)]
+pub(super) struct PlayerIntent {
+    pub jump: bool,
+    pub move_left: bool,
+    pub move_right: bool,
 }

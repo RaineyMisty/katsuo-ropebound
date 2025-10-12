@@ -5,7 +5,7 @@
 use bevy::prelude::*;
 use crate::config::physics::{PLAYER_MOVE_FORCE, PLAYER_JUMP_FORCE, PLAYER_CONTROL_SPEED_LIMIT};
 use crate::player::bundle::Player;
-use crate::components::motion::{Velocity, ControlForce, NetForce};
+use crate::self::component::{Velocity, ControlForce, NetForce};
 
 pub fn player_movement_input_system(
     keyboard_input: Res<ButtonInput<KeyCode>>,

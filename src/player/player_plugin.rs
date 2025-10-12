@@ -31,7 +31,7 @@ fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>, spawn_po
     };
     let mass = Mass(PLAYER_SPAWN_MASS * 1.5); // make the first player heavier
     let velocity = Velocity(spawn_velocity.velocity);
-    let p1 = commands.spawn(PlayerBundle::new(controls, texture, transform, velocity, mass)).id();
+    let _p1 = commands.spawn(PlayerBundle::new(controls, texture, transform, velocity, mass)).id();
     // Spawn a second player for testing
     // This is temporary and will be removed later
     // Ideally we would have a better way
@@ -44,7 +44,7 @@ fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>, spawn_po
         right: KeyCode::ArrowRight,
     };
     let mass = Mass(PLAYER_SPAWN_MASS);
-    let p2 = commands.spawn(PlayerBundle::new(controls, texture, transform, velocity, mass)).id();
+    let _p2 = commands.spawn(PlayerBundle::new(controls, texture, transform, velocity, mass)).id();
 
     // Add p1 and p2 a rope component
     // commands.spawn(Rope {

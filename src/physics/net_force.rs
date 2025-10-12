@@ -19,7 +19,7 @@ pub(super) fn collect_force_events_system(
     mut events: EventReader<ForceEvent>,
     mut query: Query<&mut NetForce>,
 ) {
-    for event in events.iter_mut() {
+    for event in events.read() {
         if let Ok(mut net_force) = query.get_mut(event.target) {
             net_force.0 += event.force;
         }

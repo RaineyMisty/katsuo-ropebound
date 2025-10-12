@@ -31,12 +31,12 @@ pub(super) fn rope_tension_system(
         };
 
         // Write events to apply Rope Force
-        events.send(ForceEvent {
+        events.write(ForceEvent {
             target: rope.attached_entity_head,
             force,
             kind: ForceKind::RopeTension { rope: entity },
         });
-        events.send(ForceEvent {
+        events.write(ForceEvent {
             target: rope.attached_entity_tail,
             force: -force,
             kind: ForceKind::RopeTension { rope: entity },

@@ -6,10 +6,10 @@ use bevy::prelude::*;
 use super::config::{ROPE_REST_LENGTH, ROPE_MAX_EXTENSION, SPRING_CONSTANT};
 
 #[derive(Clone, Copy, Debug)]
-struct RopeConstraint {
-    rest_length: f32,
-    _max_extension: f32,
-    spring_constant: f32,
+pub(super) struct RopeConstraint {
+    pub(super) rest_length: f32,
+    pub(super) _max_extension: f32,
+    pub(super) spring_constant: f32,
 }
 
 impl Default for RopeConstraint {

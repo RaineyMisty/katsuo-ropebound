@@ -21,18 +21,7 @@ pub(super) fn collect_force_events_system(
 ) {
     for event in events.read() {
         if let Ok(mut net_force) = query.get_mut(event.target) {
-            match event.kind {
-                ForceKind::RopeTension { .. } |
-                ForceKind::PlayerMove { .. } => {
-                    net_force.0 += control_speed_limit();
-                }
-                ForceKind::PlayerJump { .. } => {
-                    net_force.0 += jump_time_counter();
-                }
-                _ => {
-                    net_force.0 += event.force;
-                }
-            }
+            net_force.0 += event.force;
         }
     }
 }

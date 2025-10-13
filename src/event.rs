@@ -8,14 +8,6 @@ use bevy::prelude::*;
 pub struct ForceEvent {
     pub target: Entity,
     pub force: Vec2,
-    pub kind: ForceKind,
-}
-
-#[derive(Debug, Clone)]
-pub enum ForceKind {
-    RopeTension { rope: Entity },
-    PlayerMove { player: Entity },
-    PlayerJump { player: Entity },
 }
 
 #[derive(Event, Debug)]

@@ -4,14 +4,14 @@
 // Description: <Rope force system>
 use bevy::prelude::*;
 use super::component::{Rope, SpringJoint, RopeEnds};
-use crate::event::{ForceEvent, ForceKind};
+use crate::event::{ForceEvent};
 
 pub(super) fn rope_tension_system(
     mut events: EventWriter<ForceEvent>,
     q_transforms: Query<&GlobalTransform>,
-    q_rope: Query<(Entity, &SpringJoint, &RopeEnds)>
+    q_rope: Query<(&SpringJoint, &RopeEnds)> // used to have entity to mark the rope in ForceKind
 ) {
-    for (entity, spring_joint, rope_ends) in &q_rope {
+    for (spring_joint, rope_ends) in &q_rope {
         let Ok([head_transform, tail_transform]) =
             q_transforms.get_many([rope_ends.head, rope_ends.tail])
         else { continue; };
@@ -34,12 +34,10 @@ pub(super) fn rope_tension_system(
         events.write(ForceEvent {
             target: rope_ends.head,
             force,
-            kind: ForceKind::RopeTension { rope: entity },
         });
         events.write(ForceEvent {
             target: rope_ends.tail,
             force: -force,
-            kind: ForceKind::RopeTension { rope: entity },
         });
     }
 }

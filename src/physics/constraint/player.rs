@@ -34,10 +34,16 @@ pub(in crate::physics) fn player_intent_to_force_system(
                         force_limit.x = 0.0;
                     }
                 }
-            }
+            },
             PlayerIntentKind::JumpStart => {
                 force_limit.y = jump_force;
-            }
+            },
+            PlayerIntentKind::JumpHold { dt: _ } => {
+                // no continuous force for now
+            },
+            PlayerIntentKind::JumpEnd => {
+                // no end force for now
+            },
         }
         force_events.write(ForceEvent {
             target: event.player,

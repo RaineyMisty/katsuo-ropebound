@@ -15,7 +15,7 @@ pub fn run() {
         .insert_resource(Time::<Fixed>::from_hz(60.0))
         .add_plugins(DefaultPlugins.set(bevy::log::LogPlugin {
             level: bevy::log::Level::INFO,
-            filter: "katsuo_ropebound=debug,bevy=warn,wgpu=warn".to_string(),
+            filter: "katsuo_ropebound=debug,bevy=warn,wgpu=warn,naga=warn".to_string(),
             ..Default::default()
         }))
         .add_event::<ForceEvent>()

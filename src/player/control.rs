@@ -13,21 +13,34 @@ pub(super) fn player_input_system(
     mut event: EventWriter<PlayerIntentEvent>,
     mut query: Query<(Entity, &ControlScheme), With<Player>>,
 ) {
+
     for (entity, controls) in query.iter_mut() {
+        let mut left = keyboard_input.pressed(controls.left);
+        let mut right = keyboard_input.pressed(controls.right);
+        let jump_just = keyboard_input.just_pressed(controls.up);
         let mut axis_x = 0.0;
-        if keyboard_input.pressed(controls.left){
+        if left {
             axis_x -= 1.0;
         }
-        if keyboard_input.pressed(controls.right) {
+        if right {
             axis_x += 1.0;
         }
+
+        info!("[player_input_system]");
+        if left || right || jump_just {
+            debug!(
+                "input: ent={:?} L={} R={} JumpJust={} axis_x={}",
+                entity, left, right, jump_just, axis_x
+            );
+        }
+
         if axis_x != 0.0 {
             event.write(PlayerIntentEvent {
                 player: entity,
                 intent: PlayerIntentKind::Move { axis_x: axis_x },
             });
         }
-        if keyboard_input.just_pressed(controls.up) {
+        if jump_just {
             event.write(PlayerIntentEvent {
                 player: entity,
                 intent: PlayerIntentKind::JumpStart,

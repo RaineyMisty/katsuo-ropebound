@@ -14,6 +14,7 @@ mod event;
 
 use self::event::PlayerSpawnEvent;
 use self::spawn::spawn_player;
+use self::control::player_input_system;
 
 pub struct PlayerPlugin;
 
@@ -21,7 +22,8 @@ impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<PlayerSpawnEvent>()
         .add_systems(Startup, queue_for_player_setup_event)
-        .add_systems(Update, spawn_player);
+        .add_systems(Update, spawn_player)
+        .add_systems(Update, player_input_system);
     }
 }
 

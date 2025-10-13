@@ -5,9 +5,9 @@
 use bevy::prelude::*;
 
 use crate::physics::component::{Velocity};
-use crate::physics::config::{PLAYER_CONTROL_SPEED_LIMIT, PLAYER_MOVE_FORCE, PLAYER_JUMP_FORCE};
+use crate::physics::config::{PLAYER_CONTROL_SPEED_LIMIT, PLAYER_MOVE_FORCE, PLAYER_JUMP_FORCE, PLAYER_JUMP_IMPULSE};
 
-use crate::event::{ForceEvent, PlayerIntentEvent, PlayerIntentKind};
+use crate::event::{ForceEvent, ImpulseEvent, PlayerIntentEvent, PlayerIntentKind};
 
 pub(in crate::physics) fn player_intent_to_force_system(
     mut intent_events: EventReader<PlayerIntentEvent>,
@@ -17,10 +17,12 @@ pub(in crate::physics) fn player_intent_to_force_system(
     let speed_limit = PLAYER_CONTROL_SPEED_LIMIT;
     let move_force = PLAYER_MOVE_FORCE;
     let jump_force = PLAYER_JUMP_FORCE;
+    let jump_impulse = PLAYER_JUMP_IMPULSE;
 
     for event in intent_events.read() {
         let mut force_limit = Vec2::ZERO;
         let resistance_constant = move_force / speed_limit;
+        let mut impulse = Vec2::ZERO;
         match event.intent {
             PlayerIntentKind::Move { axis_x } => {
                 if let Ok(velocity) = query.get(event.player) {
@@ -36,7 +38,7 @@ pub(in crate::physics) fn player_intent_to_force_system(
                 }
             },
             PlayerIntentKind::JumpStart => {
-                force_limit.y = jump_force;
+                impulse.y = jump_impulse;
             },
             PlayerIntentKind::JumpHold { dt: _ } => {
                 // no continuous force for now
@@ -45,9 +47,9 @@ pub(in crate::physics) fn player_intent_to_force_system(
                 // no end force for now
             },
         }
-        force_events.write(ForceEvent {
+        force_events.write(ImpulseEvent {
             target: event.player,
-            force: force_limit,
+            impulse: impulse
         });
     }
 }

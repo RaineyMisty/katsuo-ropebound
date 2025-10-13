@@ -26,14 +26,6 @@ pub(super) fn player_input_system(
             axis_x += 1.0;
         }
 
-        info!("[player_input_system]");
-        if left || right || jump_just {
-            debug!(
-                "input: ent={:?} L={} R={} JumpJust={} axis_x={}",
-                entity, left, right, jump_just, axis_x
-            );
-        }
-
         if axis_x != 0.0 {
             event.write(PlayerIntentEvent {
                 player: entity,

@@ -7,7 +7,6 @@ use bevy::math::bounding::IntersectsVolume;
 use crate::player::bundle::Player;
 use bevy::{prelude::*, transform};
 use crate::config::physics::GRAVITY;
-use crate::components::collision::Aabb;
 use crate::game_ui::ui::TotalCoin;
 
 #[derive(Event, Debug)]

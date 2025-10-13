@@ -6,7 +6,6 @@ use bevy::prelude::*;
 use super::component::NetForce;
 use crate::event::{ForceEvent};
 
-
 pub(super) fn clean_force_system(
     mut query: Query<&mut NetForce>,
 ) {
@@ -24,12 +23,4 @@ pub(super) fn collect_force_events_system(
             net_force.0 += event.force;
         }
     }
-}
-
-fn control_speed_limit() -> Vec2 {
-    Vec2::ZERO // Placeholder for actual speed limit logic
-}
-
-fn jump_time_counter() -> Vec2 {
-    Vec2::ZERO // Placeholder for actual jump time counter logic
 }

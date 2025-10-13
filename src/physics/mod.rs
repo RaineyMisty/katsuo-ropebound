@@ -4,6 +4,7 @@
 // Description: <Physics system module and plugin>
 use bevy::prelude::*;
 
+mod constraint;
 mod gravity;
 mod integrate;
 mod net_force;
@@ -19,6 +20,7 @@ use self::integrate::integrate_velocity_system;
 use self::integrate::boundary;
 use self::net_force::clean_force_system;
 use self::net_force::collect_force_events_system;
+use self::constraint::player::player_intent_to_force_system;
 
 pub struct PhysicsPlugin;
 impl Plugin for PhysicsPlugin {
@@ -27,6 +29,7 @@ impl Plugin for PhysicsPlugin {
             FixedUpdate, 
             (
                 clean_force_system,
+                player_intent_to_force_system,
                 gravity_system,
                 collect_force_events_system,
                 integrate_force_system,

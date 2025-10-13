@@ -8,7 +8,7 @@ use bevy::time::Fixed;
 use crate::player::PlayerPlugin;
 use crate::physics::PhysicsPlugin;
 use crate::rope::RopePlugin;
-use crate::event::{ForceEvent, PlayerIntentEvent};
+use crate::event::{ForceEvent, ImpulseEvent, PlayerIntentEvent};
 
 pub fn run() {
     App::new()
@@ -19,6 +19,7 @@ pub fn run() {
             ..Default::default()
         }))
         .add_event::<ForceEvent>()
+        .add_event::<ImpulseEvent>()
         .add_event::<PlayerIntentEvent>()
         .add_plugins(PlayerPlugin)
         .add_plugins(RopePlugin)

@@ -11,6 +11,12 @@ pub struct ForceEvent {
 }
 
 #[derive(Event, Debug)]
+pub struct ImpulseEvent {
+    pub target: Entity,
+    pub impulse: Vec2,
+}
+
+#[derive(Event, Debug)]
 pub struct PlayerIntentEvent {
     pub player: Entity,
     pub intent: PlayerIntentKind,

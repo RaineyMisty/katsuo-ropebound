@@ -12,12 +12,14 @@ mod config;
 mod component;
 mod event;
 
+use self::event::PlayerSpawnEvent;
 use self::spawn::spawn_player;
 
 pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Startup, spawn_player);
+        app.add_event::<PlayerSpawnEvent>()
+        .add_systems(Startup, spawn_player);
     }
 }

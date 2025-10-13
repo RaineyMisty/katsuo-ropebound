@@ -4,7 +4,7 @@
 // Description: <Systems for player control>
 use bevy::prelude::*;
 
-use self::component::{Player, ControlScheme};
+use super::component::{Player, ControlScheme};
 
 use crate::event::{PlayerIntentEvent, PlayerIntentKind};
 
@@ -22,15 +22,15 @@ pub(super) fn player_input_system(
             axis_x += 1.0;
         }
         if axis_x != 0.0 {
-            event.send(PlayerIntentEvent {
-                target: entity,
-                kind: PlayerIntentKind::Move { direction: axis_x },
+            event.write(PlayerIntentEvent {
+                player: entity,
+                intent: PlayerIntentKind::Move { axis_x: axis_x },
             });
         }
         if keyboard_input.just_pressed(controls.up) {
-            event.send(PlayerIntentEvent {
-                target: entity,
-                kind: PlayerIntentKind::JumpStart,
+            event.write(PlayerIntentEvent {
+                player: entity,
+                intent: PlayerIntentKind::JumpStart,
             });
         }
     }

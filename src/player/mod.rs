@@ -12,6 +12,8 @@ mod config;
 mod component;
 mod event;
 
+use self::spawn::spawn_player;
+
 pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {

@@ -4,11 +4,11 @@
 // Description: <Rope bundle>
 use bevy::prelude::*;
 
-use super::component::{Rope, SpringJoint, RopeEnds};
+use super::component::{Rope, SpringJoint, EndPoints};
 
-#[derive(Bundle, Clone)]
+#[derive(Bundle)]
 pub struct RopeBundle {
     pub rope: Rope,
     pub spring_joint: SpringJoint,
-    pub rope_ends: RopeEnds,
+    pub rope_ends: EndPoints,
 }

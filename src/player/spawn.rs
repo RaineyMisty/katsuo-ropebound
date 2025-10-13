@@ -4,9 +4,9 @@
 // Description: <Player plugin>
 use bevy::prelude::*;
 
-use self::component::Player;
-use self::bundle::PlayerBundle;
-use self::event::PlayerSpawnEvent;
+use super::component::Player;
+use super::bundle::PlayerBundle;
+use super::event::PlayerSpawnEvent;
 
 use crate::physics::bundle::PhysicsBundle;
 

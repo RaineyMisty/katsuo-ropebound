@@ -8,16 +8,14 @@ use bevy::time::Fixed;
 use crate::player::PlayerPlugin;
 use crate::physics::PhysicsPlugin;
 use crate::rope::RopePlugin;
-use crate::player::config::{PLAYER_INITIAL_POSITION, PLAYER_INITIAL_VELOCITY, PlayerSpawnPoint, PlayerSpawnVelocity};
-use crate::event::ForceEvent;
+use crate::event::{ForceEvent, PlayerIntentEvent};
 
 pub fn run() {
     App::new()
         .insert_resource(Time::<Fixed>::from_hz(60.0))
-        .insert_resource(PlayerSpawnPoint { position: PLAYER_INITIAL_POSITION })
-        .insert_resource(PlayerSpawnVelocity { velocity: PLAYER_INITIAL_VELOCITY })
         .add_plugins(DefaultPlugins)
         .add_event::<ForceEvent>()
+        .add_event::<PlayerIntentEvent>()
         .add_plugins(PlayerPlugin)
         .add_plugins(RopePlugin)
         .add_plugins(PhysicsPlugin)

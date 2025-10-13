@@ -2,4 +2,4 @@
 // Copyright (c) 2025 Tingxu Chen
 // Author: Tingxu Chen <tic128@pitt.edu>
 // Description: <Physics constraint module>
-mod player;
+pub(super) mod player;

@@ -4,9 +4,8 @@
 // Description: <Player constraint in physics>
 use bevy::prelude::*;
 
-use super::component::{Velocity};
-
-use super::config::{PLAYER_CONTROL_SPEED_LIMIT, PLAYER_MOVE_FORCE, PLAYER_JUMP_FORCE};
+use crate::physics::component::{Velocity};
+use crate::physics::config::{PLAYER_CONTROL_SPEED_LIMIT, PLAYER_MOVE_FORCE, PLAYER_JUMP_FORCE};
 
 use crate::event::{ForceEvent, PlayerIntentEvent, PlayerIntentKind};
 
@@ -43,7 +42,6 @@ pub(in crate::physics) fn player_intent_to_force_system(
         force_events.write(ForceEvent {
             target: event.player,
             force: force_limit,
-        })
+        });
     }
-
 }

@@ -3,7 +3,7 @@ use crate::player::config::*;
 
 use super::component::{ControlScheme};
 
-#[derive(Bundle)]
+#[derive(Bundle, Debug)]
 pub struct PlayerBundle {
     pub sprite: Sprite,
     pub transform: Transform,

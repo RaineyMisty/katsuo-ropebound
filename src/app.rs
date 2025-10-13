@@ -13,7 +13,11 @@ use crate::event::{ForceEvent, PlayerIntentEvent};
 pub fn run() {
     App::new()
         .insert_resource(Time::<Fixed>::from_hz(60.0))
-        .add_plugins(DefaultPlugins)
+        .add_plugins(DefaultPlugins.set(bevy::log::LogPlugin {
+            level: bevy::log::Level::INFO,
+            filter: "katsuo_ropebound=debug,bevy=warn,wgpu=warn".to_string(),
+            ..Default::default()
+        }))
         .add_event::<ForceEvent>()
         .add_event::<PlayerIntentEvent>()
         .add_plugins(PlayerPlugin)

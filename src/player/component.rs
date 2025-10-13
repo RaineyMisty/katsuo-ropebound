@@ -7,7 +7,7 @@ use bevy::prelude::*;
 #[derive(Component, Clone)]
 pub(super) struct Player;
 
-#[derive(Component, Clone)]
+#[derive(Component, Clone, Debug)]
 pub(super) struct ControlScheme {
     pub up: KeyCode,
     pub left: KeyCode,

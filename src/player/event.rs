@@ -6,7 +6,7 @@ use bevy::prelude::*;
 
 use super::component::ControlScheme;
 
-#[derive(Event)]
+#[derive(Event, Debug)]
 pub struct PlayerSpawnEvent {
     // pub name: String,
     pub texture: Handle<Image>,

@@ -7,6 +7,7 @@ use bevy::prelude::*;
 mod constraint;
 mod gravity;
 mod integrate;
+mod momentum;
 mod net_force;
 
 pub mod bundle;
@@ -14,10 +15,11 @@ mod config;
 mod component;
 
 use self::gravity::gravity_system;
-use self::integrate::integrate_force_system;
 use self::integrate::integrate_momentum_system;
 use self::integrate::integrate_velocity_system;
 use self::integrate::boundary;
+use self::momentum::integrate_force_system;
+use self::momentum::collect_impulse_event_system;
 use self::net_force::clean_force_system;
 use self::net_force::collect_force_events_system;
 use self::constraint::player::player_intent_to_force_system;
@@ -33,6 +35,7 @@ impl Plugin for PhysicsPlugin {
                 gravity_system,
                 collect_force_events_system,
                 integrate_force_system,
+                collect_impulse_event_system,
                 integrate_momentum_system,
                 integrate_velocity_system,
                 boundary,

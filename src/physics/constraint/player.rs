@@ -12,6 +12,7 @@ use crate::event::{ForceEvent, ImpulseEvent, PlayerIntentEvent, PlayerIntentKind
 pub(in crate::physics) fn player_intent_to_force_system(
     mut intent_events: EventReader<PlayerIntentEvent>,
     mut force_events: EventWriter<ForceEvent>,
+    mut impulse_events: EventWriter<ImpulseEvent>,
     query: Query<&Velocity>,
 ) {
     let speed_limit = PLAYER_CONTROL_SPEED_LIMIT;
@@ -47,9 +48,13 @@ pub(in crate::physics) fn player_intent_to_force_system(
                 // no end force for now
             },
         }
-        force_events.write(ImpulseEvent {
+        force_events.write(ForceEvent{
             target: event.player,
-            impulse: impulse
+            force: force_limit,
+        });
+        impulse_events.write(ImpulseEvent {
+            target: event.player,
+            impulse: impulse,
         });
     }
 }

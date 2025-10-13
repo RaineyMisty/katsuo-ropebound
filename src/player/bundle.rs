@@ -6,7 +6,6 @@ pub struct PlayerBundle {
     pub sprite: Sprite,
     pub transform: Transform,
     pub control: ControlScheme,
-    pub intent: PlayerIntent,
 }
 
 impl PlayerBundle {
@@ -19,7 +18,6 @@ impl PlayerBundle {
             },
             transform,
             control: controls,
-            intent: PlayerIntent::default(),
         }
     }
 }

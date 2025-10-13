@@ -13,10 +13,3 @@ pub(super) struct ControlScheme {
     pub left: KeyCode,
     pub right: KeyCode,
 }
-
-#[derive(Component, Default, Clone)]
-pub(super) struct PlayerIntent {
-    pub jump: bool,
-    pub move_left: bool,
-    pub move_right: bool,
-}

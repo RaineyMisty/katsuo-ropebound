@@ -21,11 +21,11 @@ pub enum ForceKind {
 #[derive(Event, Debug)]
 pub struct PlayerIntentEvent {
     pub player: Entity,
-    pub intent: PlayerIntent,
+    pub intent: PlayerIntentKind,
 }
 
 #[derive(Debug, Clone)]
-pub enum PlayerIntent {
+pub enum PlayerIntentKind {
     Move{ axis_x: f32 },
     JumpStart,
     JumpHold{ dt: f32 },

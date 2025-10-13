@@ -4,46 +4,33 @@
 // Description: <Systems for player control>
 use bevy::prelude::*;
 
-use self::config::{PLAYER_MOVE_FORCE, PLAYER_JUMP_FORCE};
-use self::component::{Player, ControlScheme, PlayerIntent};
+use self::component::{Player, ControlScheme};
 
-use crate::event::{ForceEvent, ForceKind};
+use crate::event::{PlayerIntentEvent, PlayerIntentKind};
 
 pub(super) fn player_input_system(
     keyboard_input: Res<ButtonInput<KeyCode>>,
-    mut query: Query<(&ControlScheme, &mut PlayerIntent), With<Player>>,
+    mut event: EventWriter<PlayerIntentEvent>,
+    mut query: Query<(Entity, &ControlScheme), With<Player>>,
 ) {
-    for (controls, mut intent) in query.iter_mut() {
-        intent.move_left = keyboard_input.pressed(controls.left);
-        intent.move_right = keyboard_input.pressed(controls.right);
-        intent.jump = keyboard_input.just_pressed(controls.up);
-    }
-}
-
-pub(super) fn player_control_system(
-    mut event: EventWriter<ForceEvent>,
-    mut query: Query<(Entity, &PlayerIntent), With<Player>>,
-){
-    for (entity, intent) in query.iter_mut() {
-        let mut force = Vec2::ZERO;
-        if intent.move_left {
-            force.x -= PLAYER_MOVE_FORCE;
+    for (entity, controls) in query.iter_mut() {
+        let mut axis_x = 0.0;
+        if keyboard_input.pressed(controls.left){
+            axis_x -= 1.0;
         }
-        if intent.move_right {
-            force.x += PLAYER_MOVE_FORCE;
+        if keyboard_input.pressed(controls.right) {
+            axis_x += 1.0;
         }
-        if force != Vec2::ZERO {
-            event.write(ForceEvent {
+        if axis_x != 0.0 {
+            event.send(PlayerIntentEvent {
                 target: entity,
-                force,
-                kind: ForceKind::PlayerMove { player: entity },
+                kind: PlayerIntentKind::Move { direction: axis_x },
             });
         }
-        if intent.jump {
-            event.write(ForceEvent {
+        if keyboard_input.just_pressed(controls.up) {
+            event.send(PlayerIntentEvent {
                 target: entity,
-                force: Vec2::Y * PLAYER_JUMP_FORCE,
-                kind: ForceKind::PlayerJump { player: entity },
+                kind: PlayerIntentKind::JumpStart,
             });
         }
     }

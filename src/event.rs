@@ -17,3 +17,17 @@ pub enum ForceKind {
     PlayerMove { player: Entity },
     PlayerJump { player: Entity },
 }
+
+#[derive(Event, Debug)]
+pub struct PlayerIntentEvent {
+    pub player: Entity,
+    pub intent: PlayerIntent,
+}
+
+#[derive(Debug, Clone)]
+pub enum PlayerIntent {
+    Move{ axis_x: f32 },
+    JumpStart,
+    JumpHold{ dt: f32 },
+    JumpEnd,
+}

@@ -14,14 +14,12 @@ pub(super) fn spawn_player(
     mut commands: Commands,
     mut events: EventReader<PlayerSpawnEvent>,
 ) {
-    for event in events.iter() {
+    for event in events.read() {
         let transform = Transform::from_translation(event.position.extend(0.0));
         commands.spawn((
             PlayerBundle::new(event.controls.clone(), event.texture.clone(), transform),
             PhysicsBundle::new(event.mass.unwrap_or(1.0), true),
-            Player {
-                name: event.name.clone(),
-            },
+            Player,
         ));
     }
 }

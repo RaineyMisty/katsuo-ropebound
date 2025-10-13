@@ -8,7 +8,7 @@ use super::config::{ROPE_REST_LENGTH, ROPE_MAX_EXTENSION, SPRING_CONSTANT};
 #[derive(Component, Debug)]
 pub(super) struct Rope;
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Component, Clone, Copy, Debug)]
 pub(super) struct SpringJoint {
     pub(super) rest_length: f32,
     pub(super) _max_extension: f32,

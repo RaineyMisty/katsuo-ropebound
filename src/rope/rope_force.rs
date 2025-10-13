@@ -3,17 +3,17 @@
 // Author: Tingxu Chen <tic128@pitt.edu>
 // Description: <Rope force system>
 use bevy::prelude::*;
-use super::component::{SpringJoint, Endpoints};
+use super::component::{SpringJoint, EndPoints};
 use crate::event::{ForceEvent};
 
 pub(super) fn rope_tension_system(
     mut events: EventWriter<ForceEvent>,
     q_transforms: Query<&GlobalTransform>,
-    q_rope: Query<(&SpringJoint, &Endpoints)> // used to have entity to mark the rope in ForceKind
+    q_rope: Query<(&SpringJoint, &EndPoints)> // used to have entity to mark the rope in ForceKind
 ) {
-    for (spring_joint, rope_ends) in &q_rope {
+    for (spring_joint, end_points) in &q_rope {
         let Ok([head_transform, tail_transform]) =
-            q_transforms.get_many([rope_ends.head, rope_ends.tail])
+            q_transforms.get_many([end_points.head, end_points.tail])
         else { continue; };
 
         let direction = (tail_transform.translation() - head_transform.translation()).truncate(); // to Vec2
@@ -32,11 +32,11 @@ pub(super) fn rope_tension_system(
 
         // Write events to apply Rope Force
         events.write(ForceEvent {
-            target: rope_ends.head,
+            target: end_points.head,
             force,
         });
         events.write(ForceEvent {
-            target: rope_ends.tail,
+            target: end_points.tail,
             force: -force,
         });
     }

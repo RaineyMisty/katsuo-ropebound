@@ -4,11 +4,13 @@
 // Description: <Player event>
 use bevy::prelude::*;
 
-// #[derive(Event, Debug)]
-// pub struct PlayerSpawnEvent {
-//     pub name: String,
-//     pub texture: Handle<Image>,
-//     pub position: Vec2,
-//     pub controls: ControlScheme,
-//     pub mass: Option<f32>,
-// }
+use super::component::ControlScheme;
+
+#[derive(Event)]
+pub struct PlayerSpawnEvent {
+    // pub name: String,
+    pub texture: Handle<Image>,
+    pub position: Vec2,
+    pub controls: ControlScheme,
+    pub mass: Option<f32>,
+}

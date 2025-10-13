@@ -21,7 +21,7 @@ pub(in crate::physics) fn player_intent_to_force_system(
     for event in intent_events.read() {
         let mut force_limit = Vec2::ZERO;
         let resistance_constant = move_force / speed_limit;
-        match event.kind {
+        match event.intent {
             PlayerIntentKind::Move { axis_x } => {
                 if let Ok(velocity) = query.get(event.player) {
                     let speed = velocity.0.x * axis_x.signum();

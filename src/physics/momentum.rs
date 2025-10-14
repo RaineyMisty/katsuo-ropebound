@@ -7,7 +7,7 @@ use super::component::{Momentum, NetForce};
 use crate::event::{ImpulseEvent};
 
 pub(super) fn integrate_force_system(
-    time: Res<Time>,
+    time: Res<Time<Fixed>>,
     mut query: Query<(&mut Momentum, &NetForce)>,
 ) {
     let delta_seconds = time.delta_secs();

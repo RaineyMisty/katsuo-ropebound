@@ -10,22 +10,29 @@ use crate::player::PlayerPlugin;
 use crate::physics::PhysicsPlugin;
 use crate::config::*;
 use crate::stateMachine::*;
+use crate::config::*;
+use crate::physics::PhysicsPlugin;
+use crate::player::PlayerPlugin;
+use bevy::asset::AssetPlugin;
+use bevy::prelude::*;
+use bevy::sprite::SpritePlugin;
+use bevy::time::Fixed;
+use std::env;
 
 use crate::map::{MapPlugin, SCREEN};
-use crate::util::{DevModePlugin};
-use crate::game_ui::{UIPlugin};
+use crate::multiplayer::UdpClientPlugin;
+use crate::multiplayer::UdpServerPlugin;
+use crate::util::DevModePlugin;
 
-// Example query for getting the platform colliders which are visible on screen
-// fn log_offscreen_entities(
-//     q: Query<(Entity, &ViewVisibility), (With<Collider>, With<Transform>)>,
-// ) {
-//     for (e, view) in &q {
-//         if !view.get() {
-//             info!("🛰 Entity {:?} with Collider is off-screen", e);
-//         }
-//     }
-// }
+use crate::game_ui::UIPlugin;
 
+use crate::physics::rope_force::{
+    RopeGeometry, apply_rope_geometry, compute_rope_geometry, init_ropes, rope_force_to_system,
+    rope_tension_system,
+};
+use crate::player::load_players::spawn_players;
+
+// <- compute_rope_geometry 删除了
 
 // move a half screen right and a half screen up.
 // so that the origin is in the positive coordinate system
@@ -37,12 +44,8 @@ fn init_player_camera(mut commands: Commands) {
             ..default()
         },
         Transform {
-            translation: Vec3::new(
-                 SCREEN.0 / 2.0,
-                 SCREEN.1 / 2.0,
-                 0.0,
-             ),
-             ..Default::default() 
+            translation: Vec3::new(SCREEN.0 / 2.0, SCREEN.1 / 2.0, 0.0),
+            ..Default::default()
         },
         MainCamera,
     ));
@@ -55,12 +58,15 @@ pub struct MainCamera;
 #[derive(Component)]
 pub struct FollowedPlayer;
 
+#[derive(Component)]
+pub struct MainPlayer;
+
 const CAMERA_DECAY_RATE: f32 = 3.;
 
 // System for the camera movement
 fn update_camera(
-    mut camera: Single<&mut Transform, (With<MainCamera>, Without<FollowedPlayer>)>,
-    player: Single<&Transform, (With<FollowedPlayer>, Without<Camera2d>)>,
+    mut camera: Single<&mut Transform, (With<MainCamera>, Without<MainPlayer>)>,
+    player: Single<&Transform, (With<MainPlayer>, Without<Camera2d>)>,
     time: Res<Time>,
 ) {
     let Vec3 { y, .. } = player.translation;
@@ -114,9 +120,12 @@ fn trigger_bot_input(
     }
 }
 
-pub fn run() {
+#[derive(Resource)]
+pub struct IsMainPlayer(pub bool);
+
+pub fn run(is_main_player: bool) {
     let mut app = App::new();
-    #[cfg(debug_assertions)] // not added in release mode.
+    #[cfg(all(feature = "client", debug_assertions))]
     app.add_plugins(DevModePlugin);
 
     app
@@ -124,18 +133,48 @@ pub fn run() {
         .insert_resource(PlayerSpawnPoint { position: PLAYER_INITIAL_POSITION })
         .insert_resource(PlayerSpawnVelocity { velocity: PLAYER_INITIAL_VELOCITY })
         .insert_resource(BotActive(false))
-        .add_systems(Startup, init_player_camera)
 
+    #[cfg(feature = "client")]
+    app.add_plugins(DefaultPlugins);
+    app.insert_resource(IsMainPlayer(is_main_player));
+
+    #[cfg(feature = "server")]
+    app.add_plugins(MinimalPlugins);
+
+    app.insert_resource(Time::<Fixed>::from_hz(60.0))
+        .insert_resource(PlayerSpawnPoint {
+            position: PLAYER_INITIAL_POSITION,
+        })
+        .insert_resource(PlayerSpawnVelocity {
+            velocity: PLAYER_INITIAL_VELOCITY,
+        })
+        .add_systems(Startup, init_player_camera)
+        .add_systems(FixedUpdate, update_camera)
         .add_plugins(MapPlugin)
-        .add_plugins(DefaultPlugins)
         .add_plugins(PlayerPlugin)
         .add_plugins(PhysicsPlugin)
         .add_plugins(UIPlugin)
+        .insert_resource(RopeGeometry::default())
+        // .add_systems(Startup, init_ropes)
+        .add_systems(Startup, init_ropes.after(spawn_players))
+        .add_systems(Update, rope_tension_system)
+        .add_systems(Update, rope_force_to_system)
+        .add_systems(Update, compute_rope_geometry)
+        .add_systems(Update, apply_rope_geometry);
 
         .add_systems(Update, update_camera)
         .add_systems(Update, (bot_update,bot_update_toggle,trigger_bot_input,
         ))
         .add_event::<ToggleBotEvent>()
         .run();
+    #[cfg(feature = "client")]
+        app.add_plugins(UdpClientPlugin {
+            // server_addr: "127.0.0.1:5000".to_string(), // localhost
+            // server_addr: "home.tailaaef65.ts.net:5000".to_string(), // hostname magic dns.
+            // server_addr: "100.110.71.63:5000".to_string(), // tailscaled.
+            server_addr: "3.21.92.34:5000".to_string(),
+        });
+    #[cfg(feature = "server")]
+        app.add_plugins(UdpServerPlugin);
+    app.run();
 }
-

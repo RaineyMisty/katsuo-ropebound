@@ -1,13 +1,25 @@
-mod util;
 mod app;
-mod map;
-mod player;
-mod config;
 mod components;
-mod physics;
+mod config;
 mod game_ui;
 mod stateMachine;
 
+use std::env;
 fn main() {
-    app::run();
+    let mut is_main_player = false;
+
+    for arg in env::args().skip(1) { // skip binary name
+        match arg.as_str() {
+            "--main" => {
+                is_main_player = true;
+            }
+            "--player" => {
+                is_main_player = false;
+            }
+            _ => {
+                eprintln!("Unknown argument: {arg}");
+            }
+        }
+    }
+    app::run(is_main_player);
 }

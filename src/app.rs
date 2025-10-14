@@ -3,6 +3,13 @@
 // Author: Tingxu Chen <tic128@pitt.edu>
 // Description: <Create App and setup camera>
 
+use bevy::prelude::*;
+use bevy::time::Fixed;
+use bevy::transform;
+use crate::player::PlayerPlugin;
+use crate::physics::PhysicsPlugin;
+use crate::config::*;
+use crate::stateMachine::*;
 use crate::config::*;
 use crate::physics::PhysicsPlugin;
 use crate::player::PlayerPlugin;
@@ -72,6 +79,46 @@ fn update_camera(
         .translation
         .smooth_nudge(&target, CAMERA_DECAY_RATE, time.delta_secs());
 }
+// going to implement the replacement for the controls
+#[derive(Event)]
+struct ToggleBotEvent;
+
+#[derive(Resource)]
+struct BotActive(bool);
+
+fn bot_update_toggle(
+    mut bot_active: ResMut<BotActive>,
+    keyboard: Res<ButtonInput<KeyCode>>,
+){
+    //toggle logic
+    if keyboard.just_pressed(KeyCode::Space) {
+        bot_active.0 = !bot_active.0;
+    }
+}
+
+fn bot_update(
+    mut players: Query<(Entity, &Transform,&mut Bot), With<Bot>>,
+    botActive: Res<BotActive>,
+    mut keys: ResMut<ButtonInput<KeyCode>>,
+){
+    if botActive.0 == false{
+        return;
+    }
+    else{
+        for (entity, transform, mut Bot) in players.iter_mut(){
+            let (newState, _) = Bot.change(&mut keys);
+        }
+        
+    }
+}
+fn trigger_bot_input(
+    mut toggle_events: EventWriter<ToggleBotEvent>,
+    keyboard: Res<ButtonInput<KeyCode>>,
+) {
+    if keyboard.just_pressed(KeyCode::KeyB) {
+        toggle_events.write(ToggleBotEvent);
+    }
+}
 
 #[derive(Resource)]
 pub struct IsMainPlayer(pub bool);
@@ -81,6 +128,11 @@ pub fn run(is_main_player: bool) {
     #[cfg(all(feature = "client", debug_assertions))]
     app.add_plugins(DevModePlugin);
 
+    app
+        .insert_resource(Time::<Fixed>::from_hz(60.0))
+        .insert_resource(PlayerSpawnPoint { position: PLAYER_INITIAL_POSITION })
+        .insert_resource(PlayerSpawnVelocity { velocity: PLAYER_INITIAL_VELOCITY })
+        .insert_resource(BotActive(false))
 
     #[cfg(feature = "client")]
     app.add_plugins(DefaultPlugins);
@@ -110,6 +162,11 @@ pub fn run(is_main_player: bool) {
         .add_systems(Update, compute_rope_geometry)
         .add_systems(Update, apply_rope_geometry);
 
+        .add_systems(Update, update_camera)
+        .add_systems(Update, (bot_update,bot_update_toggle,trigger_bot_input,
+        ))
+        .add_event::<ToggleBotEvent>()
+        .run();
     #[cfg(feature = "client")]
         app.add_plugins(UdpClientPlugin {
             // server_addr: "127.0.0.1:5000".to_string(), // localhost

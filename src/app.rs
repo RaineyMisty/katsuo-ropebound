@@ -10,7 +10,7 @@ use crate::physics::PhysicsPlugin;
 use crate::player::PlayerPlugin;
 use crate::player_lifetime::PlayerLifetimePlugin;
 use crate::rope::RopePlugin;
-use crate::event::{ForceEvent, ImpulseEvent, PlayerIntentEvent};
+use crate::event::{ForceEvent, ImpulseEvent, PlayerIntentEvent, PlayerSpawnEvent, RequestControl};
 
 pub fn run() {
     App::new()
@@ -24,8 +24,9 @@ pub fn run() {
         .add_event::<ImpulseEvent>()
         .add_event::<PlayerIntentEvent>()
         .add_event::<PlayerSpawnEvent>()
+        .add_event::<RequestControl>()
         .add_plugins(PlayerLifetimePlugin)
-        .add_systems(ControlPlugin)
+        .add_plugins(ControlPlugin)
         .add_plugins(PlayerPlugin)
         .add_plugins(RopePlugin)
         .add_plugins(PhysicsPlugin)

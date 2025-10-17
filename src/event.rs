@@ -63,7 +63,7 @@ pub struct PlayerSpawnEvent {
  */
 #[derive(Event, Debug)]
 pub struct RequestControl {
-    pub entity,
+    pub entity: Entity,
     pub spec: ControlSpec
 }
 

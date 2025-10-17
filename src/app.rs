@@ -5,8 +5,10 @@
 
 use bevy::prelude::*;
 use bevy::time::Fixed;
-use crate::player::PlayerPlugin;
+use crate::control::ControlPlugin;
 use crate::physics::PhysicsPlugin;
+use crate::player::PlayerPlugin;
+use crate::player_lifetime::PlayerLifetimePlugin;
 use crate::rope::RopePlugin;
 use crate::event::{ForceEvent, ImpulseEvent, PlayerIntentEvent};
 
@@ -21,6 +23,9 @@ pub fn run() {
         .add_event::<ForceEvent>()
         .add_event::<ImpulseEvent>()
         .add_event::<PlayerIntentEvent>()
+        .add_event::<PlayerSpawnEvent>()
+        .add_plugins(PlayerLifetimePlugin)
+        .add_systems(ControlPlugin)
         .add_plugins(PlayerPlugin)
         .add_plugins(RopePlugin)
         .add_plugins(PhysicsPlugin)

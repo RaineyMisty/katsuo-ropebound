@@ -1,6 +1,8 @@
 mod app;
-mod player;
+mod control;
 mod physics;
+mod player;
+mod player_lifetime;
 mod rope;
 mod event;
 

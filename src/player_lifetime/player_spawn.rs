@@ -4,9 +4,9 @@
 // Description: <Player Spawn System>
 use bevy::prelude::*;
 
-use crate::event::{PlayerSpawnEvent, ControlSpec}
+use crate::event::{PlayerSpawnEvent, ControlSpec};
 
-pub(in crate::player_lifetime) fn queue_for_player_setup_event(
+pub(super) fn queue_for_player_setup_event(
     asset_server: Res<AssetServer>,
     mut events: EventWriter::<PlayerSpawnEvent>,
 ) {
@@ -14,7 +14,7 @@ pub(in crate::player_lifetime) fn queue_for_player_setup_event(
     events.write(PlayerSpawnEvent {
         texture: tex,
         position: Vec2::new(-500.0,-200.0),
-        controls: ControlSpec{
+        controls: ControlSpec::Keyboard {
             up: KeyCode::KeyW,
             left: KeyCode::KeyA,
             right: KeyCode::KeyD,

@@ -6,13 +6,15 @@ use bevy::prelude::*;
 
 mod player_spawn;
 
-use self::player_lifetime::queue_for_player_setup_event;
+use self::player_spawn::queue_for_player_setup_event;
+
+use crate::event::PlayerSpawnEvent;
 
 pub struct PlayerLifetimePlugin;
 
 impl Plugin for PlayerLifetimePlugin{
-    fn build (&self app: mut App){
-        app.add_event<PlayerSpawnEvent>()
+    fn build (&self, app: &mut App){
+        app.add_event::<PlayerSpawnEvent>()
         .add_systems(Startup, queue_for_player_setup_event);
     }
 }

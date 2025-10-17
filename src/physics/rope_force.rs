@@ -5,7 +5,7 @@
 use bevy::prelude::*;
 use crate::components::rope::{Rope, RopeConstraint};
 use crate::components::motion::{RopeForce, NetForce};
-use crate::app::FollowedPlayer;          // 用于 query 玩家实体
+use crate::player::Player;          // 用于 query 玩家实体
 
 
 
@@ -73,7 +73,7 @@ pub struct RopeSprite {
 
 pub fn init_ropes(
     mut commands: Commands,
-    q_players: Query<Entity, With<FollowedPlayer>>, // 或者用你标记主玩家的组件
+    q_players: Query<Entity, With<Player>>, // 或者用你标记主玩家的组件
 ) {
     let mut player_entities = Vec::new();
     for entity in q_players.iter() {
@@ -85,8 +85,8 @@ pub fn init_ropes(
         return;
     }
 
-let p1 = player_entities[0];
-let p2 = player_entities[1];
+    let p1 = player_entities[0];
+    let p2 = player_entities[1];
 
     // 生成 rope 实体
     let rope_entity = commands

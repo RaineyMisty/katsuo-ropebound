@@ -5,7 +5,7 @@
 use bevy::prelude::*;
 
 use crate::physics::component::{Velocity};
-use crate::physics::config::{PLAYER_CONTROL_SPEED_LIMIT, PLAYER_MOVE_FORCE, PLAYER_JUMP_FORCE, PLAYER_JUMP_IMPULSE};
+use crate::physics::config::{PLAYER_CONTROL_SPEED_LIMIT, PLAYER_MOVE_FORCE, PLAYER_JUMP_IMPULSE};
 
 use crate::event::{ForceEvent, ImpulseEvent, PlayerIntentEvent, PlayerIntentKind};
 
@@ -17,7 +17,6 @@ pub(in crate::physics) fn player_intent_to_force_system(
 ) {
     let speed_limit = PLAYER_CONTROL_SPEED_LIMIT;
     let move_force = PLAYER_MOVE_FORCE;
-    let jump_force = PLAYER_JUMP_FORCE;
     let jump_impulse = PLAYER_JUMP_IMPULSE;
 
     for event in intent_events.read() {

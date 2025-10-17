@@ -155,6 +155,25 @@ fn apply_jump(
 - **Source first**, **effect later**: Input/AI → Intent → Physics/State
 - **Forbidden** to modify physics directly in UI/rendering stages; to change physics, send an event to the physics module.
 
+### 3.4 When to Use Events
+
+- **Use events for:**
+
+  - **Instant, one-off happenings:** spawn/despawn, control handoff, damage taken, door opened, play SFX, logging—i.e., edge-triggered actions.
+  - **Cross-module notifications:** sender doesn’t know receiver internals; send an **intent/request value** and let the target decide which components to add.
+  - **Low-frequency, non-persistent signals:** event buffers are cleared after read; not meant to store long-lived state.
+
+- **Don’t use events for:**
+
+  - **High-frequency continuous data** (per-frame input axes, velocity, position sync). Prefer **Components/Resources**.
+  - **Queryable persistent state** (HP, control mode, team). Keep these as **Components**; events should only announce that a change occurred.
+
+- **Are lots of events bad?**
+
+  - It’s about **granularity**, not count: *one action = one event*. Don’t turn per-frame noise into an event firehose.
+  - Keep event names clear, payloads small, and payloads as **value objects**—never implementation components.
+  - Performance: Bevy batches events efficiently for typical low-rate use. Flooding with per-frame axis values is inappropriate.
+
 ------
 
 ## 4) Plugin and module (crate/module) structure

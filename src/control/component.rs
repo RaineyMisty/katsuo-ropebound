@@ -4,14 +4,14 @@
 // Description: <Control components>
 use bevy::prelude::*;
 
-#[derive(Component, Clone, Debug)]
-pub(in crate::control) struct ControlScheme {
-    pub move_axis: f32;
-    pub jump_just: bool;
+#[derive(Component, Default, Clone, Debug)]
+pub(super) struct ControlScheme {
+    pub move_axis: f32,
+    pub jump_just: bool,
 }
 
 #[derive(Component, Clone, Debug)]
-pub(in crate::control) struct KeyboardControlled {
+pub(super) struct KeyboardControlled {
     pub up: KeyCode,
     pub left: KeyCode,
     pub right: KeyCode,

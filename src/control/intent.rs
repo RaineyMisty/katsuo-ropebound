@@ -4,12 +4,12 @@
 // Description: <Key control method>
 use bevy::prelude::*;
 
-use super::component::{Player, ControlScheme};
+use super::component::{ControlScheme};
 
+use crate::player::component::Player;
 use crate::event::{PlayerIntentEvent, PlayerIntentKind};
 
 pub(super) fn scheme_to_intent_writer (
-    keyboard_input: Res<ButtonInput<KeyCode>>,
     mut event: EventWriter<PlayerIntentEvent>,
     query: Query<(Entity, &ControlScheme), With<Player>>,
 ) {

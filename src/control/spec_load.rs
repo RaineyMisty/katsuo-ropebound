@@ -4,7 +4,7 @@
 // Description: <Deal with Control Request>
 use bevy::prelude::*;
 
-use super::component::KeyboardControlled;
+use super::component::{KeyboardControlled, ControlScheme};
 use crate::event::{RequestControl, ControlSpec};
 
 fn clean_control(
@@ -15,22 +15,22 @@ fn clean_control(
         .remove::<ControlScheme>();
 }
 
-pub(in crate::control) fn on_request_control(
+pub(super) fn on_request_control(
     mut commands: Commands,
     mut reqs: EventReader<RequestControl>,
 ) {
     for req in reqs.read() {
-        clean_control(&commands, req.entity);
+        clean_control(&mut commands, req.entity);
         match &req.spec {
             ControlSpec::Keyboard {up, left, right} => {
-                commands.entity(entity).insert((
+                commands.entity(req.entity).insert((
                     KeyboardControlled { up: *up, left: *left, right: *right },
-                    ControlScheme,
+                    ControlScheme::default(),
                 ));
             }
             ControlSpec::Aibot {..} => {
-                commands.entity(entity).insert((
-                    ControlScheme,
+                commands.entity(req.entity).insert((
+                    ControlScheme::default(),
                 ));
             }
         }

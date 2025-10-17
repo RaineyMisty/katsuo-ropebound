@@ -15,7 +15,7 @@ pub(super) struct NetForce (pub Vec2);
 pub(super) struct Momentum (pub Vec2);
 
 #[derive(Component, Clone, Copy, Debug)]
-pub struct Mass (pub(super) f32);
+pub(super) struct Mass (pub f32);
 
 impl Default for Mass {
     fn default() -> Self {

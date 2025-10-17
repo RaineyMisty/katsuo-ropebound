@@ -8,11 +8,11 @@ use super::component::{Velocity, NetForce, Gravity, Mass, Momentum};
 
 #[derive(Bundle, Clone)]
 pub struct PhysicsBundle {
-    pub velocity: Velocity,
-    pub net_force: NetForce,
-    pub gravity: Gravity,
-    pub mass: Mass,
-    pub momentum: Momentum,
+    velocity: Velocity,
+    net_force: NetForce,
+    gravity: Gravity,
+    mass: Mass,
+    momentum: Momentum,
 }
 
 impl Default for PhysicsBundle {
@@ -36,20 +36,5 @@ impl PhysicsBundle {
             mass: Mass(mass),
             momentum: Momentum::default(),
         }
-    }
-    pub fn get_mass(&self) -> f32 {
-        self.mass.0
-    }
-    pub fn get_gravity(&self) -> bool {
-        self.gravity.0
-    }
-    pub fn get_velocity(&self) -> Vec2 {
-        self.velocity.0
-    }
-    pub fn get_net_force(&self) -> Vec2 {
-        self.net_force.0
-    }
-    pub fn get_momentum(&self) -> Vec2 {
-        self.momentum.0
     }
 }

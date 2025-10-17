@@ -1,13 +1,10 @@
 use bevy::prelude::*;
 use crate::player::config::*;
 
-use super::component::{ControlScheme};
-
 #[derive(Bundle, Debug)]
 pub struct PlayerBundle {
     pub sprite: Sprite,
     pub transform: Transform,
-    // pub control: ControlScheme,
 }
 
 impl PlayerBundle {

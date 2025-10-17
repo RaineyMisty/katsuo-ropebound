@@ -8,7 +8,7 @@ use super::component::Player;
 use super::bundle::PlayerBundle;
 
 use crate::physics::bundle::PhysicsBundle;
-use crate::event::{RequestControl, ControlSpec};
+use crate::event::{PlayerSpawnEvent, RequestControl};
 
 pub(super) fn spawn_player(
     mut commands: Commands,
@@ -23,10 +23,11 @@ pub(super) fn spawn_player(
             Player,
         ))
         .id();
+
+        req_ctl.write(RequestControl {
+            entity,
+            spec: event.controls.clone(),
+        });
     }
 
-    req_ctl.write(RequestControl {
-        entity,
-        spec: event.controls.clone();
-    });
 }

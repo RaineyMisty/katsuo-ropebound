@@ -4,13 +4,11 @@
 // Description: <Player mod>
 use bevy::prelude::*;
 
-mod control;
 mod spawn;
 
 mod bundle;
 mod config;
-mod component;
-mod event;
+pub mod component;
 
 use self::spawn::spawn_player;
 
@@ -23,6 +21,6 @@ impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<PlayerSpawnEvent>()
         .add_event::<RequestControl>()
-        .add_systems(Update, spawn_player)
+        .add_systems(Update, spawn_player);
     }
 }

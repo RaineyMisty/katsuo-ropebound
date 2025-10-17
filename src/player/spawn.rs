@@ -6,20 +6,27 @@ use bevy::prelude::*;
 
 use super::component::Player;
 use super::bundle::PlayerBundle;
-use super::event::PlayerSpawnEvent;
 
 use crate::physics::bundle::PhysicsBundle;
+use crate::event::{RequestControl, ControlSpec};
 
 pub(super) fn spawn_player(
     mut commands: Commands,
     mut events: EventReader<PlayerSpawnEvent>,
+    mut req_ctl: EventWriter<RequestControl>
 ) {
     for event in events.read() {
         let transform = Transform::from_translation(event.position.extend(0.0));
-        commands.spawn((
-            PlayerBundle::new(event.controls.clone(), event.texture.clone(), transform),
+        let entity = commands.spawn((
+            PlayerBundle::new(event.texture.clone(), transform),
             PhysicsBundle::new(event.mass.unwrap_or(1.0), true),
             Player,
-        ));
+        ))
+        .id();
     }
+
+    req_ctl.write(RequestControl {
+        entity,
+        spec: event.controls.clone();
+    });
 }

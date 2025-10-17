@@ -5,11 +5,4 @@
 use bevy::prelude::*;
 
 #[derive(Component, Clone)]
-pub(super) struct Player;
-
-#[derive(Component, Clone, Debug)]
-pub(super) struct ControlScheme {
-    pub up: KeyCode,
-    pub left: KeyCode,
-    pub right: KeyCode,
-}
+pub struct Player;

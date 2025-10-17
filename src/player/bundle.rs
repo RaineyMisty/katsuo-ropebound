@@ -7,11 +7,11 @@ use super::component::{ControlScheme};
 pub struct PlayerBundle {
     pub sprite: Sprite,
     pub transform: Transform,
-    pub control: ControlScheme,
+    // pub control: ControlScheme,
 }
 
 impl PlayerBundle {
-    pub fn new(controls: ControlScheme, texture: Handle<Image>, transform: Transform) -> Self {
+    pub fn new(texture: Handle<Image>, transform: Transform) -> Self {
         Self {
             sprite: Sprite {
                 image: texture,
@@ -19,7 +19,6 @@ impl PlayerBundle {
                 ..Default::default()
             },
             transform,
-            control: controls,
         }
     }
 }

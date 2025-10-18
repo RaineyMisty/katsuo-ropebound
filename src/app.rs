@@ -35,6 +35,8 @@ pub enum GameMode {
     NetCoop(usize),
     Simulated,
 }
+#[derive(Resource, Deref, DerefMut)]
+struct botTimer {time:Timer}
 // <- compute_rope_geometry 删除了
 
 // move a half screen right and a half screen up.

@@ -132,11 +132,6 @@ pub fn spawn_players(
     }
     commands.entity(*player_list[camera_follow_player]).insert(FollowedPlayer);
 
-    commands.spawn(Rope {
-        constraint: RopeConstraint::default(),
-        attached_entity_head: *player_list[0],
-        attached_entity_tail: *player_list[1],
-    });
 }
 
 // make player base w or w/o sprite.

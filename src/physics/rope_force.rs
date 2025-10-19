@@ -99,7 +99,7 @@ pub fn init_ropes(
         .spawn(Rope {
             constraint: RopeConstraint {
                 rest_length: 300.0,
-                spring_constant: 80.0,
+                spring_constant: 80000.0,
                 max_extension: 300.0,
             },
             attached_entity_head: p1,
@@ -120,11 +120,11 @@ pub fn apply_rope_geometry(
     for (rope_entity, head, tail) in rope_geometry.updates.iter() {
         for (mut transform, mut mesh, rope_sprite) in &mut q_rope_sprites {
             if rope_sprite.rope_entity == *rope_entity {
-                println!("Points: head = {:?}, tail = {:?}", head, tail);
+                // println!("Points: head = {:?}, tail = {:?}", head, tail);
                 transform.translation = Vec3::new(0.0, 0.0, 0.0);
 
                 let mut pts = Vec::new();
-                let steps = 120;
+                let steps = 40;
                 let L: f32 = 300.0;
                 point_curve(&mut pts, &steps, &head, &tail, L);
                 let thickness = 2.0;
@@ -155,7 +155,7 @@ pub fn spawn_rope_sprite(
     // 将spawn_point.position作为head，spawn_point.position + Vec3::new(300.0, -100.0, 0.0)作为tail
     // 但是要转换成 Vec2
     let mut pts = Vec::new();
-    let steps = 120;
+    let steps = 40;
     let head = Vec2::new(50.0, 0.0);
     let tail = Vec2::new(350.0, 0.0);
     let L = 300.0; // 绳子长度
@@ -223,7 +223,7 @@ fn point_curve(pts: &mut Vec<Vec2>, steps: &usize, head: &Vec2, tail: &Vec2, L: 
     println!("head = {:?}, tail = {:?}", head, tail);
     // 计算绳子最短距离
     let D = (tail - head).length();
-    println!("D = {}, L = {}", D, L);
+    // println!("D = {}, L = {}", D, L);
     if L <= D {
         // println!("Warning: Rope length L <= distance D, cannot form catenary curve.");
         // 直接线性插值
@@ -235,9 +235,32 @@ fn point_curve(pts: &mut Vec<Vec2>, steps: &usize, head: &Vec2, tail: &Vec2, L: 
         }
         return;
     }
+
+    // 计算水平距离差
+    let x_diff = tail.x - head.x;
     
     // 计算垂直距离差
     let y_diff = tail.y - head.y;
+
+    if x_diff.abs() < 0.0001 {
+        // 特殊情况：垂直线段
+        // 计算最低点
+        let y_min = head.y.min(tail.y);
+        let y_max = head.y.max(tail.y);
+        // 计算最低点对应的 y 坐标
+        // y_max - y0 + y_min - y0 = L
+        // 2y0 = y_min + y_max - L
+        // y0 = (y_min + y_max - L) / 2
+        let y0 = (y_min + y_max - L) / 2.0;
+        // 生成线段
+        // 直接从 y_max 到 y0。
+        for i in 0..=*steps {
+            let t = i as f32 / *steps as f32;
+            let y = y_max + (y0 - y_max) * t;
+            pts.push(Vec2::new(head.x, y));
+        }
+        return;
+    }
 
     // 计算参数 a
     // 二分法求解 a，使得 2a sinh(d/(2a)) = \sqrt(L^2 - y差^2)
@@ -247,7 +270,7 @@ fn point_curve(pts: &mut Vec<Vec2>, steps: &usize, head: &Vec2, tail: &Vec2, L: 
     let mut a_high = (target.max(1.0) + d.max(1.0)) * 10.0;
     // println!("d = {}, target = {}", d, target);
     // println!("a_low = {}, a_high = {}", a_low, a_high);
-    for j in 0..64 {
+    for j in 0..48 {
         // println!("Iteration {}:", j);
         // println!("  a_low = {}, a_high = {}", a_low, a_high);
         let a_mid = (a_low + a_high) * 0.5;
@@ -260,8 +283,14 @@ fn point_curve(pts: &mut Vec<Vec2>, steps: &usize, head: &Vec2, tail: &Vec2, L: 
         }
     }
     let a = (a_low + a_high) * 0.5;
-
-    let x0 = -a * ((y_diff / L).atanh());
+    
+    let r = (y_diff / L).clamp(-0.999_999, 0.999_999);
+    let mut x0: f32;
+    if head.x < tail.x {
+        x0 = -a * (r.atanh()) + (head.x + tail.x) * 0.5;
+    } else {
+        x0 = a * (r.atanh()) + (head.x + tail.x) * 0.5;
+    }
     let c = head.y - a * ((head.x - x0) / a).cosh();
 
     println!("a = {}", a);

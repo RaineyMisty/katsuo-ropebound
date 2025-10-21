@@ -13,6 +13,18 @@ use bevy::render::mesh::{Mesh2d, Indices, PrimitiveTopology};
 use bevy::render::render_asset::RenderAssetUsages;
 use bevy::sprite::{MeshMaterial2d, ColorMaterial};
 
+
+/// 临时存放 rope 的几何信息
+#[derive(Resource, Default)]
+pub struct RopeGeometry {
+    pub updates: Vec<(Entity, Vec2, Vec2)>, // (rope_entity, head, tail)
+}
+
+#[derive(Component)]
+pub struct RopeSprite {
+    rope_entity: Entity,
+}
+
 /// 每帧先把 RopeForce 清零
 pub fn clean_rope_force_system(mut q_rope_force: Query<&mut RopeForce>) {
     for mut rope_force in &mut q_rope_force {
@@ -64,17 +76,6 @@ pub fn rope_force_to_system(mut query: Query<(&RopeForce, &mut NetForce)>) {
 
 // ==================== 绳子可视化部分 ====================
 
-/// 临时存放 rope 的几何信息
-#[derive(Resource, Default)]
-pub struct RopeGeometry {
-    pub updates: Vec<(Entity, Vec2, Vec2)>, // (rope_entity, head, tail)
-}
-
-#[derive(Component)]
-pub struct RopeSprite {
-    rope_entity: Entity,
-}
-
 pub fn init_ropes(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
@@ -121,12 +122,21 @@ pub fn apply_rope_geometry(
         for (mut transform, mut mesh, rope_sprite) in &mut q_rope_sprites {
             if rope_sprite.rope_entity == *rope_entity {
                 // println!("Points: head = {:?}, tail = {:?}", head, tail);
-                transform.translation = Vec3::new(0.0, 0.0, 0.0);
+                // 计算中点位置
+                let mid = (head + tail) * 0.5;
+                // 更新 transform
+                transform.translation = Vec3::new(mid.x, mid.y, 1.0);
 
                 let mut pts = Vec::new();
                 let steps = 40;
                 let L: f32 = 300.0;
                 point_curve(&mut pts, &steps, &head, &tail, L);
+                // 绳子采样点减去中点位置，变成局部坐标
+                for p in &mut pts {
+                    *p -= mid;
+                }
+                // 输出采样点个数
+                // println!("Rope sprite initial points count: {}", pts.len());
                 let thickness = 2.0;
                 // sprite.custom_size = Some(Vec2::new(*length, 2.0));
 
@@ -160,6 +170,8 @@ pub fn spawn_rope_sprite(
     let tail = Vec2::new(350.0, 0.0);
     let L = 300.0; // 绳子长度
     point_curve(&mut pts, &steps, &head, &tail, L);
+    // 输出采样点个数
+    // println!("Rope sprite initial points count: {}", pts.len());
 
     // 2) 生成 Mesh
     let thickness = 2.0;
@@ -220,7 +232,7 @@ pub fn compute_rope_geometry(
 }
 
 fn point_curve(pts: &mut Vec<Vec2>, steps: &usize, head: &Vec2, tail: &Vec2, L: f32) {
-    println!("head = {:?}, tail = {:?}", head, tail);
+    // println!("head = {:?}, tail = {:?}", head, tail);
     // 计算绳子最短距离
     let D = (tail - head).length();
     // println!("D = {}, L = {}", D, L);
@@ -242,7 +254,8 @@ fn point_curve(pts: &mut Vec<Vec2>, steps: &usize, head: &Vec2, tail: &Vec2, L: 
     // 计算垂直距离差
     let y_diff = tail.y - head.y;
 
-    if x_diff.abs() < 0.0001 {
+    if x_diff.abs() < 0.01 {
+        // println!("Special case: vertical segment");
         // 特殊情况：垂直线段
         // 计算最低点
         let y_min = head.y.min(tail.y);
@@ -282,7 +295,7 @@ fn point_curve(pts: &mut Vec<Vec2>, steps: &usize, head: &Vec2, tail: &Vec2, L: 
             a_low = a_mid;
         }
     }
-    let a = (a_low + a_high) * 0.5;
+    let mut a = (a_low + a_high) * 0.5;
     
     let r = (y_diff / L).clamp(-0.999_999, 0.999_999);
     let mut x0: f32;
@@ -293,9 +306,20 @@ fn point_curve(pts: &mut Vec<Vec2>, steps: &usize, head: &Vec2, tail: &Vec2, L: 
     }
     let c = head.y - a * ((head.x - x0) / a).cosh();
 
-    println!("a = {}", a);
-    println!("x0 = {}", x0);
-    println!("c = {}", c);
+    if a.abs() < 0.0001 {
+        a = 0.0001;
+    // println!("a = {}", a);
+    // println!("x0 = {}", x0);
+    // println!("c = {}", c);
+    }
+
+    // u_max = max(|(tail.x - x0)/a|, |(head.x - x0)/a|)
+    // 用于输出较大的值警告
+    let u_max = (tail.x - x0).abs().max((head.x - x0).abs()) / a;
+    if u_max > 20.0 {
+        println!("Warning: u_max too large = {}", u_max);
+    }
+    // println!("u_max = {}", u_max);
 
     for i in 0..=*steps {
         let t = i as f32 / *steps as f32;
@@ -350,9 +374,84 @@ fn polyline_ribbon_mesh(points: &[Vec2], width: f32) -> Mesh {
     }
 
     // 4) 组装 Mesh —— 0.16 需要 RenderAssetUsages
-    let mut mesh = Mesh::new(PrimitiveTopology::TriangleList, RenderAssetUsages::RENDER_WORLD);
+    // let mut mesh = Mesh::new(PrimitiveTopology::TriangleList, RenderAssetUsages::RENDER_WORLD);
+    let mut mesh = Mesh::new(PrimitiveTopology::TriangleList, RenderAssetUsages::default());
     mesh.insert_attribute(Mesh::ATTRIBUTE_POSITION, positions);
     mesh.insert_attribute(Mesh::ATTRIBUTE_UV_0, uvs);
     mesh.insert_indices(Indices::U32(indices)); // 0.16 用 insert_indices
     mesh
+}
+
+use bevy::log::info;
+
+pub fn debug_print_player_world_pos(q: Query<(Entity, &GlobalTransform), With<Player>>) {
+    for (e, gt) in &q {
+        let p = gt.translation();
+        info!("Player {:?} world: ({:.2}, {:.2}, {:.2})", e, p.x, p.y, p.z);
+        // 或者 println! 也行
+        // println!("Player {:?} world: ({:.2}, {:.2}, {:.2})", e, p.x, p.y, p.z);
+    }
+}
+
+pub fn debug_print_rope_mesh2d(
+    meshes: Res<Assets<Mesh>>,
+    materials: Res<Assets<ColorMaterial>>,
+    q: Query<(Entity, &Mesh2d, Option<&MeshMaterial2d<ColorMaterial>>, &GlobalTransform), With<RopeSprite>>,
+) {
+    for (e, mesh2d, mat2d, gt) in &q {
+        let wp = gt.translation();
+        println!("\n[RopeMesh] entity={:?} world=({:.1},{:.1},{:.1})", e, wp.x, wp.y, wp.z);
+
+        // 读取网格
+        if let Some(mesh) = meshes.get(&mesh2d.0) {
+            // 顶点（局部坐标）
+            if let Some(positions) = mesh.attribute(Mesh::ATTRIBUTE_POSITION).and_then(|a| a.as_float3()) {
+                println!("  vertices: {}", positions.len());
+                // 计算局部 AABB（帮助确认是否“局部化”成功）
+                let mut min = [f32::INFINITY; 3];
+                let mut max = [f32::NEG_INFINITY; 3];
+                for v in positions {
+                    min[0] = min[0].min(v[0]); max[0] = max[0].max(v[0]);
+                    min[1] = min[1].min(v[1]); max[1] = max[1].max(v[1]);
+                    min[2] = min[2].min(v[2]); max[2] = max[2].max(v[2]);
+                }
+                println!("  local AABB: x[{:.1},{:.1}] y[{:.1},{:.1}] z[{:.1},{:.1}]",
+                    min[0], max[0], min[1], max[1], min[2], max[2]);
+            } else {
+                println!("  positions: <missing>");
+            }
+
+            // UV
+            if let Some(uvs) = mesh.attribute(Mesh::ATTRIBUTE_UV_0).and_then(|a| a.as_float3()) {
+                let sample: Vec<[f32;3]> = uvs.iter().take(6).cloned().collect();
+                println!("  uv0 count: {}  sample(first up to 6) = {:?}", uvs.len(), sample);
+            } else {
+                println!("  uv0: <missing>");
+            }
+
+            // 索引（三角形数）
+            match mesh.indices() {
+                Some(Indices::U32(v)) => println!("  indices: {} ({} tris)", v.len(), v.len()/3),
+                Some(Indices::U16(v)) => println!("  indices: {} ({} tris)", v.len(), v.len()/3),
+                None => println!("  indices: <none> (non-indexed)"),
+            }
+        } else {
+            println!("  <mesh handle not found in Assets<Mesh>>");
+        }
+
+        // 材质（颜色/贴图）
+        if let Some(mat2d) = mat2d {
+            if let Some(mat) = materials.get(&mat2d.0) {
+                if let Some(tex) = &mat.texture {
+                    println!("  material: color={:?}  texture_handle={:?}", mat.color, tex.id());
+                } else {
+                    println!("  material: color={:?}  texture=<none>", mat.color);
+                }
+            } else {
+                println!("  <material handle not found in Assets<ColorMaterial>>");
+            }
+        } else {
+            println!("  material: <MeshMaterial2d<ColorMaterial> missing>");
+        }
+    }
 }

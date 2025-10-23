@@ -11,7 +11,7 @@ pub(super) struct Rope;
 #[derive(Component, Clone, Copy, Debug)]
 pub(super) struct SpringJoint {
     pub(super) rest_length: f32,
-    pub(super) _max_extension: f32,
+    pub(super) max_extension: f32,
     pub(super) spring_constant: f32,
 }
 
@@ -19,7 +19,7 @@ impl Default for SpringJoint {
     fn default() -> Self {
         SpringJoint {
             rest_length: ROPE_REST_LENGTH,
-            _max_extension: ROPE_MAX_EXTENSION,
+            max_extension: ROPE_MAX_EXTENSION,
             spring_constant: SPRING_CONSTANT,
         }
     }

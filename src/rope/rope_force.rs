@@ -4,10 +4,8 @@
 // Description: <Rope force system>
 use bevy::prelude::*;
 use super::component::{SpringJoint, EndPoints, EndPoint};
-use crate::event::{ForceEvent};
 
 pub(super) fn rope_tension_system(
-    mut events: EventWriter<ForceEvent>,
     q_transforms: Query<&GlobalTransform>,
     q_rope: Query<(&SpringJoint, &EndPoints)> // used to have entity to mark the rope in ForceKind
 ) {
@@ -40,34 +38,39 @@ pub(super) fn rope_tension_system(
         let force = if current_length > spring_joint.rest_length {
             // F = -k * x
             let extension = current_length - spring_joint.rest_length;
+            info!("Rope force extension: {:?}", extension);
             let spring_constant = spring_joint.spring_constant;
+            info!("Rope spring constant: {:?}", spring_constant);
             let force_magnitude = spring_constant * extension;
+            info!("Rope force magnitude: {:?}", force_magnitude);
             let force_direction = direction.normalize();
+            info!("Rope force direction: {:?}", force_direction);
             force_direction * force_magnitude
         } else {
             Vec2::ZERO
         };
+        info!("Rope force applied: {:?}", force);
 
-        // Write events to apply Rope Force
-        if force != Vec2::ZERO {
-            match end_points.head {
-                EndPoint::Body(e) => {
-                    events.write(ForceEvent {
-                        target: e,
-                        force,
-                    });
-                }
-                EndPoint::Fixed(_) => {}
-            }
-            match end_points.tail {
-                EndPoint::Body(e) => {
-                    events.write(ForceEvent {
-                        target: e,
-                        force: -force,
-                    });
-                }
-                EndPoint::Fixed(_) => {}
-            }
-        }
+        // // Write events to apply Rope Force
+        // if force != Vec2::ZERO {
+        //     match end_points.head {
+        //         EndPoint::Body(e) => {
+        //             events.write(ForceEvent {
+        //                 target: e,
+        //                 force,
+        //             });
+        //         }
+        //         EndPoint::Fixed(_) => {}
+        //     }
+        //     match end_points.tail {
+        //         EndPoint::Body(e) => {
+        //             events.write(ForceEvent {
+        //                 target: e,
+        //                 force: -force,
+        //             });
+        //         }
+        //         EndPoint::Fixed(_) => {}
+        //     }
+        // }
     }
 }

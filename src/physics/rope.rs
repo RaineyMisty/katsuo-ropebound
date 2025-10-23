@@ -4,7 +4,7 @@
 // Description: <Rope physics>
 use bevy::prelude::*;
 
-use event::RegisterRope;
+use crate::event::RegisterRope;
 
 pub(super) fn rope_register_system(
     mut commands: Commands,

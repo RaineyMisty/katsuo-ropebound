@@ -4,7 +4,7 @@
 // Description: <Player constraint in physics>
 use bevy::prelude::*;
 
-use super::component::{Velocity};
+use super::physics_core::component::{Velocity};
 use super::config::{PLAYER_CONTROL_SPEED_LIMIT, PLAYER_MOVE_FORCE, PLAYER_JUMP_IMPULSE};
 
 use crate::event::{ForceEvent, ImpulseEvent, PlayerIntentEvent, PlayerIntentKind};

@@ -4,7 +4,7 @@
 // Description: <Physics system module and plugin>
 use bevy::prelude::*;
 
-mod constraint;
+mod player;
 mod gravity;
 mod integrate;
 mod momentum;
@@ -22,7 +22,7 @@ use self::momentum::integrate_force_system;
 use self::momentum::collect_impulse_event_system;
 use self::net_force::clean_force_system;
 use self::net_force::collect_force_events_system;
-use self::constraint::player::player_intent_to_force_system;
+use self::player::player_intent_to_force_system;
 
 pub struct PhysicsPlugin;
 impl Plugin for PhysicsPlugin {

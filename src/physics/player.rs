@@ -4,12 +4,12 @@
 // Description: <Player constraint in physics>
 use bevy::prelude::*;
 
-use crate::physics::component::{Velocity};
-use crate::physics::config::{PLAYER_CONTROL_SPEED_LIMIT, PLAYER_MOVE_FORCE, PLAYER_JUMP_IMPULSE};
+use super::component::{Velocity};
+use super::config::{PLAYER_CONTROL_SPEED_LIMIT, PLAYER_MOVE_FORCE, PLAYER_JUMP_IMPULSE};
 
 use crate::event::{ForceEvent, ImpulseEvent, PlayerIntentEvent, PlayerIntentKind};
 
-pub(in crate::physics) fn player_intent_to_force_system(
+pub(super) fn player_intent_to_force_system(
     mut intent_events: EventReader<PlayerIntentEvent>,
     mut force_events: EventWriter<ForceEvent>,
     mut impulse_events: EventWriter<ImpulseEvent>,

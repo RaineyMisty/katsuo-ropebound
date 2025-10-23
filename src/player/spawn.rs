@@ -9,12 +9,13 @@ use super::config::PLAYER_SPAWN_MASS;
 use super::bundle::PlayerBundle;
 
 use crate::physics::bundle::PhysicsBundle;
-use crate::event::{PlayerSpawnEvent, RequestControl};
+use crate::event::{PlayerSpawnEvent, RequestControl, PlayerSpawned};
 
 pub(super) fn spawn_player(
     mut commands: Commands,
     mut events: EventReader<PlayerSpawnEvent>,
-    mut req_ctl: EventWriter<RequestControl>
+    mut req_ctl: EventWriter<RequestControl>,
+    mut spawned: EventWriter<PlayerSpawned>,
 ) {
     let spawn_mass = PLAYER_SPAWN_MASS;
     for event in events.read() {
@@ -29,6 +30,11 @@ pub(super) fn spawn_player(
         req_ctl.write(RequestControl {
             entity,
             spec: event.controls.clone(),
+        });
+
+        spawned.write(PlayerSpawned {
+            entity,
+            node: event.node,
         });
     }
 

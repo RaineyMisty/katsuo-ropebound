@@ -10,7 +10,7 @@ use crate::physics::PhysicsPlugin;
 use crate::player::PlayerPlugin;
 use crate::player_lifetime::PlayerLifetimePlugin;
 use crate::rope::RopePlugin;
-use crate::event::{ForceEvent, ImpulseEvent, PlayerIntentEvent, PlayerSpawnEvent, RequestControl};
+use crate::event::EventPlugin;
 
 pub fn run() {
     App::new()
@@ -20,11 +20,7 @@ pub fn run() {
             filter: "katsuo_ropebound=debug,bevy=warn,wgpu=warn,naga=warn".to_string(),
             ..Default::default()
         }))
-        .add_event::<ForceEvent>()
-        .add_event::<ImpulseEvent>()
-        .add_event::<PlayerIntentEvent>()
-        .add_event::<PlayerSpawnEvent>()
-        .add_event::<RequestControl>()
+        .add_plugins(EventPlugin)
         .add_plugins(PlayerLifetimePlugin)
         .add_plugins(ControlPlugin)
         .add_plugins(PlayerPlugin)

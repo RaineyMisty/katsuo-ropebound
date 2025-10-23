@@ -4,6 +4,22 @@
 // Description: <Event>
 use bevy::prelude::*;
 
+// Event plugins
+pub struct EventPlugin;
+impl Plugin for EventPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_event::<ForceEvent>()
+           .add_event::<RegisterRope>()
+           // .add_event::<UnregisterRope>()
+           .add_event::<ImpulseEvent>()
+           .add_event::<PlayerIntentEvent>()
+           .add_event::<PlayerSpawnEvent>()
+           .add_event::<PlayerSpawned>()
+           .add_event::<RopeSpawnEvent>()
+           .add_event::<RequestControl>();
+    }
+}
+
 /** Physics event
   *
   * rope -> physics
@@ -13,6 +29,24 @@ pub struct ForceEvent {
     pub target: Entity,
     pub force: Vec2,
 }
+
+/** Rope registration event
+  *
+  * rope -> physics
+  */
+#[derive(Event, Clone, Copy, Debug)]
+pub struct RegisterRope {
+    pub rope: Entity,
+    pub head: Entity,
+    pub tail: Entity,
+    pub rest_len: f32,
+    pub k: f32,
+}
+
+// #[derive(Event, Clone, Copy, Debug)]
+// pub struct UnregisterRope {
+//     pub rope: Entity,
+// }
 
 
 /* Impulse event
@@ -46,15 +80,32 @@ pub enum PlayerIntentKind {
 
 /* Player Spawn event
  *
- * playerlife -> player
+ * player_lifetime -> player
  */
 #[derive(Event, Debug)]
 pub struct PlayerSpawnEvent {
     // pub name: String,
+    pub node: u32,
     pub texture: Handle<Image>,
     pub position: Vec2,
     pub controls: ControlSpec,
     pub mass: Option<f32>,
+}
+
+#[derive(Event, Debug)]
+pub struct PlayerSpawned {
+    pub entity: Entity,
+    pub node: u32,
+}
+
+/** Rope Spawn event
+  *
+  * player_lifetime -> rope
+  */
+#[derive(Event, Debug)]
+pub struct RopeSpawnEvent {
+    pub head_entity: Entity,
+    pub tail_entity: Entity,
 }
 
 /* Player control spec

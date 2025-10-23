@@ -13,15 +13,19 @@ use super::bundle::RopeBundle;
 pub(super) fn spawn_rope(
     mut commands: Commands,
     mut events: EventReader<RopeSpawnEvent>,
+    mut register_events: EventWriter<RegisterRope>,
 ) {
     for event in events.read() {
         info!("Spawning rope between {:?} and {:?}", event.head_entity, event.tail_entity);
-        commands.spawn((
+        let rest_length = ROPE_REST_LENGTH;
+        let max_extension = ROPE_MAX_EXTENSION;
+        let spring_constant = SPRING_CONSTANT;
+        let rope_entity = commands.spawn((
             RopeBundle {
                 spring_joint: SpringJoint {
-                    rest_length: ROPE_REST_LENGTH,
-                    max_extension: ROPE_MAX_EXTENSION,
-                    spring_constant: SPRING_CONSTANT,
+                    rest_length,
+                    max_extension,
+                    spring_constant,
                 },
                 rope_ends: EndPoints {
                     head: EndPoint::Body(event.head_entity),
@@ -30,8 +34,16 @@ pub(super) fn spawn_rope(
                 transform: Transform::default(),
             },
             Rope,
-        ));
+        )).id();
 
-
+        info!("Rope entity spawned: {:?}", rope_entity);
+        register_events.write(RegisterRope {
+            rope_entity,
+            head_entity: event.head_entity,
+            tail_entity: event.tail_entity,
+            rest_length,
+            max_extension,
+            spring_constant,
+        });
     }
 }

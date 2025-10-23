@@ -36,11 +36,12 @@ pub struct ForceEvent {
   */
 #[derive(Event, Clone, Copy, Debug)]
 pub struct RegisterRope {
-    pub rope: Entity,
-    pub head: Entity,
-    pub tail: Entity,
-    pub rest_len: f32,
-    pub k: f32,
+    pub rope_entity: Entity,
+    pub head_entity: Entity,
+    pub tail_entity: Entity,
+    pub rest_length: f32,
+    pub max_extension: f32,
+    pub spring_constant: f32,
 }
 
 // #[derive(Event, Clone, Copy, Debug)]

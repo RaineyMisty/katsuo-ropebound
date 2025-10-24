@@ -46,3 +46,12 @@
   - `mod`: CoinPlugin.
   - `spawn`: Spawn coin.
   - `detect`: Detect coin gathering inside the Coin System. Do not solve it in collision.
+
+### **AI Bot**:
+
+- `ai`:
+  - `observer`: detect environment as state
+  - `policy`: choose policy
+  - `controller`: get action answer from policy, and send it to control module.
+- `control`:
+  - `scheme`: Add a new logic to convert the action output by the AI ​​module into the ControlScheme of the control module

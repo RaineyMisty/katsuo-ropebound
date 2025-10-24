@@ -3,20 +3,39 @@
 // Author: Tingxu Chen <tic128@pitt.edu>
 // Description: <Physics system module and plugin>
 use bevy::prelude::*;
+use bevy::time::Fixed;
 
 mod physics_core;
 mod player;
-// mod rope;
+mod control;
 
 mod config;
+mod schedule;
 
 use self::physics_core::PhysicsCorePlugin;
-use self::player::player_intent_to_force_system;
+use self::player::player_insert_physics;
+use self::control::player_intent_to_force;
+use self::schedule::PhysicsSet;
 
 pub struct PhysicsPlugin;
 impl Plugin for PhysicsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins(PhysicsCorePlugin)
-        .add_systems(Update, player_intent_to_force_system);
+        app.insert_resource(Time::<Fixed>::from_hz(60.0))
+           .configure_sets(
+                FixedUpdate,
+                (
+                    PhysicsSet::Clear,
+                    PhysicsSet::Emit,
+                    PhysicsSet::Integrate,
+                ).chain(),
+            )
+           .add_plugins(PhysicsCorePlugin)
+           .add_systems(
+                FixedUpdate,
+                (
+                    player_insert_physics,
+                    player_intent_to_force,
+                ).in_set(PhysicsSet::Emit).chain()
+            );
     }
 }

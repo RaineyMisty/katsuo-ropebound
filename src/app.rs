@@ -5,12 +5,13 @@
 
 use bevy::prelude::*;
 use bevy::time::Fixed;
+use crate::event::EventPlugin;
+use crate::camera::CameraPlugin;
 use crate::control::ControlPlugin;
+use crate::lifetime::LifetimePlugin;
 use crate::physics::PhysicsPlugin;
 use crate::player::PlayerPlugin;
-use crate::lifetime::LifetimePlugin;
 use crate::rope::RopePlugin;
-use crate::event::EventPlugin;
 
 pub fn run() {
     App::new()
@@ -21,18 +22,11 @@ pub fn run() {
             ..Default::default()
         }))
         .add_plugins(EventPlugin)
+        .add_plugins(CameraPlugin)
         .add_plugins(LifetimePlugin)
         .add_plugins(ControlPlugin)
+        .add_plugins(PhysicsPlugin)
         .add_plugins(PlayerPlugin)
         .add_plugins(RopePlugin)
-        .add_plugins(PhysicsPlugin)
-        .add_systems(Startup, setup_camera)
         .run();
-}
-
-fn setup_camera(mut commands: Commands) {
-    commands.spawn((
-        Camera2d,
-        Camera::default(),
-    ));
 }

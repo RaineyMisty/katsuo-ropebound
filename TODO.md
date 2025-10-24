@@ -30,6 +30,7 @@
   - `platform`: Send platform spawn event.
   - `coin`: Send coin spawn event.
   - `resoruce`: Save map data as resource.
+- `event`: Write platform and coin spawn events.
 
 ### **Platform**:
 
@@ -38,3 +39,10 @@
   - `spawn`: Platform spawn and send collision component attachment request and physics component attachment request.
 - `physics`
   - `platform`: Add moving platform logic here.
+
+### **Coin System**:
+
+- `coin`: Spawn coin as an entity.
+  - `mod`: CoinPlugin.
+  - `spawn`: Spawn coin.
+  - `detect`: Detect coin gathering inside the Coin System. Do not solve it in collision.

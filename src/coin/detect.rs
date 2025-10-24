@@ -3,3 +3,6 @@
 // Author:
 // Description: <Coin detect>
 use bevy::prelude::*;
+
+// TODO-Coin System: Detect coin gathering inside the Coin System.
+//                   Do not solve it in collision.

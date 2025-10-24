@@ -3,3 +3,5 @@
 // Author:
 // Description: <Coin loading>
 use bevy::prelude::*;
+
+// TODO-Map Loading: Send coin spawn event.

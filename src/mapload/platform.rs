@@ -3,3 +3,5 @@
 // Author:
 // Description: <Platform loading>
 use bevy::prelude::*;
+
+// TODO-Map Loading: Send platform spawn event.

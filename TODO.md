@@ -21,7 +21,7 @@
 - `physics`
   - `rope`: Rope physics analysis.
 
-### **Maploading**:
+### **Map Loading**:
 
 - `mapload`:
   - `mod`: MapLoadingPlugin.

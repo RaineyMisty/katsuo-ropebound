@@ -14,12 +14,21 @@ pub(super) fn spawn_rope(
     mut commands: Commands,
     mut events: EventReader<RopeSpawnEvent>,
     mut register_events: EventWriter<RegisterRope>,
+    tf: Query<&GlobalTransform>,
 ) {
     for event in events.read() {
-        info!("Spawning rope between {:?} and {:?}", event.head_entity, event.tail_entity);
         let rest_length = ROPE_REST_LENGTH;
         let max_extension = ROPE_MAX_EXTENSION;
         let spring_constant = SPRING_CONSTANT;
+        let position_head = match query.iter(event.head_entity) {
+            Ok(data) => data;
+            Err(_) => continue;
+        }
+        let position_tail = match query.iter(event.tail_entity) {
+            Ok(data) => data;
+            Err(_) => continue;
+        }
+        let mid = (position_head.translation().truncate() + position_tail.translation().truncate()) / 2.0
         let rope_entity = commands.spawn((
             RopeBundle {
                 spring_joint: SpringJoint {
@@ -36,7 +45,6 @@ pub(super) fn spawn_rope(
             Rope,
         )).id();
 
-        info!("Rope entity spawned: {:?}", rope_entity);
         register_events.write(RegisterRope {
             rope_entity,
             head_entity: event.head_entity,

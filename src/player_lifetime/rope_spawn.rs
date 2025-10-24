@@ -13,7 +13,6 @@ pub(super) fn wait_for_player_spawn(
     mut rope_events: EventWriter<RopeSpawnEvent>,
 ) {
     for event in events.read() {
-        info!("Player spawned: {:?}", event.entity);
         let node = event.node as usize;
         if track.node_to_entity[node].is_none() {
             track.node_to_entity[node] = Some(event.entity);
@@ -22,13 +21,11 @@ pub(super) fn wait_for_player_spawn(
     }
 
     if !track.is_rope && track.spawned_players == track.expected_players {
-        info!("All players spawned, spawning rope");
         let total_nodes = track.node_to_entity.len();
 
         // spawn rope between players
         for i in 0..total_nodes - 1 {
             if let (Some(head), Some(tail)) = (track.node_to_entity[i], track.node_to_entity[i + 1]) {
-                info!("Requesting rope between node {} and {}", i, i + 1);
                 rope_events.write(RopeSpawnEvent {
                     head_entity: head,
                     tail_entity: tail,

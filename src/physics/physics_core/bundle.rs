@@ -4,15 +4,16 @@
 // Description: <General physics bundle>
 use bevy::prelude::*;
 
-use super::component::{Velocity, NetForce, Gravity, Mass, Momentum};
+use super::component::{Velocity, NetForce, Gravity, Mass, Momentum, Impulse};
 
 #[derive(Bundle, Clone)]
-pub struct PhysicsBundle {
+pub(in crate::physics) struct PhysicsBundle {
     velocity: Velocity,
     net_force: NetForce,
     gravity: Gravity,
     mass: Mass,
     momentum: Momentum,
+    impulse: Impulse,
 }
 
 impl Default for PhysicsBundle {
@@ -23,6 +24,7 @@ impl Default for PhysicsBundle {
             gravity: Gravity::default(),
             mass: Mass::default(),
             momentum: Momentum::default(),
+            impulse: Impulse::default(),
         }
     }
 }
@@ -35,6 +37,7 @@ impl PhysicsBundle {
             gravity: Gravity(gravity),
             mass: Mass(mass),
             momentum: Momentum::default(),
+            impulse: Impulse::default(),
         }
     }
 }

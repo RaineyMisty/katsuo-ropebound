@@ -3,9 +3,27 @@
 // Author: Tingxu Chen <tic128@pitt.edu>
 // Description: <Systems for physics integration>
 use bevy::prelude::*;
-use super::component::{Velocity, Momentum, Mass};
+use super::component::{Velocity, Momentum, Impulse, NetForce, Mass};
 
-pub(super) fn integrate_momentum_system(
+pub(super) fn netforce_to_momentum(
+    time: Res<Time<Fixed>>,
+    mut query: Query<(&mut Momentum, &NetForce)>,
+) {
+    let delta_seconds = time.delta_secs();
+    for (mut momentum, net_force) in query.iter_mut() {
+        momentum.0 += net_force.0 * delta_seconds;
+    }
+}
+
+pub(super) fn impulse_to_momentum(
+    mut query: Query<(&mut Momentum, &Impulse)>,
+) {
+    for (mut momentum, impulse) in query.iter_mut() {
+        momentum.0 += impulse.0;
+    }
+}
+
+pub(super) fn momentum_to_velocity(
     mut query: Query<(&mut Velocity, &Momentum, &Mass)>,
 ) {
     for (mut velocity, momentum, mass) in query.iter_mut() {
@@ -13,7 +31,7 @@ pub(super) fn integrate_momentum_system(
     }
 }
 
-pub(super) fn integrate_velocity_system(
+pub(super) fn velocity_to_transform(
     time: Res<Time<Fixed>>,
     mut query: Query<(&mut Transform, &Velocity)>,
 ) {

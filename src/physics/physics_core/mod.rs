@@ -3,40 +3,61 @@
 // Author: Tingxu Chen <tic128@pitt.edu>
 // Description: <Physics system module and plugin>
 use bevy::prelude::*;
+use bevy::time::Fixed;
 
 mod gravity;
+mod clear;
 mod integrate;
-mod momentum;
-mod net_force;
 
 pub(super) mod bundle;
 pub(super) mod config;
 pub(super) mod component;
 
 use self::gravity::gravity_system;
-use self::integrate::integrate_momentum_system;
-use self::integrate::integrate_velocity_system;
+use self::clear::clean_force;
+use self::clear::clean_impulse;
+use self::integrate::netforce_to_momentum;
+use self::integrate::impulse_to_momentum;
+use self::integrate::momentum_to_velocity;
+use self::integrate::velocity_to_transform;
 use self::integrate::boundary;
-use self::momentum::integrate_force_system;
-use self::momentum::collect_impulse_event_system;
-use self::net_force::clean_force_system;
-use self::net_force::collect_force_events_system;
+// use self::net_force::collect_force_events_system;
+
+use super::schedule::PhysicsSet;
 
 pub(super) struct PhysicsCorePlugin;
 impl Plugin for PhysicsCorePlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(
+        app.configure_sets(
+            FixedUpdate,
+            (
+                PhysicsSet::Clear,
+                PhysicsSet::Emit,
+                PhysicsSet::Integrate,
+            ).chain(),
+        )
+        .add_systems(
             FixedUpdate, 
             (
-                clean_force_system,
+                clean_force,
+                clean_impulse,
+            ).in_set(PhysicsSet::Clear)
+        )
+        .add_systems(
+            FixedUpdate, 
+            (
                 gravity_system,
-                collect_force_events_system,
-                integrate_force_system,
-                collect_impulse_event_system,
-                integrate_momentum_system,
-                integrate_velocity_system,
+            ).in_set(PhysicsSet::Emit)
+        )
+        .add_systems(
+            FixedUpdate, 
+            (
+                netforce_to_momentum,
+                impulse_to_momentum,
+                momentum_to_velocity,
+                velocity_to_transform,
                 boundary,
-            ).chain()
+            ).in_set(PhysicsSet::Integrate).chain()
         );
     }
 }

@@ -9,10 +9,13 @@ use bevy::prelude::*;
 pub(in crate::physics) struct Velocity (pub Vec2);
 
 #[derive(Component, Default, Clone, Copy, Debug)]
-pub(super) struct NetForce (pub Vec2);
+pub(in crate::physics) struct NetForce (pub Vec2);
 
 #[derive(Component, Default, Clone, Copy, Debug)]
 pub(super) struct Momentum (pub Vec2);
+
+#[derive(Component, Default, Clone, Copy, Debug)]
+pub(in crate::physics) struct Impulse (pub Vec2);
 
 #[derive(Component, Clone, Copy, Debug)]
 pub(super) struct Mass (pub f32);

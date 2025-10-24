@@ -13,14 +13,11 @@ use self::player_spawn::queue_for_player_setup_event;
 use self::rope_spawn::wait_for_player_spawn;
 use self::component::SpawnTrack;
 
-use crate::event::PlayerSpawnEvent;
-
 pub struct LifetimePlugin;
 
 impl Plugin for LifetimePlugin{
     fn build (&self, app: &mut App){
         app.init_resource::<SpawnTrack>()
-        .add_event::<PlayerSpawnEvent>()
         .add_systems(Startup, queue_for_player_setup_event)
         .add_systems(Update, wait_for_player_spawn);
     }

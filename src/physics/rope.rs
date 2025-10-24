@@ -4,11 +4,11 @@
 // Description: <Rope physics>
 use bevy::prelude::*;
 
-use crate::event::RegisterRope;
+use crate::event::Rope2PhysicsAttach;
 
 pub(super) fn rope_register_system(
     mut commands: Commands,
-    mut events: EventReader<RegisterRope>,
+    mut events: EventReader<Rope2PhysicsAttach>,
 ) {
     // TODO: REGISTER ROPE PHYSICS
 }

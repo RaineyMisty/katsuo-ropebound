@@ -6,12 +6,12 @@ use bevy::prelude::*;
 
 use super::component::SpawnTrack;
 
-use crate::event::{PlayerSpawnEvent, ControlSpec};
+use crate::event::{Lifetime2PlayerSpawn, ControlType};
 
 pub(super) fn queue_for_player_setup_event(
     asset_server: Res<AssetServer>,
     mut track: ResMut<SpawnTrack>,
-    mut events: EventWriter::<PlayerSpawnEvent>,
+    mut events: EventWriter::<Lifetime2PlayerSpawn>,
 ) {
     let player_count = 3;
     track.expected_players = player_count;
@@ -20,11 +20,11 @@ pub(super) fn queue_for_player_setup_event(
     track.is_rope = false;
 
     let tex: Handle<Image> = asset_server.load("portrait_rainey.png");
-    events.write(PlayerSpawnEvent {
+    events.write(Lifetime2PlayerSpawn {
         node: 0,
         texture: tex,
         position: Vec2::new(-100.0,-200.0),
-        controls: ControlSpec::Keyboard {
+        controls: ControlType::Keyboard {
             up: KeyCode::KeyW,
             left: KeyCode::KeyA,
             right: KeyCode::KeyD,
@@ -33,11 +33,11 @@ pub(super) fn queue_for_player_setup_event(
     });
 
     let tex: Handle<Image> = asset_server.load("portrait_shawn.png");
-    events.write(PlayerSpawnEvent {
+    events.write(Lifetime2PlayerSpawn {
         node: 1,
         texture: tex,
         position: Vec2::new(-300.0,-200.0),
-        controls: ControlSpec::Keyboard {
+        controls: ControlType::Keyboard {
             up: KeyCode::ArrowUp,
             left: KeyCode::ArrowLeft,
             right: KeyCode::ArrowRight,
@@ -46,11 +46,11 @@ pub(super) fn queue_for_player_setup_event(
     });
 
     let tex: Handle<Image> = asset_server.load("portrait_jagger.png");
-    events.write(PlayerSpawnEvent {
+    events.write(Lifetime2PlayerSpawn {
         node: 2,
         texture: tex,
         position: Vec2::new(-500.0,-200.0),
-        controls: ControlSpec::Keyboard {
+        controls: ControlType::Keyboard {
             up: KeyCode::KeyI,
             left: KeyCode::KeyJ,
             right: KeyCode::KeyL,

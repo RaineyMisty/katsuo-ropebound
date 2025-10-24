@@ -7,10 +7,10 @@ use bevy::prelude::*;
 use super::physics_core::component::{Velocity, NetForce, Impulse};
 use super::config::{PLAYER_CONTROL_SPEED_LIMIT, PLAYER_MOVE_FORCE, PLAYER_JUMP_IMPULSE};
 
-use crate::event::{PlayerIntentEvent, PlayerIntentKind};
+use crate::event::{Control2PhysicsIntent, IntentType};
 
 pub(super) fn player_intent_to_force(
-    mut intent_events: EventReader<PlayerIntentEvent>,
+    mut intent_events: EventReader<Control2PhysicsIntent>,
     mut query: Query<(&Velocity, &mut NetForce, &mut Impulse)>,
 ) {
     let speed_limit = PLAYER_CONTROL_SPEED_LIMIT;
@@ -27,7 +27,7 @@ pub(super) fn player_intent_to_force(
         let resistance_constant = move_force / speed_limit;
         let mut jump_impulse = Vec2::ZERO;
         match event.intent {
-            PlayerIntentKind::Move { axis_x } => {
+            IntentType::Move { axis_x } => {
                 let speed = velocity.0.x * axis_x.signum();
                 if speed <= 0.0 {
                     force_limit.x = move_force * axis_x.signum();
@@ -38,13 +38,13 @@ pub(super) fn player_intent_to_force(
                     force_limit.x = 0.0;
                 }
             },
-            PlayerIntentKind::JumpStart => {
+            IntentType::JumpStart => {
                 jump_impulse.y = PLAYER_JUMP_IMPULSE;
             },
-            PlayerIntentKind::JumpHold { dt: _ } => {
+            IntentType::JumpHold { dt: _ } => {
                 // no continuous force for now
             },
-            PlayerIntentKind::JumpEnd => {
+            IntentType::JumpEnd => {
                 // no end force for now
             },
         }

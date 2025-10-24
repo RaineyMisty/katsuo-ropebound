@@ -4,13 +4,13 @@
 // Description: <Player Lifetime - Player Spawn>
 use bevy::prelude::*;
 
-use crate::event::{PlayerSpawned, RopeSpawnEvent};
+use crate::event::{Player2LifetimeSpawned, Lifetime2RopeSpawn};
 use super::component::SpawnTrack;
 
 pub(super) fn wait_for_player_spawn(
     mut track: ResMut<SpawnTrack>,
-    mut events: EventReader<PlayerSpawned>,
-    mut rope_events: EventWriter<RopeSpawnEvent>,
+    mut events: EventReader<Player2LifetimeSpawned>,
+    mut rope_events: EventWriter<Lifetime2RopeSpawn>,
 ) {
     for event in events.read() {
         let node = event.node as usize;
@@ -26,7 +26,7 @@ pub(super) fn wait_for_player_spawn(
         // spawn rope between players
         for i in 0..total_nodes - 1 {
             if let (Some(head), Some(tail)) = (track.node_to_entity[i], track.node_to_entity[i + 1]) {
-                rope_events.write(RopeSpawnEvent {
+                rope_events.write(Lifetime2RopeSpawn {
                     head_entity: head,
                     tail_entity: tail,
                 });

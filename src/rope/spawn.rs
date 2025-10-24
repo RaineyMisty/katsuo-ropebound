@@ -4,7 +4,7 @@
 // Description: <Rope Spawn system>
 use bevy::prelude::*;
 
-use crate::event::{RopeSpawnEvent, RegisterRope};
+use crate::event::{Lifetime2RopeSpawn, Rope2PhysicsAttach};
 
 use super::component::{EndPoint, EndPoints, SpringJoint, Rope};
 use super::config::{ROPE_REST_LENGTH, ROPE_MAX_EXTENSION, SPRING_CONSTANT};
@@ -12,8 +12,8 @@ use super::bundle::RopeBundle;
 
 pub(super) fn spawn_rope(
     mut commands: Commands,
-    mut events: EventReader<RopeSpawnEvent>,
-    mut register_events: EventWriter<RegisterRope>,
+    mut events: EventReader<Lifetime2RopeSpawn>,
+    mut register_events: EventWriter<Rope2PhysicsAttach>,
     tf: Query<&GlobalTransform>,
 ) {
     for event in events.read() {
@@ -45,7 +45,7 @@ pub(super) fn spawn_rope(
             Rope,
         )).id();
 
-        register_events.write(RegisterRope {
+        register_events.write(Rope2PhysicsAttach {
             rope_entity,
             head_entity: event.head_entity,
             tail_entity: event.tail_entity,

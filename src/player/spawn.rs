@@ -8,14 +8,14 @@ use super::component::Player;
 use super::config::PLAYER_SPAWN_MASS;
 use super::bundle::PlayerBundle;
 
-use crate::event::{PlayerSpawnEvent, RequestPlayerPhysics, RequestControl, PlayerSpawned};
+use crate::event::{Lifetime2PlayerSpawn, Player2PhysicsAttach, Player2ControlAttach, Player2LifetimeSpawned};
 
 pub(super) fn spawn_player(
     mut commands: Commands,
-    mut events: EventReader<PlayerSpawnEvent>,
-    mut req_phy: EventWriter<RequestPlayerPhysics>,
-    mut req_ctl: EventWriter<RequestControl>,
-    mut spawned: EventWriter<PlayerSpawned>,
+    mut events: EventReader<Lifetime2PlayerSpawn>,
+    mut req_phy: EventWriter<Player2PhysicsAttach>,
+    mut req_ctl: EventWriter<Player2ControlAttach>,
+    mut spawned: EventWriter<Player2LifetimeSpawned>,
 ) {
     for event in events.read() {
         let transform = Transform::from_translation(event.position.extend(0.0));
@@ -26,17 +26,17 @@ pub(super) fn spawn_player(
         .id();
 
         let spawn_mass = PLAYER_SPAWN_MASS;
-        req_phy.write(RequestPlayerPhysics {
+        req_phy.write(Player2PhysicsAttach {
             entity,
             mass: spawn_mass,
         });
 
-        req_ctl.write(RequestControl {
+        req_ctl.write(Player2ControlAttach {
             entity,
             spec: event.controls.clone(),
         });
 
-        spawned.write(PlayerSpawned {
+        spawned.write(Player2LifetimeSpawned {
             entity,
             node: event.node,
         });

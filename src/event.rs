@@ -8,97 +8,62 @@ use bevy::prelude::*;
 pub struct EventPlugin;
 impl Plugin for EventPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<RegisterRope>()
-           // .add_event::<UnregisterRope>()
-           .add_event::<PlayerIntentEvent>()
-           .add_event::<PlayerSpawnEvent>()
-           .add_event::<PlayerSpawned>()
-           .add_event::<RopeSpawnEvent>()
-           .add_event::<RequestControl>()
-           .add_event::<RequestPlayerPhysics>()
-           .add_event::<RequestRopePhysics>();
+        app.add_event::<Lifetime2PlayerSpawn>()
+           .add_event::<Player2LifetimeSpawned>()
+           .add_event::<Lifetime2RopeSpawn>()
+           .add_event::<Control2PhysicsIntent>()
+           .add_event::<Player2ControlAttach>()
+           .add_event::<Player2PhysicsAttach>()
+           .add_event::<Rope2PhysicsAttach>();
     }
 }
 
-/** Rope registration event
-  *
-  * rope -> physics
-  */
-#[derive(Event, Clone, Copy, Debug)]
-pub struct RegisterRope {
-    pub rope_entity: Entity,
+// Lifetime calls Player to Spawn
+#[derive(Event, Debug)]
+pub struct Lifetime2PlayerSpawn {
+    pub node: u32,
+    pub texture: Handle<Image>,
+    pub position: Vec2,
+    pub controls: ControlType,
+    pub mass: Option<f32>,
+}
+
+// Player sends Lifetime Spawn feedback
+#[derive(Event, Debug)]
+pub struct Player2LifetimeSpawned {
+    pub entity: Entity,
+    pub node: u32,
+}
+
+// Lifetime calls Rope to Spawn
+#[derive(Event, Debug)]
+pub struct Lifetime2RopeSpawn {
     pub head_entity: Entity,
     pub tail_entity: Entity,
-    pub rest_length: f32,
-    pub max_extension: f32,
-    pub spring_constant: f32,
 }
 
-// #[derive(Event, Clone, Copy, Debug)]
-// pub struct UnregisterRope {
-//     pub rope: Entity,
-// }
-
-/** Player Intent event
-  *
-  * control -> physics
-  */
+// Control sends player Intent to Physics
 #[derive(Event, Debug)]
-pub struct PlayerIntentEvent {
+pub struct Control2PhysicsIntent {
     pub player: Entity,
-    pub intent: PlayerIntentKind,
+    pub intent: IntentType,
 }
-
 #[derive(Debug, Clone)]
-pub enum PlayerIntentKind {
+pub enum IntentType {
     Move{ axis_x: f32 },
     JumpStart,
     JumpHold{ dt: f32 },
     JumpEnd,
 }
 
-/* Player Spawn event
- *
- * player_lifetime -> player
- */
+// Player requests Control to Attach a control component
 #[derive(Event, Debug)]
-pub struct PlayerSpawnEvent {
-    // pub name: String,
-    pub node: u32,
-    pub texture: Handle<Image>,
-    pub position: Vec2,
-    pub controls: ControlSpec,
-    pub mass: Option<f32>,
-}
-
-#[derive(Event, Debug)]
-pub struct PlayerSpawned {
+pub struct Player2ControlAttach {
     pub entity: Entity,
-    pub node: u32,
+    pub spec: ControlType
 }
-
-/** Rope Spawn event
-  *
-  * player_lifetime -> rope
-  */
-#[derive(Event, Debug)]
-pub struct RopeSpawnEvent {
-    pub head_entity: Entity,
-    pub tail_entity: Entity,
-}
-
-/* Player control spec
- *
- * player -> control
- */
-#[derive(Event, Debug)]
-pub struct RequestControl {
-    pub entity: Entity,
-    pub spec: ControlSpec
-}
-
 #[derive(Debug, Clone)]
-pub enum ControlSpec {
+pub enum ControlType {
     Keyboard {
         up: KeyCode,
         left: KeyCode,
@@ -107,13 +72,20 @@ pub enum ControlSpec {
     Aibot,
 }
 
+// Player requests Physics to Attach a player physics component
 #[derive(Event, Debug)]
-pub struct RequestPlayerPhysics {
+pub struct Player2PhysicsAttach {
     pub entity: Entity,
     pub mass: f32,
 }
 
-#[derive(Event, Debug)]
-pub struct RequestRopePhysics {
-    pub entity: Entity,
+// Rope requests Physics to Attach a rope physics component
+#[derive(Event, Clone, Copy, Debug)]
+pub struct Rope2PhysicsAttach {
+    pub rope_entity: Entity,
+    pub head_entity: Entity,
+    pub tail_entity: Entity,
+    pub rest_length: f32,
+    pub max_extension: f32,
+    pub spring_constant: f32,
 }

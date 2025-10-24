@@ -14,9 +14,6 @@ use self::control::keyboard_control_system;
 use self::intent::scheme_to_intent_writer;
 use self::spec_load::on_request_control;
 
-use crate::event::RequestControl;
-use crate::event::PlayerIntentEvent;
-
 pub struct ControlPlugin;
 
 impl Plugin for ControlPlugin {

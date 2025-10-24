@@ -91,4 +91,5 @@ pub struct Rope2PhysicsAttach {
 }
 
 // Collision sends Physics Information
-// TODO: Collision send Entity, Overlap Info, ect.
+// TODO-Collision: Write an event to send collision graphic information.
+//                 Entity, Overlap Info, ect.

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2025
 // Author:
-// Description: <>
+// Description: <Collision component>
 use bevy::prelude::*;
 
-// TODO: Add collision components (Aabb, ect.)
+// TODO-Collision : Add collision components (Aabb, ect.)

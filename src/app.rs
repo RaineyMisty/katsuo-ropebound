@@ -7,11 +7,8 @@ use bevy::prelude::*;
 use bevy::time::Fixed;
 use crate::event::EventPlugin;
 use crate::camera::CameraPlugin;
-use crate::control::ControlPlugin;
 use crate::lifetime::LifetimePlugin;
 use crate::physics::PhysicsPlugin;
-use crate::player::PlayerPlugin;
-use crate::rope::RopePlugin;
 
 pub fn run() {
     App::new()
@@ -24,9 +21,6 @@ pub fn run() {
         .add_plugins(EventPlugin)
         .add_plugins(CameraPlugin)
         .add_plugins(LifetimePlugin)
-        .add_plugins(ControlPlugin)
         .add_plugins(PhysicsPlugin)
-        .add_plugins(PlayerPlugin)
-        .add_plugins(RopePlugin)
         .run();
 }

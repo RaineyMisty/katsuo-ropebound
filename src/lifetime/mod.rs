@@ -18,6 +18,11 @@ pub struct LifetimePlugin;
 impl Plugin for LifetimePlugin{
     fn build (&self, app: &mut App){
         app.init_resource::<SpawnTrack>()
+        .add_plugins((
+            crate::control::ControlPlugin,
+            crate::player::PlayerPlugin,
+            crate::rope::RopePlugin
+        ))
         .add_systems(Startup, queue_for_player_setup_event)
         .add_systems(Update, wait_for_player_spawn);
     }

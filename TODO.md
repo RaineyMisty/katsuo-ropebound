@@ -30,3 +30,11 @@
   - `platform`: Send platform spawn event.
   - `coin`: Send coin spawn event.
   - `resoruce`: Save map data as resource.
+
+### **Platform**:
+
+- `platform`: Spawn platform as an entity.
+  - `mod`: PlatformPlugin.
+  - `spawn`: Platform spawn and send collision component attachment request and physics component attachment request.
+- `physics`
+  - `platform`: Add moving platform logic here.

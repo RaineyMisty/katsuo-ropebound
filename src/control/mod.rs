@@ -21,9 +21,7 @@ pub struct ControlPlugin;
 
 impl Plugin for ControlPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<RequestControl>()
-        .add_event::<PlayerIntentEvent>()
-        .add_systems(Update, on_request_control)
+        app.add_systems(Update, on_request_control)
         .add_systems(Update, keyboard_control_system)
         .add_systems(Update, scheme_to_intent_writer);
     }

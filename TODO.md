@@ -1,7 +1,12 @@
 ## TODO List
 
 ### **Camera**:
+
 - `camera`: Moving camera.
+
+### **Control**:
+
+- `control`: Add No-air-jump, Coyote Time and Wall Jump.
 
 ### **Collision**:
 

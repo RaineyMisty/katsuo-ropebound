@@ -4,9 +4,9 @@
 // Description: <Collision mod>
 use bevy::prelude::*;
 
-pub struct CameraPlugin;
+pub struct CollisionPlugin;
 
-impl Plugin for CameraPlugin {
+impl Plugin for CollisionPlugin {
     fn build(&self, app: &mut App) {
         // app.add_systems(Update, collision);
     }

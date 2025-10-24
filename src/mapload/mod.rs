@@ -8,6 +8,9 @@ pub struct MapLoadingPlugin;
 
 impl Plugin for MapLoadingPlugin {
     fn build(&self, app: &mut App) {
-        // app.add_systems(Update, collision);
+        app.add_plugins((
+            crate::platform::PlatformPlugin,
+            crate::coin::CoinPlugin,
+        ));
     }
 }

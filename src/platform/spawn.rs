@@ -3,3 +3,7 @@
 // Author:
 // Description: <Platform Spawn>
 use bevy::prelude::*;
+
+// TODO-Platform: Platform spawn and send collision
+//                component attachment request and 
+//                physics component attachment request.

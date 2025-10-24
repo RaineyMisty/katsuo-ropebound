@@ -15,9 +15,9 @@ use self::component::SpawnTrack;
 
 use crate::event::PlayerSpawnEvent;
 
-pub struct PlayerLifetimePlugin;
+pub struct LifetimePlugin;
 
-impl Plugin for PlayerLifetimePlugin{
+impl Plugin for LifetimePlugin{
     fn build (&self, app: &mut App){
         app.init_resource::<SpawnTrack>()
         .add_event::<PlayerSpawnEvent>()

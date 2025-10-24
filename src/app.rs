@@ -8,7 +8,7 @@ use bevy::time::Fixed;
 use crate::control::ControlPlugin;
 use crate::physics::PhysicsPlugin;
 use crate::player::PlayerPlugin;
-use crate::player_lifetime::PlayerLifetimePlugin;
+use crate::lifetime::LifetimePlugin;
 use crate::rope::RopePlugin;
 use crate::event::EventPlugin;
 
@@ -21,7 +21,7 @@ pub fn run() {
             ..Default::default()
         }))
         .add_plugins(EventPlugin)
-        .add_plugins(PlayerLifetimePlugin)
+        .add_plugins(LifetimePlugin)
         .add_plugins(ControlPlugin)
         .add_plugins(PlayerPlugin)
         .add_plugins(RopePlugin)

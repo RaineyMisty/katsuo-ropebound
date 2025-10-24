@@ -2,7 +2,7 @@ mod app;
 mod control;
 mod physics;
 mod player;
-mod player_lifetime;
+mod lifetime;
 mod rope;
 mod event;
 

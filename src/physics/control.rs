@@ -7,7 +7,7 @@ use bevy::prelude::*;
 use super::physics_core::component::{Velocity, NetForce, Impulse};
 use super::config::{PLAYER_CONTROL_SPEED_LIMIT, PLAYER_MOVE_FORCE, PLAYER_JUMP_IMPULSE};
 
-use crate::event::{ForceEvent, ImpulseEvent, PlayerIntentEvent, PlayerIntentKind};
+use crate::event::{PlayerIntentEvent, PlayerIntentKind};
 
 pub(super) fn player_intent_to_force(
     mut intent_events: EventReader<PlayerIntentEvent>,

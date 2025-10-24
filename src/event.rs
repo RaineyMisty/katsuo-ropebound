@@ -89,3 +89,6 @@ pub struct Rope2PhysicsAttach {
     pub max_extension: f32,
     pub spring_constant: f32,
 }
+
+// Collision sends Physics Information
+// TODO: Collision send Entity, Overlap Info, ect.

@@ -16,7 +16,9 @@ impl Plugin for EventPlugin {
            .add_event::<PlayerSpawnEvent>()
            .add_event::<PlayerSpawned>()
            .add_event::<RopeSpawnEvent>()
-           .add_event::<RequestControl>();
+           .add_event::<RequestControl>()
+           .add_event::<RequestPlayerPhysics>()
+           .add_event::<RequestRopePhysics>();
     }
 }
 
@@ -127,4 +129,15 @@ pub enum ControlSpec {
         right: KeyCode,
     },
     Aibot,
+}
+
+#[derive(Event, Debug)]
+pub struct RequestPlayerPhysics {
+    pub entity: Entity,
+    pub mass: f32,
+}
+
+#[derive(Event, Debug)]
+pub struct RequestRopePhysics {
+    pub entity: Entity,
 }

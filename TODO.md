@@ -50,8 +50,8 @@
 ### **AI Bot**:
 
 - `ai`:
-  - `observer`: detect environment as state
-  - `policy`: choose policy
-  - `controller`: get action answer from policy, and send it to control module.
+  - `observer`: Detect environment as state
+  - `policy`: Choose policy
+  - `controller`: Get action answer from policy, and send it to control module.
 - `control`:
   - `scheme`: Add a new logic to convert the action output by the AI ​​module into the ControlScheme of the control module

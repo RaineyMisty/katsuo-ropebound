@@ -28,3 +28,8 @@ pub(super) fn keyboard_control_system(
         control.jump_just = jump_just;
     }
 }
+
+// pub(super) fn ai_control_system
+// TODO-AI Bot: Add a new logic to convert the action
+//              output by the AI ​​module into the
+//              ControlScheme of the control module

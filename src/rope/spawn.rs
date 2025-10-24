@@ -20,15 +20,15 @@ pub(super) fn spawn_rope(
         let rest_length = ROPE_REST_LENGTH;
         let max_extension = ROPE_MAX_EXTENSION;
         let spring_constant = SPRING_CONSTANT;
-        let position_head = match query.iter(event.head_entity) {
-            Ok(data) => data;
-            Err(_) => continue;
-        }
-        let position_tail = match query.iter(event.tail_entity) {
-            Ok(data) => data;
-            Err(_) => continue;
-        }
-        let mid = (position_head.translation().truncate() + position_tail.translation().truncate()) / 2.0
+        // let position_head = match tf.iter(event.head_entity) {
+        //     Ok(data) => data,
+        //     Err(_) => continue,
+        // };
+        // let position_tail = match tf.iter(event.tail_entity) {
+        //     Ok(data) => data,
+        //     Err(_) => continue,
+        // };
+        // let mid = (position_head.translation().truncate() + position_tail.translation().truncate()) / 2.0;
         let rope_entity = commands.spawn((
             RopeBundle {
                 spring_joint: SpringJoint {

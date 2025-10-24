@@ -8,10 +8,8 @@ use bevy::prelude::*;
 pub struct EventPlugin;
 impl Plugin for EventPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<ForceEvent>()
-           .add_event::<RegisterRope>()
+        app.add_event::<RegisterRope>()
            // .add_event::<UnregisterRope>()
-           .add_event::<ImpulseEvent>()
            .add_event::<PlayerIntentEvent>()
            .add_event::<PlayerSpawnEvent>()
            .add_event::<PlayerSpawned>()
@@ -20,16 +18,6 @@ impl Plugin for EventPlugin {
            .add_event::<RequestPlayerPhysics>()
            .add_event::<RequestRopePhysics>();
     }
-}
-
-/** Physics event
-  *
-  * rope -> physics
-  */
-#[derive(Event, Debug)]
-pub struct ForceEvent {
-    pub target: Entity,
-    pub force: Vec2,
 }
 
 /** Rope registration event
@@ -50,18 +38,6 @@ pub struct RegisterRope {
 // pub struct UnregisterRope {
 //     pub rope: Entity,
 // }
-
-
-/* Impulse event
-  *
-  * physics -> physics
-  * collision -> physics
-  */
-#[derive(Event, Debug)]
-pub struct ImpulseEvent {
-    pub target: Entity,
-    pub impulse: Vec2,
-}
 
 /** Player Intent event
   *

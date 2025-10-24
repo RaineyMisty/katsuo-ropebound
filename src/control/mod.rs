@@ -4,15 +4,15 @@
 // Description: <Systems for player control>
 use bevy::prelude::*;
 
-mod control;
+mod scheme;
 mod intent;
-mod spec_load;
+mod binding;
 
 mod component;
 
-use self::control::keyboard_control_system;
+use self::scheme::keyboard_control_system;
 use self::intent::scheme_to_intent_writer;
-use self::spec_load::on_request_control;
+use self::binding::on_request_control;
 
 pub struct ControlPlugin;
 

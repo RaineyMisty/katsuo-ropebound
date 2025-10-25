@@ -7,12 +7,14 @@ use bevy::prelude::*;
 mod player_spawn;
 mod rope_spawn;
 mod camera_spawn;
+mod spawn_track;
 
 mod resource;
 
 use self::player_spawn::queue_for_player_setup_event;
 use self::camera_spawn::send_target;
-use self::rope_spawn::wait_for_player_spawn;
+use self::rope_spawn::send_rope_spawn;
+use self::spawn_track::wait_for_player_spawn;
 use self::resource::SpawnTrack;
 
 pub struct LifetimePlugin;
@@ -27,6 +29,7 @@ impl Plugin for LifetimePlugin{
         ))
         .add_systems(Startup, queue_for_player_setup_event)
         .add_systems(Update, send_target)
+        .add_systems(Update, send_rope_spawn)
         .add_systems(Update, wait_for_player_spawn);
     }
 }

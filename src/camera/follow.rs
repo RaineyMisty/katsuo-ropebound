@@ -14,7 +14,6 @@ pub(super) fn set_target(
     for e in event.read() {
         target.0 = e.main_player;
     }
-    println!("Camera target set to: {:?}", target.0);
 }
 
 pub(super) fn camera_follow(

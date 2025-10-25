@@ -4,7 +4,7 @@
 // Description: <Player Spawn System>
 use bevy::prelude::*;
 
-use super::component::SpawnTrack;
+use super::resource::SpawnTrack;
 
 use crate::event::{Lifetime2PlayerSpawn, ControlType};
 

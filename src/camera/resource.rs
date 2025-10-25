@@ -5,4 +5,4 @@
 use bevy::prelude::*;
 
 #[derive(Resource, Default)]
-pub(super) struct FollowTarget( Option<Entity> );
+pub(super) struct FollowTarget(pub(super) Option<Entity> );

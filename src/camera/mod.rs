@@ -4,16 +4,21 @@
 // Description: <Camera mod>
 use bevy::prelude::*;
 
-// mod follow;
+mod follow;
 mod spawn;
+mod resource;
 
 use self::spawn::setup_camera;
+use self::follow::set_target;
+use self::resource::FollowTarget;
 
 pub struct CameraPlugin;
 
 impl Plugin for CameraPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Startup, setup_camera);
+        app.init_resource::<FollowTarget>()
+           .add_systems(Startup, setup_camera)
+           .add_systems(Update, set_target);
         //    .app_systems(Update, camera_follow_2d);
 
     }

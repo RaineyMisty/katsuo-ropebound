@@ -18,6 +18,7 @@ pub(super) fn queue_for_player_setup_event(
     track.spawned_players = 0;
     track.node_to_entity = vec![None; player_count];
     track.is_rope = false;
+    track.main_player = Some(0);
 
     let tex: Handle<Image> = asset_server.load("portrait_rainey.png");
     events.write(Lifetime2PlayerSpawn {

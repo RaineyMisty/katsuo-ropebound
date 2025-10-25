@@ -14,7 +14,8 @@ impl Plugin for EventPlugin {
            .add_event::<Control2PhysicsIntent>()
            .add_event::<Player2ControlAttach>()
            .add_event::<Player2PhysicsAttach>()
-           .add_event::<Rope2PhysicsAttach>();
+           .add_event::<Rope2PhysicsAttach>()
+           .add_event::<Lifetime2CameraTarget>();
     }
 }
 
@@ -89,6 +90,12 @@ pub struct Rope2PhysicsAttach {
     pub max_extension: f32,
     pub spring_constant: f32,
 }
+
+#[derive(Event, Debug)]
+pub struct Lifetime2CameraTarget{
+    pub main_player: Entity,
+}
+
 
 // Collision sends Physics Information
 // TODO-Collision: Write an event to send collision graphic information.

@@ -93,7 +93,7 @@ pub struct Rope2PhysicsAttach {
 
 #[derive(Event, Debug)]
 pub struct Lifetime2CameraTarget{
-    pub main_player: Entity,
+    pub main_player: Option<Entity>,
 }
 
 

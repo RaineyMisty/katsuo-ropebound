@@ -6,7 +6,8 @@ use bevy::prelude::*;
 
 pub(super) fn setup_camera(mut commands: Commands) {
     commands.spawn((
-        Camera2d,
         Camera::default(),
+        Camera2d,
+        Transform::from_xyz(640.0, 360.0, 1000.0),
     ));
 }

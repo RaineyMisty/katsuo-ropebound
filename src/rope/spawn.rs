@@ -6,7 +6,7 @@ use bevy::prelude::*;
 
 use crate::event::{Lifetime2RopeSpawn, Rope2PhysicsAttach};
 
-use super::component::{EndPoint, EndPoints, SpringJoint, Rope};
+use super::component::{EndPoint, EndPoints, Rope};
 use super::config::{ROPE_REST_LENGTH, ROPE_MAX_EXTENSION, SPRING_CONSTANT};
 use super::bundle::RopeBundle;
 
@@ -28,11 +28,6 @@ pub(super) fn spawn_rope(
         let mid = (head_pos + tail_pos) * 0.5;
         let rope_entity = commands.spawn((
             RopeBundle {
-                spring_joint: SpringJoint {
-                    rest_length,
-                    max_extension,
-                    spring_constant,
-                },
                 rope_ends: EndPoints {
                     head: EndPoint::Body(event.head_entity),
                     tail: EndPoint::Body(event.tail_entity),
@@ -44,8 +39,8 @@ pub(super) fn spawn_rope(
 
         register_events.write(Rope2PhysicsAttach {
             rope_entity,
-            head_entity: event.head_entity,
-            tail_entity: event.tail_entity,
+            // head_entity: event.head_entity,
+            // tail_entity: event.tail_entity,
             rest_length,
             max_extension,
             spring_constant,

@@ -83,8 +83,8 @@ pub struct Player2PhysicsAttach {
 #[derive(Event, Clone, Copy, Debug)]
 pub struct Rope2PhysicsAttach {
     pub rope_entity: Entity,
-    pub head_entity: Entity,
-    pub tail_entity: Entity,
+    // pub head_entity: Entity,
+    // pub tail_entity: Entity,
     pub rest_length: f32,
     pub max_extension: f32,
     pub spring_constant: f32,

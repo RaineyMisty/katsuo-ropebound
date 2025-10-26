@@ -4,18 +4,30 @@
 // Description: <Rope physics>
 use bevy::prelude::*;
 
-use crate::event::Rope2PhysicsAttach;
+use super::physics_core::component::NetForce;
 
-pub(super) fn rope_register_system(
+use crate::event::Rope2PhysicsAttach;
+use crate::rope::component::{EndPoint, EndPoints};
+
+pub(super) fn rope_insert_joint(
     mut commands: Commands,
     mut events: EventReader<Rope2PhysicsAttach>,
 ) {
-    // TODO: REGISTER ROPE PHYSICS
+    for event in events.read() {
+        commands.entity(event.rope_entity).insert(
+            SpringJoint {
+                rest_length: event.rest_length,
+                max_extension: event.max_extension,
+                spring_constant: event.spring_constant,
+            },
+        );
+    }
 }
 
 pub(super) fn rope_tension_system(
     q_transforms: Query<&GlobalTransform>,
-    q_rope: Query<(&SpringJoint, &EndPoints)> // used to have entity to mark the rope in ForceKind
+    q_rope: Query<(&SpringJoint, &EndPoints)>, // used to have entity to mark the rope in ForceKind
+    mut q_force: Query<&mut NetForce>
 ) {
     for (spring_joint, end_points) in &q_rope {
         let head_pos = match end_points.head {
@@ -53,5 +65,23 @@ pub(super) fn rope_tension_system(
         } else {
             Vec2::ZERO
         };
+
+        if let EndPoint::Body(head_e) = end_points.head {
+            if let Ok(mut net_force) = q_force.get_mut(head_e) {
+                net_force.0 += force;
+            }
+        }
+        if let EndPoint::Body(tail_e) = end_points.tail {
+            if let Ok(mut net_force) = q_force.get_mut(tail_e) {
+                net_force.0 -= force;
+            }
+        }
     }
+}
+
+#[derive(Component, Default, Clone, Copy, Debug)]
+pub(super) struct SpringJoint {
+    pub(super) rest_length: f32,
+    pub(super) max_extension: f32,
+    pub(super) spring_constant: f32,
 }

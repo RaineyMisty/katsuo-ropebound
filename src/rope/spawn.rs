@@ -16,19 +16,16 @@ pub(super) fn spawn_rope(
     mut register_events: EventWriter<Rope2PhysicsAttach>,
     tf: Query<&GlobalTransform>,
 ) {
+    let rest_length = ROPE_REST_LENGTH;
+    let max_extension = ROPE_MAX_EXTENSION;
+    let spring_constant = SPRING_CONSTANT;
     for event in events.read() {
-        let rest_length = ROPE_REST_LENGTH;
-        let max_extension = ROPE_MAX_EXTENSION;
-        let spring_constant = SPRING_CONSTANT;
-        // let position_head = match tf.iter(event.head_entity) {
-        //     Ok(data) => data,
-        //     Err(_) => continue,
-        // };
-        // let position_tail = match tf.iter(event.tail_entity) {
-        //     Ok(data) => data,
-        //     Err(_) => continue,
-        // };
-        // let mid = (position_head.translation().truncate() + position_tail.translation().truncate()) / 2.0;
+        let Ok([head_gt, tail_gt]) = tf.get_many([event.head_entity, event.tail_entity]) else {
+            continue;
+        };
+        let head_pos = head_gt.translation();
+        let tail_pos = tail_gt.translation();
+        let mid = (head_pos + tail_pos) * 0.5;
         let rope_entity = commands.spawn((
             RopeBundle {
                 spring_joint: SpringJoint {
@@ -40,7 +37,7 @@ pub(super) fn spawn_rope(
                     head: EndPoint::Body(event.head_entity),
                     tail: EndPoint::Body(event.tail_entity),
                 },
-                transform: Transform::default(),
+                transform: Transform::from_translation(mid),
             },
             Rope,
         )).id();

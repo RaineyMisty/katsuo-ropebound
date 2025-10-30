@@ -25,7 +25,7 @@ pub(super) fn rope_insert_joint(
 }
 
 pub(super) fn rope_tension_system(
-    q_transforms: Query<&GlobalTransform>,
+    q_transforms: Query<&Transform>,
     q_rope: Query<(&SpringJoint, &EndPoints)>, // used to have entity to mark the rope in ForceKind
     mut q_force: Query<&mut NetForce>
 ) {
@@ -33,7 +33,7 @@ pub(super) fn rope_tension_system(
         let head_pos = match end_points.head {
             EndPoint::Body(e) => {
                 if let Ok(t) = q_transforms.get(e) {
-                    t.translation().truncate()
+                    t.translation.truncate()
                 } else {
                     continue; // skip if entity not found
                 }
@@ -44,7 +44,7 @@ pub(super) fn rope_tension_system(
         let tail_pos = match end_points.tail {
             EndPoint::Body(e) => {
                 if let Ok(t) = q_transforms.get(e) {
-                    t.translation().truncate()
+                    t.translation.truncate()
                 } else {
                     continue; // skip if entity not found
                 }

@@ -20,8 +20,13 @@ pub(super) fn wait_for_player_spawn(
         }
     }
 
+    let total_nodes = track.node_to_entity.len();
+    if total_nodes < 2 {
+        track.is_rope = true;
+        return;
+    }
+
     if !track.is_rope && track.spawned_players == track.expected_players {
-        let total_nodes = track.node_to_entity.len();
 
         // spawn rope between players
         for i in 0..total_nodes - 1 {

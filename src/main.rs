@@ -4,6 +4,7 @@ mod event;
 mod camera;
 mod control;
 mod lifetime;
+mod mapload;
 mod physics;
 mod player;
 mod rope;

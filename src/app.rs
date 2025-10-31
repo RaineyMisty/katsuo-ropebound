@@ -7,6 +7,7 @@ use bevy::prelude::*;
 use bevy::time::Fixed;
 use crate::event::EventPlugin;
 use crate::camera::CameraPlugin;
+use crate::mapload::MapLoadingPlugin;
 use crate::lifetime::LifetimePlugin;
 use crate::physics::PhysicsPlugin;
 
@@ -20,6 +21,7 @@ pub fn run() {
         }))
         .add_plugins(EventPlugin)
         .add_plugins(CameraPlugin)
+        .add_plugins(MapLoadingPlugin)
         .add_plugins(LifetimePlugin)
         .add_plugins(PhysicsPlugin)
         .run();

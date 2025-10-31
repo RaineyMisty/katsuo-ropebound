@@ -16,6 +16,6 @@ fn setup_camera(mut commands: Commands) {
     commands.spawn((
         Camera::default(),
         Camera2d,
-        Transform::from_xyz(640.0, 360.0, 1000.0),
+        Transform::from_xyz(640.0, 360.0, 10.0),
     ));
 }

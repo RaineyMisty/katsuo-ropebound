@@ -12,7 +12,14 @@ pub(super) fn send_target(
     track: Res<SpawnTrack>,
     mut event: EventWriter::<Lifetime2CameraTarget>,
 ){  
-    let player = track.node_to_entity[0]; // assuming node 0 is the main player
+    if track.main_player.is_none() {
+        event.write(Lifetime2CameraTarget {
+            main_player: None,
+        });
+        return;
+    }
+    let main_index = track.main_player.unwrap();
+    let player = track.node_to_entity[main_index];
     event.write(Lifetime2CameraTarget {
         main_player: player,
     });

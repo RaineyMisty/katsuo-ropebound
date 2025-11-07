@@ -20,7 +20,7 @@ pub(super) fn queue_for_player_setup_event(
     track.is_rope = false;
     track.main_player = Some(0);
 
-    let tex: Handle<Image> = asset_server.load("portrait_rainey.png");
+    let tex: Handle<Image> = asset_server.load("portraits/rainey.png");
     events.write(Lifetime2PlayerSpawn {
         node: 0,
         texture: tex,
@@ -33,7 +33,7 @@ pub(super) fn queue_for_player_setup_event(
         mass: Some(50.0),
     });
 
-    let tex: Handle<Image> = asset_server.load("portrait_shawn.png");
+    let tex: Handle<Image> = asset_server.load("portraits/sean.png");
     events.write(Lifetime2PlayerSpawn {
         node: 1,
         texture: tex,
@@ -46,7 +46,7 @@ pub(super) fn queue_for_player_setup_event(
         mass: Some(50.0),
     });
 
-    let tex: Handle<Image> = asset_server.load("portrait_jagger.png");
+    let tex: Handle<Image> = asset_server.load("portraits/jagger.png");
     events.write(Lifetime2PlayerSpawn {
         node: 2,
         texture: tex,

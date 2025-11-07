@@ -1,5 +1,21 @@
-pub mod bundle;
-pub mod player_plugin;
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2025 Tingxu Chen
+// Author: Tingxu Chen <tic128@pitt.edu>
+// Description: <Player mod>
+use bevy::prelude::*;
 
-pub use player_plugin::PlayerPlugin;
-pub use bundle::{Player, PlayerControls, PlayerBundle};
+mod spawn;
+
+mod bundle;
+mod config;
+pub mod component;
+
+use self::spawn::spawn_player;
+
+pub struct PlayerPlugin;
+
+impl Plugin for PlayerPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_systems(Update, spawn_player);
+    }
+}

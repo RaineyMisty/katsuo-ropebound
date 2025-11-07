@@ -3,40 +3,44 @@
 // Author: Tingxu Chen <tic128@pitt.edu>
 // Description: <Physics system module and plugin>
 use bevy::prelude::*;
+use bevy::time::Fixed;
 
-pub mod integrate;
-pub mod control;
-pub mod gravity;
-pub mod rope_force;
+mod physics_core;
+mod player;
+mod control;
+mod rope;
 
-use self::integrate::clean_force_system;
-use self::integrate::integrate_force_system;
-use self::integrate::integrate_momentum_system;
-use self::integrate::integrate_velocity_system;
-use self::integrate::boundary;
-use self::control::player_movement_input_system;
-use self::gravity::gravity_system;
-use self::rope_force::clean_rope_force_system;
-use self::rope_force::rope_tension_system;
-use self::rope_force::rope_force_to_system;
+mod config;
+mod schedule;
+
+use self::physics_core::PhysicsCorePlugin;
+use self::player::player_insert_physics;
+use self::rope::rope_insert_joint;
+use self::rope::rope_tension_system;
+use self::control::player_intent_to_force;
+use self::schedule::PhysicsSet;
 
 pub struct PhysicsPlugin;
 impl Plugin for PhysicsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(
-            FixedUpdate, 
-            (
-                clean_force_system,
-                gravity_system,
-                player_movement_input_system,
-                clean_rope_force_system,
-                rope_tension_system,
-                rope_force_to_system,
-                integrate_force_system,
-                integrate_momentum_system,
-                integrate_velocity_system,
-                boundary,
-            ).chain()
-        );
+        app.insert_resource(Time::<Fixed>::from_hz(60.0))
+           .configure_sets(
+                FixedUpdate,
+                (
+                    PhysicsSet::Clear,
+                    PhysicsSet::Emit,
+                    PhysicsSet::Integrate,
+                ).chain(),
+            )
+           .add_plugins(PhysicsCorePlugin)
+           .add_systems(
+                FixedUpdate,
+                (
+                    player_insert_physics,
+                    rope_insert_joint,
+                    player_intent_to_force,
+                    rope_tension_system,
+                ).in_set(PhysicsSet::Emit).chain()
+            );
     }
 }

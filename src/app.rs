@@ -5,25 +5,24 @@
 
 use bevy::prelude::*;
 use bevy::time::Fixed;
-use crate::player::PlayerPlugin;
+use crate::event::EventPlugin;
+use crate::camera::CameraPlugin;
+use crate::map::MapPlugin;
+use crate::lifetime::LifetimePlugin;
 use crate::physics::PhysicsPlugin;
-use crate::config::*;
 
 pub fn run() {
     App::new()
         .insert_resource(Time::<Fixed>::from_hz(60.0))
-        .insert_resource(PlayerSpawnPoint { position: PLAYER_INITIAL_POSITION })
-        .insert_resource(PlayerSpawnVelocity { velocity: PLAYER_INITIAL_VELOCITY })
-        .add_plugins(DefaultPlugins)
-        .add_plugins(PlayerPlugin)
+        .add_plugins(DefaultPlugins.set(bevy::log::LogPlugin {
+            level: bevy::log::Level::INFO,
+            filter: "katsuo_ropebound=debug,bevy=warn,wgpu=warn,naga=warn".to_string(),
+            ..Default::default()
+        }))
+        .add_plugins(EventPlugin)
+        .add_plugins(CameraPlugin)
+        .add_plugins(MapPlugin)
+        .add_plugins(LifetimePlugin)
         .add_plugins(PhysicsPlugin)
-        .add_systems(Startup, setup_camera)
         .run();
-}
-
-fn setup_camera(mut commands: Commands) {
-    commands.spawn((
-        Camera2d,
-        Camera::default(),
-    ));
 }

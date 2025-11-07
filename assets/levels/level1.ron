@@ -1,0 +1,8 @@
+Level(
+  version: "1.0.0",
+  pixels_per_meter: 64.0,
+
+  background: "backgrounds/mount_bg.png",
+
+  chunks: [ Chunk { id: "A", rect: (0, 0, 1280, 2048) } ],
+)

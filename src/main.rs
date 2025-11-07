@@ -1,8 +1,13 @@
 mod app;
-mod player;
-mod config;
-mod components;
+mod event;
+
+mod camera;
+mod control;
+mod lifetime;
+mod map;
 mod physics;
+mod player;
+mod rope;
 
 fn main() {
     app::run();

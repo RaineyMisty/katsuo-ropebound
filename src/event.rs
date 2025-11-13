@@ -100,8 +100,8 @@ pub struct Lifetime2CameraTarget{
 #[derive(Event, Debug)]
 pub struct Mapload2PlatformSpawn{
     pub texture: Handle<Image>,
-    pub position: (f32, f32),
-    pub size: (f32, f32),
+    pub position: Vec2,
+    pub size: Vec2,
 }
 
 

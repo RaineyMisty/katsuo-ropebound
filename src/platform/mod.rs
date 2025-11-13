@@ -4,10 +4,14 @@
 // Description: <PlatformPlugin>
 use bevy::prelude::*;
 
+mod spawn;
+
+use self::spawn::platform_spawn;
+
 pub struct PlatformPlugin;
 
 impl Plugin for PlatformPlugin {
     fn build(&self, app: &mut App) {
-        // app.add_systems(Update, platform_spawn);
+        app.add_systems(Update, platform_spawn);
     }
 }

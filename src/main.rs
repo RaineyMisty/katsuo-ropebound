@@ -6,6 +6,7 @@ mod control;
 mod lifetime;
 mod mapload;
 mod physics;
+mod platform;
 mod player;
 mod rope;
 

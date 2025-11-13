@@ -35,8 +35,8 @@ pub(super) struct Chunk {
 pub(super) struct Object {
     pub(super) id: Option<String>,
     pub(super) kind: Kind,
-    pub(super) pos: (f32, f32),
-    pub(super) size: (f32, f32),
+    pub(super) pos: Vec2,
+    pub(super) size: Vec2,
     pub(super) rot_deg: f32,
     pub(super) collider: ColliderKind,
     pub(super) sprite: Option<String>,

@@ -49,13 +49,13 @@ pub(super) fn spawn_level_labels(
     let font = asset_server.load("fonts/NotoSans-VariableFont_wdth,wght.ttf");
 
     for (i, obj) in level.objects.iter().enumerate() {
-        let (x_px, y_px) = obj.pos;
+        let pos_px = obj.pos;
 
         // 如果你想把 pixel 转 meter，可以改成：
         // let x = x_px / level.pixels_per_meter;
         // let y = y_px / level.pixels_per_meter;
-        let x = x_px;
-        let y = y_px;
+        let x = pos_px.x;
+        let y = pos_px.y;
 
         // label 文本优先用 object.id，否则用 Kind + index
         let name = obj
@@ -105,11 +105,11 @@ pub(super) fn draw_level_gizmos(mut gizmos: Gizmos, level_res: Option<Res<LevelR
 
     // 画每个 Object 的框（彩色）
     for obj in &level.objects {
-        let (x_px, y_px) = obj.pos;
-        let (w_px, h_px) = obj.size;
+        let pos_px = obj.pos;
+        let size_px = obj.size;
 
-        let center = Vec2::new(x_px, y_px);
-        let full_size = Vec2::new(w_px, h_px);
+        let center = pos_px;
+        let full_size = size_px;
 
         let color = color_for_kind(&obj.kind);
 

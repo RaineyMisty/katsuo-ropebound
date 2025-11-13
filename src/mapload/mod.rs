@@ -22,6 +22,9 @@ pub struct MapLoadPlugin;
 impl Plugin for MapLoadPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<LevelRes>()
+        .add_plugins((
+            crate::platform::PlatformPlugin,
+        ))
         .add_systems(Startup, load_level_from_ron)
         .add_systems(Startup, load_background)
         .add_systems(Update, draw_level_gizmos)

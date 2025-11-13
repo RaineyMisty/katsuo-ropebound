@@ -2,7 +2,547 @@ Level(
   version: "1.0.0",
   pixels_per_meter: 64.0,
 
-  background: "backgrounds/mount_bg.png",
+  background: "levels/mount_bg.png",
+  parallax: [
+    ParallaxLayer ( image: "levels/entity.png", factor: 0.5 ),
+    ParallaxLayer ( image: "levels/tile_fg.png", factor: 0.8 ),
+  ],
 
-  chunks: [ Chunk { id: "A", rect: (0, 0, 1280, 2048) } ],
+  chunks: [ Chunk ( id: "A", rect: (0, 0, 2048, 1024) ) ],
+
+  objects: [
+    Object (
+      id: Some("platform_01"),
+      kind: Platform,
+      pos: (802, 1433),
+      size: (61, 49),
+      rot_deg: 0.0,
+      collider: Rect,
+      sprite: None,
+      layer: Some("play"),
+      z: Some(0.0),
+      props: {
+        "one_way": "false",
+      },
+    ),
+
+    Object (
+      id: Some("platform_02"),
+      kind: Platform,
+      pos: (481, 1441),
+      size: (191, 65),
+      rot_deg: 0.0,
+      collider: Rect,
+      sprite: None,
+      layer: Some("play"),
+      z: Some(0.0),
+      props: {
+        "one_way": "false",
+      },
+    ),
+
+    Object (
+      id: Some("spikes_01"),
+      kind: Spikes,
+      pos: (742, 14),
+      size: (165, 28),
+      rot_deg: 0.0,
+      collider: Rect,
+      sprite: None,
+      layer: Some("play"),
+      z: Some(0.0),
+      props: {},
+    ),
+
+    Object (
+      id: Some("platform_03"),
+      kind: Platform,
+      pos: (1024, 419),
+      size: (384, 61),
+      rot_deg: 0.0,
+      collider: Rect,
+      sprite: None,
+      layer: Some("play"),
+      z: Some(0.0),
+      props: {
+        "one_way": "false",
+      },
+    ),
+
+    Object (
+      id: Some("coin_01"),
+      kind: Coin,
+      pos: (37, 672),
+      size: (54, 64),
+      rot_deg: 0.0,
+      collider: Sensor,
+      sprite: None,
+      layer: Some("play_fx"),
+      z: Some(1.0),
+      props: {
+        "value": "1",
+      },
+    ),
+
+    Object (
+      id: Some("trampoline_01"),
+      kind: JumpPad,
+      pos: (1057, 20),
+      size: (63, 39),
+      rot_deg: 0.0,
+      collider: Rect,
+      sprite: None,
+      layer: Some("play"),
+      z: Some(0.0),
+      props: {
+        "bounce_strength": "10",
+      },
+    ),
+
+    Object (
+      id: Some("platform_04"),
+      kind: Platform,
+      pos: (896, 140),
+      size: (128, 24),
+      rot_deg: 0.0,
+      collider: Rect,
+      sprite: None,
+      layer: Some("play"),
+      z: Some(0.0),
+      props: {
+        "one_way": "false",
+      },
+    ),
+
+    Object (
+      id: Some("platform_05"),
+      kind: Platform,
+      pos: (672, 1121),
+      size: (197, 69),
+      rot_deg: 0.0,
+      collider: Rect,
+      sprite: None,
+      layer: Some("play"),
+      z: Some(0.0),
+      props: {
+        "one_way": "false",
+      },
+    ),
+
+    Object (
+      id: Some("platform_06"),
+      kind: Platform,
+      pos: (512, 224),
+      size: (384, 63),
+      rot_deg: 0.0,
+      collider: Rect,
+      sprite: None,
+      layer: Some("play"),
+      z: Some(0.0),
+      props: {
+        "one_way": "false",
+      },
+    ),
+
+    Object (
+      id: Some("platform_07"),
+      kind: Platform,
+      pos: (992, 1762),
+      size: (193, 63),
+      rot_deg: 0.0,
+      collider: Rect,
+      sprite: None,
+      layer: Some("play"),
+      z: Some(0.0),
+      props: {
+        "one_way": "false",
+      },
+    ),
+
+    // 有 moving 的平台
+    Object (
+      id: Some("platform_08"),
+      kind: Platform,
+      pos: (192, 780),            // 初始放在 boundary 起点
+      size: (257, 24),
+      rot_deg: 0.0,
+      collider: Rect,
+      sprite: None,
+      layer: Some("play"),
+      z: Some(0.0),
+      // moving: Some(Moving {
+      //   path: Line { start: (513, 1521), end: (163, 1000) }, // 用原 moving.start / end
+      //   loop_mode: Loop,        // triggerType: "loop"
+      //   period_s: 2.50,         // 这里随便给了个值，你可以按 speed 算
+      //   easing: Bezier(0.0, 0.0, 1.0, 1.0), // 线性
+      //   wait_s: 0.0,
+      //   start_t: 0.0,
+      //   kinematic: true,
+      // }),
+      props: {
+        "one_way": "false",
+        "speed": "3",
+        "move_type": "linear",
+        "loop_mode": "loop",
+      },
+    ),
+
+    Object (
+      id: Some("platform_09"),
+      kind: Platform,
+      pos: (128, 96),
+      size: (257, 64),
+      rot_deg: 0.0,
+      collider: Rect,
+      sprite: None,
+      layer: Some("play"),
+      z: Some(0.0),
+      props: {
+        "one_way": "false",
+      },
+    ),
+
+    Object (
+      id: Some("spikes_02"),
+      kind: Spikes,
+      pos: (617, 270),
+      size: (174, 27),
+      rot_deg: 0.0,
+      collider: Rect,
+      sprite: None,
+      layer: Some("play"),
+      z: Some(0.0),
+      props: {},
+    ),
+
+    Object (
+      id: Some("platform_10"),
+      kind: Platform,
+      pos: (679, 812),
+      size: (51, 32),
+      rot_deg: 0.0,
+      collider: Rect,
+      sprite: None,
+      layer: Some("play"),
+      z: Some(0.0),
+      props: {
+        "one_way": "false",
+      },
+    ),
+
+    Object (
+      id: Some("coin_02"),
+      kind: Coin,
+      pos: (224, 674),
+      size: (49, 67),
+      rot_deg: 0.0,
+      collider: Sensor,
+      sprite: None,
+      layer: Some("play_fx"),
+      z: Some(1.0),
+      props: {
+        "value": "1",
+      },
+    ),
+
+    Object (
+      id: Some("platform_11"),
+      kind: Platform,
+      pos: (1120, 672),
+      size: (193, 64),
+      rot_deg: 0.0,
+      collider: Rect,
+      sprite: None,
+      layer: Some("play"),
+      z: Some(0.0),
+      props: {
+        "one_way": "false",
+      },
+    ),
+
+    Object (
+      id: Some("coin_03"),
+      kind: Coin,
+      pos: (100, 673),
+      size: (56, 65),
+      rot_deg: 0.0,
+      collider: Sensor,
+      sprite: None,
+      layer: Some("play_fx"),
+      z: Some(1.0),
+      props: {
+        "value": "1",
+      },
+    ),
+
+    Object (
+      id: Some("platform_12"),
+      kind: Platform,
+      pos: (545, 1759),
+      size: (322, 62),
+      rot_deg: 0.0,
+      collider: Rect,
+      sprite: None,
+      layer: Some("play"),
+      z: Some(0.0),
+      props: {
+        "one_way": "false",
+      },
+    ),
+
+    Object (
+      id: Some("platform_13"),
+      kind: Platform,
+      pos: (160, 609),
+      size: (321, 65),
+      rot_deg: 0.0,
+      collider: Rect,
+      sprite: None,
+      layer: Some("play"),
+      z: Some(0.0),
+      props: {
+        "one_way": "false",
+      },
+    ),
+
+    Object (
+      id: Some("platform_14"),
+      kind: Platform,
+      pos: (614, 877),
+      size: (53, 33),
+      rot_deg: 0.0,
+      collider: Rect,
+      sprite: None,
+      layer: Some("play"),
+      z: Some(0.0),
+      props: {
+        "one_way": "false",
+      },
+    ),
+
+    Object (
+      id: Some("coin_04"),
+      kind: Coin,
+      pos: (289, 673),
+      size: (46, 65),
+      rot_deg: 0.0,
+      collider: Sensor,
+      sprite: None,
+      layer: Some("play_fx"),
+      z: Some(1.0),
+      props: {
+        "value": "1",
+      },
+    ),
+
+    Object (
+      id: Some("trampoline_02"),
+      kind: JumpPad,
+      pos: (352, 276),
+      size: (64, 39),
+      rot_deg: 0.0,
+      collider: Rect,
+      sprite: None,
+      layer: Some("play"),
+      z: Some(0.0),
+      props: {
+        "bounce_strength": "10",
+      },
+    ),
+
+    Object (
+      id: Some("platform_15"),
+      kind: Platform,
+      pos: (768, 779),
+      size: (128, 22),
+      rot_deg: 0.0,
+      collider: Rect,
+      sprite: None,
+      layer: Some("play"),
+      z: Some(0.0),
+      props: {
+        "one_way": "false",
+      },
+    ),
+
+    Object (
+      id: Some("platform_16"),
+      kind: Platform,
+      pos: (993, 1442),
+      size: (318, 63),
+      rot_deg: 0.0,
+      collider: Rect,
+      sprite: None,
+      layer: Some("play"),
+      z: Some(0.0),
+      props: {
+        "one_way": "false",
+      },
+    ),
+
+    Object (
+      id: Some("platform_17"),
+      kind: Platform,
+      pos: (194, 1504),
+      size: (257, 64),
+      rot_deg: 0.0,
+      collider: Rect,
+      sprite: None,
+      layer: Some("play"),
+      z: Some(0.0),
+      props: {
+        "one_way": "false",
+      },
+    ),
+
+    Object (
+      id: Some("platform_18"),
+      kind: Platform,
+      pos: (448, 589),
+      size: (256, 25),
+      rot_deg: 0.0,
+      collider: Rect,
+      sprite: None,
+      layer: Some("play"),
+      z: Some(0.0),
+      props: {
+        "one_way": "false",
+      },
+    ),
+
+    Object (
+      id: Some("coin_05"),
+      kind: Coin,
+      pos: (161, 674),
+      size: (46, 67),
+      rot_deg: 0.0,
+      collider: Sensor,
+      sprite: None,
+      layer: Some("play_fx"),
+      z: Some(1.0),
+      props: {
+        "value": "1",
+      },
+    ),
+
+    Object (
+      id: Some("platform_19"),
+      kind: Platform,
+      pos: (320, 1186),
+      size: (233, 31),
+      rot_deg: 0.0,
+      collider: Rect,
+      sprite: None,
+      layer: Some("play"),
+      z: Some(0.0),
+      props: {
+        "one_way": "false",
+      },
+    ),
+
+    Object (
+      id: Some("platform_20"),
+      kind: Platform,
+      pos: (1024, 929),
+      size: (232, 25),
+      rot_deg: 0.0,
+      collider: Rect,
+      sprite: None,
+      layer: Some("play"),
+      z: Some(0.0),
+      props: {
+        "one_way": "false",
+      },
+    ),
+
+    Object (
+      id: Some("coin_06"),
+      kind: Coin,
+      pos: (481, 34),
+      size: (55, 63),
+      rot_deg: 0.0,
+      collider: Sensor,
+      sprite: None,
+      layer: Some("play_fx"),
+      z: Some(1.0),
+      props: {
+        "value": "1",
+      },
+    ),
+
+    Object (
+      id: Some("trampoline_03"),
+      kind: JumpPad,
+      pos: (800, 1492),
+      size: (64, 39),
+      rot_deg: 0.0,
+      collider: Rect,
+      sprite: None,
+      layer: Some("play"),
+      z: Some(0.0),
+      props: {
+        "bounce_strength": "10",
+      },
+    ),
+
+    Object (
+      id: Some("coin_07"),
+      kind: Coin,
+      pos: (1186, 1248),
+      size: (61, 64),
+      rot_deg: 0.0,
+      collider: Sensor,
+      sprite: None,
+      layer: Some("play_fx"),
+      z: Some(1.0),
+      props: {
+        "value": "1",
+      },
+    ),
+
+    Object (
+      id: Some("platform_21"),
+      kind: Platform,
+      pos: (1026, 560),
+      size: (100, 32),
+      rot_deg: 0.0,
+      collider: Rect,
+      sprite: None,
+      layer: Some("play"),
+      z: Some(0.0),
+      props: {
+        "one_way": "false",
+      },
+    ),
+
+    Object (
+      id: Some("platform_22"),
+      kind: Platform,
+      pos: (608, 396),
+      size: (192, 24),
+      rot_deg: 0.0,
+      collider: Rect,
+      sprite: None,
+      layer: Some("play"),
+      z: Some(0.0),
+      props: {
+        "one_way": "false",
+      },
+    ),
+
+    Object (
+      id: Some("platform_23"),
+      kind: Platform,
+      pos: (1190, 1197),
+      size: (52, 33),
+      rot_deg: 0.0,
+      collider: Rect,
+      sprite: None,
+      layer: Some("play"),
+      z: Some(0.0),
+      props: {
+        "one_way": "false",
+      },
+    ),
+  ],
 )

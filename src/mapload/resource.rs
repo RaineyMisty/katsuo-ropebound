@@ -6,10 +6,10 @@ use bevy::prelude::*;
 use serde::Deserialize;
 use std::collections::HashMap;
 
-#[derive(Resource, Debug, Clone)]
+#[derive(Resource, Default, Debug, Clone)]
 pub(super) struct LevelRes(pub Level);
 
-#[derive(Deserialize, TypePath, Asset, Debug, Clone)]
+#[derive(Deserialize, Default, TypePath, Asset, Debug, Clone)]
 pub(super) struct Level {
     pub(super) version: String,
     pub(super) pixels_per_meter: f32,

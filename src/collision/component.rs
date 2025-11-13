@@ -4,4 +4,13 @@
 // Description: <Collision component>
 use bevy::prelude::*;
 
-// TODO-Collision : Add collision components (Aabb, ect.)
+#[derive(Component, Debug)]
+pub(super) struct Collider {
+    pub(super) extend: Vec2,
+}
+
+#[derive(Component, Debug)]
+pub(super) struct Aabb2D {
+    pub(super) min: Vec2,
+    pub(super) max: Vec2,
+}

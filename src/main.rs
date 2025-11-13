@@ -3,6 +3,7 @@ mod event;
 
 mod camera;
 mod coin;
+mod collision;
 mod control;
 mod lifetime;
 mod mapload;

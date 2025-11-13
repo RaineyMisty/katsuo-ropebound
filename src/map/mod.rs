@@ -21,20 +21,17 @@ pub struct MapPlugin;
 
 impl Plugin for MapPlugin {
     fn build(&self, app: &mut App) {
-        #[cfg(feature = "client")]
         app.add_systems(
             Startup,
             (
                 load_background,
-                load_map_data,
-                load_render_resources,
+                // load_map_data,
+                // load_render_resources,
                 load_background_layers,
-                load_game_objects,
+                // load_game_objects,
             )
             .chain(),
         );
-        #[cfg(feature = "server")]
-        app.add_systems(Startup, (load_map_data, load_game_objects).chain());
-        app.add_systems(Update, linear_move_with_easing);
+        // app.add_systems(Update, linear_move_with_easing);
     }
 }

@@ -15,7 +15,8 @@ impl Plugin for EventPlugin {
            .add_event::<Player2ControlAttach>()
            .add_event::<Player2PhysicsAttach>()
            .add_event::<Rope2PhysicsAttach>()
-           .add_event::<Lifetime2CameraTarget>();
+           .add_event::<Lifetime2CameraTarget>()
+           .add_event::<Mapload2PlatformSpawn>();
     }
 }
 
@@ -94,6 +95,13 @@ pub struct Rope2PhysicsAttach {
 #[derive(Event, Debug)]
 pub struct Lifetime2CameraTarget{
     pub main_player: Option<Entity>,
+}
+
+#[derive(Event, Debug)]
+pub struct Mapload2PlatformSpawn{
+    pub texture: Handle<Image>,
+    pub position: (f32, f32),
+    pub size: (f32, f32),
 }
 
 

@@ -5,16 +5,21 @@
 use bevy::prelude::*;
 
 use super::component::Player;
-use super::config::PLAYER_SPAWN_MASS;
+use super::config::{PLAYER_SPAWN_MASS, PLAYER_SIZE};
 use super::bundle::PlayerBundle;
 
-use crate::event::{Lifetime2PlayerSpawn, Player2PhysicsAttach, Player2ControlAttach, Player2LifetimeSpawned};
+use crate::event::Lifetime2PlayerSpawn;
+use crate::event::Player2PhysicsAttach;
+use crate::event::Player2ControlAttach;
+use crate::event::Entity2CollisionAttach;
+use crate::event::Player2LifetimeSpawned;
 
 pub(super) fn spawn_player(
     mut commands: Commands,
     mut events: EventReader<Lifetime2PlayerSpawn>,
     mut req_phy: EventWriter<Player2PhysicsAttach>,
     mut req_ctl: EventWriter<Player2ControlAttach>,
+    mut req_col: EventWriter<Entity2CollisionAttach>,
     mut spawned: EventWriter<Player2LifetimeSpawned>,
 ) {
     for event in events.read() {
@@ -34,6 +39,12 @@ pub(super) fn spawn_player(
         req_ctl.write(Player2ControlAttach {
             entity,
             spec: event.controls.clone(),
+        });
+
+        info!("player {}", entity);
+        req_col.write(Entity2CollisionAttach {
+            entity,
+            size: PLAYER_SIZE,
         });
 
         spawned.write(Player2LifetimeSpawned {

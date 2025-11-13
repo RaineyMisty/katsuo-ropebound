@@ -22,6 +22,7 @@ pub(super) fn on_request_collision(
 ) {
     for req in reqs.read() {
         clean_collision(&mut commands, req.entity);
+        info!("binding {}", req.entity);
         commands.entity(req.entity).insert((
             Collider {
                 extend: req.size,

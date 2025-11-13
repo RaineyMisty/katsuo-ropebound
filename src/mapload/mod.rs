@@ -24,11 +24,14 @@ impl Plugin for MapLoadPlugin {
         app.init_resource::<LevelRes>()
         .add_plugins((
             crate::platform::PlatformPlugin,
+            crate::coin::CoinPlugin,
         ))
         .add_systems(Startup, load_level_from_ron)
-        .add_systems(Startup, load_background)
+        .add_systems(Startup, (
+            load_background,
+            map_spawn
+        ).chain())
         .add_systems(Update, draw_level_gizmos)
-        .add_systems(Update, spawn_level_labels)
-        .add_systems(Update, map_spawn);
+        .add_systems(Update, spawn_level_labels);
     }
 }

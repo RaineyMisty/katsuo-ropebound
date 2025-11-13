@@ -2,6 +2,7 @@ mod app;
 mod event;
 
 mod camera;
+mod coin;
 mod control;
 mod lifetime;
 mod mapload;

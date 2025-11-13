@@ -16,7 +16,8 @@ impl Plugin for EventPlugin {
            .add_event::<Player2PhysicsAttach>()
            .add_event::<Rope2PhysicsAttach>()
            .add_event::<Lifetime2CameraTarget>()
-           .add_event::<Mapload2PlatformSpawn>();
+           .add_event::<Mapload2PlatformSpawn>()
+           .add_event::<Mapload2CoinSpawn>();
     }
 }
 
@@ -99,6 +100,13 @@ pub struct Lifetime2CameraTarget{
 
 #[derive(Event, Debug)]
 pub struct Mapload2PlatformSpawn{
+    pub texture: Handle<Image>,
+    pub position: Vec2,
+    pub size: Vec2,
+}
+
+#[derive(Event, Debug)]
+pub struct Mapload2CoinSpawn{
     pub texture: Handle<Image>,
     pub position: Vec2,
     pub size: Vec2,

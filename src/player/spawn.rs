@@ -41,7 +41,6 @@ pub(super) fn spawn_player(
             spec: event.controls.clone(),
         });
 
-        info!("player {}", entity);
         req_col.write(Entity2CollisionAttach {
             entity,
             size: PLAYER_SIZE,

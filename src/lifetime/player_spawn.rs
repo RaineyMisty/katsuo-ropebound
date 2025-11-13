@@ -24,7 +24,7 @@ pub(super) fn player_spawn(
     events.write(Lifetime2PlayerSpawn {
         node: 0,
         texture: tex,
-        position: Vec2::new(200.0, 200.0),
+        position: Vec2::new(32.0, 32.0),
         controls: ControlType::Keyboard {
             up: KeyCode::KeyW,
             left: KeyCode::KeyA,
@@ -37,7 +37,7 @@ pub(super) fn player_spawn(
     events.write(Lifetime2PlayerSpawn {
         node: 1,
         texture: tex,
-        position: Vec2::new(400.0, 200.0),
+        position: Vec2::new(128.0, 32.0),
         controls: ControlType::Keyboard {
             up: KeyCode::ArrowUp,
             left: KeyCode::ArrowLeft,
@@ -50,7 +50,7 @@ pub(super) fn player_spawn(
     events.write(Lifetime2PlayerSpawn {
         node: 2,
         texture: tex,
-        position: Vec2::new(600.0, 200.0),
+        position: Vec2::new(224.0, 32.0),
         controls: ControlType::Keyboard {
             up: KeyCode::KeyI,
             left: KeyCode::KeyJ,

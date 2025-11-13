@@ -18,7 +18,8 @@ impl Plugin for EventPlugin {
            .add_event::<Lifetime2CameraTarget>()
            .add_event::<Mapload2PlatformSpawn>()
            .add_event::<Mapload2CoinSpawn>()
-           .add_event::<Entity2CollisionAttach>();
+           .add_event::<Entity2CollisionAttach>()
+           .add_event::<Collision2PhysicsInfo>();
     }
 }
 
@@ -117,6 +118,14 @@ pub struct Mapload2CoinSpawn {
 pub struct Entity2CollisionAttach {
     pub entity: Entity,
     pub size: Vec2,
+}
+
+#[derive(Event, Debug)]
+pub struct Collision2PhysicsInfo {
+    pub entity_a: Entity,
+    pub entity_b: Entity,
+    pub normal: Vec2,
+    pub penetration: f32,
 }
 
 

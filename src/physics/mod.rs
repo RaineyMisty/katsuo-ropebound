@@ -8,6 +8,7 @@ use bevy::time::Fixed;
 mod physics_core;
 mod player;
 mod control;
+mod collision;
 mod rope;
 
 mod config;
@@ -18,6 +19,7 @@ use self::player::player_insert_physics;
 use self::rope::rope_insert_joint;
 use self::rope::rope_tension_system;
 use self::control::player_intent_to_force;
+use self::collision::collision_info_to_impulse;
 use self::schedule::PhysicsSet;
 
 pub struct PhysicsPlugin;
@@ -40,6 +42,7 @@ impl Plugin for PhysicsPlugin {
                     rope_insert_joint,
                     player_intent_to_force,
                     rope_tension_system,
+                    collision_info_to_impulse,
                 ).in_set(PhysicsSet::Emit).chain()
             );
     }

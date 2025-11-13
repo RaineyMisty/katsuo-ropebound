@@ -7,7 +7,7 @@ use bevy::prelude::*;
 use crate::event::{Player2LifetimeSpawned, Lifetime2RopeSpawn};
 use super::resource::SpawnTrack;
 
-pub(super) fn wait_for_player_spawn(
+pub(super) fn rope_spawn(
     mut track: ResMut<SpawnTrack>,
     mut events: EventReader<Player2LifetimeSpawned>,
     mut rope_events: EventWriter<Lifetime2RopeSpawn>,

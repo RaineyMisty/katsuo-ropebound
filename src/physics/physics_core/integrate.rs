@@ -47,7 +47,7 @@ pub(super) fn boundary(
     mut query: Query<(&mut Transform, &mut Velocity, &mut Momentum)>,
 ) {
     let width = 1280.0 - 32.0; // minus player width
-    let height = 720.0 - 32.0; // minus player height
+    let height = 2048.0 - 32.0; // minus player height
     for (mut transform, mut velocity, mut momentum) in query.iter_mut() {
         if transform.translation.x < 32.0 {
             transform.translation.x = 32.0;

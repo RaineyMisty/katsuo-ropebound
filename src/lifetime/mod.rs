@@ -11,9 +11,10 @@ mod spawn_track;
 
 mod resource;
 
-use self::player_spawn::queue_for_player_setup_event;
-use self::camera_spawn::send_target;
-use self::spawn_track::wait_for_player_spawn;
+use self::player_spawn::player_spawn;
+use self::camera_spawn::camera_spawn;
+use self::spawn_track::player_spawn_track;
+use self::rope_spawn::rope_spawn;
 use self::resource::SpawnTrack;
 
 pub struct LifetimePlugin;
@@ -26,7 +27,9 @@ impl Plugin for LifetimePlugin{
             crate::player::PlayerPlugin,
             crate::rope::RopePlugin
         ))
-        .add_systems(Startup, queue_for_player_setup_event)
-        .add_systems(Update, wait_for_player_spawn);
+        .add_systems(Startup, player_spawn)
+        .add_systems(Update, player_spawn_track)
+        .add_systems(Update, camera_spawn)
+        .add_systems(Update, rope_spawn);
     }
 }

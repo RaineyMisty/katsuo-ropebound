@@ -8,7 +8,7 @@ use super::resource::SpawnTrack;
 
 use crate::event::{Lifetime2PlayerSpawn, ControlType};
 
-pub(super) fn queue_for_player_setup_event(
+pub(super) fn player_spawn(
     asset_server: Res<AssetServer>,
     mut track: ResMut<SpawnTrack>,
     mut events: EventWriter::<Lifetime2PlayerSpawn>,

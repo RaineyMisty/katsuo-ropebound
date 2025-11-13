@@ -8,7 +8,7 @@ use super::resource::SpawnTrack;
 
 use crate::event::{Lifetime2CameraTarget};
 
-pub(super) fn send_target(
+pub(super) fn camera_spawn(
     track: Res<SpawnTrack>,
     mut event: EventWriter::<Lifetime2CameraTarget>,
 ){  

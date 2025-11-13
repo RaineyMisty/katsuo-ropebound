@@ -13,7 +13,7 @@ pub(super) fn player_spawn(
     mut track: ResMut<SpawnTrack>,
     mut events: EventWriter::<Lifetime2PlayerSpawn>,
 ) {
-    let player_count = 3;
+    let player_count = 2;
     track.expected_players = player_count;
     track.spawned_players = 0;
     track.node_to_entity = vec![None; player_count];
@@ -46,16 +46,16 @@ pub(super) fn player_spawn(
         mass: Some(50.0),
     });
 
-    let tex: Handle<Image> = asset_server.load("portraits/jagger.png");
-    events.write(Lifetime2PlayerSpawn {
-        node: 2,
-        texture: tex,
-        position: Vec2::new(224.0, 32.0),
-        controls: ControlType::Keyboard {
-            up: KeyCode::KeyI,
-            left: KeyCode::KeyJ,
-            right: KeyCode::KeyL,
-        },
-        mass: Some(50.0),
-    });
+    // let tex: Handle<Image> = asset_server.load("portraits/jagger.png");
+    // events.write(Lifetime2PlayerSpawn {
+    //     node: 2,
+    //     texture: tex,
+    //     position: Vec2::new(224.0, 32.0),
+    //     controls: ControlType::Keyboard {
+    //         up: KeyCode::KeyI,
+    //         left: KeyCode::KeyJ,
+    //         right: KeyCode::KeyL,
+    //     },
+    //     mass: Some(50.0),
+    // });
 }

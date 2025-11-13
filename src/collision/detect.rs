@@ -30,8 +30,8 @@ pub(super) fn collision_detect(
 }
 
 fn aabb_vs_aabb(a: &Aabb2D, b: &Aabb2D) -> Option<(Vec2, f32)> {
-    if a.max.x < b.min.x || a.min.x > b.max.x ||
-       a.max.y < b.min.y || a.min.y > b.max.y {
+    if a.max.x <= b.min.x || a.min.x >= b.max.x ||
+       a.max.y <= b.min.y || a.min.y >= b.max.y {
         return None;
     }
 

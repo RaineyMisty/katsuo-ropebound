@@ -2,12 +2,12 @@
 // Copyright (c) 2025 Tingxu Chen
 // Author: Tingxu Chen <tic128@pitt.edu>
 // Description: <Create App and setup camera>
-
 use bevy::prelude::*;
 use bevy::time::Fixed;
+
 use crate::event::EventPlugin;
 use crate::camera::CameraPlugin;
-use crate::map::MapPlugin;
+use crate::mapload::MapLoadPlugin;
 use crate::lifetime::LifetimePlugin;
 use crate::physics::PhysicsPlugin;
 
@@ -21,7 +21,7 @@ pub fn run() {
         }))
         .add_plugins(EventPlugin)
         .add_plugins(CameraPlugin)
-        .add_plugins(MapPlugin)
+        .add_plugins(MapLoadPlugin)
         .add_plugins(LifetimePlugin)
         .add_plugins(PhysicsPlugin)
         .run();

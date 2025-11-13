@@ -10,6 +10,7 @@ pub(super) struct SpawnTrack {
     pub spawned_players: usize,
     pub node_to_entity: Vec<Option<Entity>>, //std::collections::HashMap<f32, Entity>,
     pub is_rope: bool,
+    pub main_player: Option<usize>, // node index
 }
 
 impl Default for SpawnTrack {
@@ -19,6 +20,7 @@ impl Default for SpawnTrack {
             spawned_players: 0,
             node_to_entity: vec![None; 2],
             is_rope: false,
+            main_player: None,
         }
     }
 }

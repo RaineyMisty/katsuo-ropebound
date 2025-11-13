@@ -4,8 +4,6 @@
 // Description: <Backgound Spawn>
 use bevy::prelude::*;
 
-// TODO-Map Loading: Spawn background.
-
 pub(super) fn load_background(
     mut commands: Commands,
     assets: Res<AssetServer>,
@@ -16,5 +14,13 @@ pub(super) fn load_background(
             ..Default::default()
         },
         Transform::from_xyz(640.0, 1024.0, -10.0),
+    ));
+    
+    commands.spawn((
+        Sprite {
+            image: assets.load("levels/entity.png"),
+            ..Default::default()
+        },
+        Transform::from_xyz(640.0, 1024.0, -5.0),
     ));
 }

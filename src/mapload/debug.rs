@@ -98,10 +98,9 @@ pub(super) fn draw_level_gizmos(mut gizmos: Gizmos, level_res: Option<Res<LevelR
 
         let center = Vec2::new(x + w / 2.0, y + h / 2.0);
         let full_size = Vec2::new(w, h);
-        let half_size = full_size / 2.0;
 
         // Bevy 0.16 的 API：rect_2d(center, half_size, color)
-        gizmos.rect_2d(center, half_size, Color::srgb(1.0, 1.0, 1.0));
+        gizmos.rect_2d(center, full_size, Color::srgb(1.0, 1.0, 1.0));
     }
 
     // 画每个 Object 的框（彩色）
@@ -111,10 +110,9 @@ pub(super) fn draw_level_gizmos(mut gizmos: Gizmos, level_res: Option<Res<LevelR
 
         let center = Vec2::new(x_px, y_px);
         let full_size = Vec2::new(w_px, h_px);
-        let half_size = full_size / 2.0;
 
         let color = color_for_kind(&obj.kind);
 
-        gizmos.rect_2d(center, half_size, color);
+        gizmos.rect_2d(center, full_size, color);
     }
 }

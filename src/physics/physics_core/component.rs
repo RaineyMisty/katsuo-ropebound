@@ -35,3 +35,9 @@ impl Default for Gravity {
     }
 }
 
+#[derive(Component, Clone, Copy, Debug)]
+pub(in crate::physics) struct RigidBody {
+    pub inv_mass: f32,
+    pub restitution: f32,
+    pub friction: f32,
+}

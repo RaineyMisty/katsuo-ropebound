@@ -5,7 +5,7 @@
 use bevy::prelude::*;
 
 use super::config::{PLATFORM_RESTITUTION, PLATFORM_FRICTION};
-use super::physics_core::component::RigidBody;
+use super::physics_core::component::{RigidBody, Velocity, Impulse};
 use crate::event::Platform2PhysicsAttach;
 
 pub(super) fn platform_insert_physics(
@@ -15,12 +15,14 @@ pub(super) fn platform_insert_physics(
     let platform_restitution = PLATFORM_RESTITUTION;
     let platform_friction = PLATFORM_FRICTION;
     for event in events.read() {
-        commands.entity(event.entity).insert(
+        commands.entity(event.entity).insert((
             RigidBody {
                 inv_mass: event.inv_mass,
                 restitution: platform_restitution,
                 friction: platform_friction,
             },
-        );
+            Velocity::default(),
+            Impulse::default(),
+        ));
     }
 }

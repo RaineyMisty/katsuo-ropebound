@@ -25,7 +25,9 @@ pub(super) fn collision_info_to_impulse (
                 (velocity_b, rb_b, mut impulse_b)])
                 = query.get_many_mut([ea, eb])
         {
-            let inv_mass_sum = rb_a.inv_mass + rb_b.inv_mass;
+            let inv_mass_a = rb_a.inv_mass;
+            let inv_mass_b = rb_b.inv_mass;
+            let inv_mass_sum = inv_mass_a + inv_mass_b;
             if inv_mass_sum == 0.0 {
                 continue;
             }
@@ -54,15 +56,64 @@ pub(super) fn collision_info_to_impulse (
 
             let impulse_total = impulse_normal + impulse_tangent;
 
-            if rb_a.inv_mass > 0.0 {
+            if inv_mass_a > 0.0 {
                 impulse_a.0 -= impulse_total;
             }
-            if rb_b.inv_mass > 0.0 {
+            if inv_mass_b > 0.0 {
                 impulse_b.0 += impulse_total;
             }
 
         } else {
             continue;
+        }
+    }
+}
+
+pub(super) fn resolve_penetration (
+    mut events: EventReader<Collision2PhysicsInfo>,
+    mut query: Query<(&mut Transform, &RigidBody)>,
+) {
+    const PERCENT: f32 = 0.9;
+    const SLOP: f32 = 0.01;
+
+    for event in events.read() {
+        let ea = event.entity_a;
+        let eb = event.entity_b;
+        if ea == eb {
+            continue;
+        }
+        let normal = event.normal;
+        let mut penetration = event.penetration;
+        if penetration <= SLOP {
+            continue;
+        }
+
+        penetration -= SLOP;
+        if let Ok([(mut tf_a, rb_a),
+                   (mut tf_b, rb_b)])
+                   = query.get_many_mut([ea, eb])
+        {
+            let inv_mass_a = rb_a.inv_mass;
+            let inv_mass_b = rb_b.inv_mass;
+            let inv_mass_sum = inv_mass_a + inv_mass_b;
+
+            if inv_mass_sum == 0.0 {
+                continue;
+            }
+
+            let correction_mag = penetration * PERCENT;
+            let correction = normal * correction_mag;
+
+            let factor_a = inv_mass_a / inv_mass_sum;
+            let factor_b = inv_mass_b / inv_mass_sum;
+
+            let move_a = correction * factor_a;
+            let move_b = -correction * factor_b;
+
+            tf_a.translation.x += move_a.x;
+            tf_a.translation.y += move_a.y;
+            tf_b.translation.x += move_b.x;
+            tf_b.translation.y += move_b.y;
         }
     }
 }

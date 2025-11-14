@@ -22,6 +22,7 @@ use self::rope::rope_insert_joint;
 use self::rope::rope_tension_system;
 use self::control::player_intent_to_force;
 use self::collision::collision_info_to_impulse;
+use self::collision::resolve_penetration;
 use self::schedule::PhysicsSet;
 
 pub struct PhysicsPlugin;
@@ -46,6 +47,7 @@ impl Plugin for PhysicsPlugin {
                     player_intent_to_force,
                     rope_tension_system,
                     collision_info_to_impulse,
+                    resolve_penetration,
                 ).in_set(PhysicsSet::Emit).chain()
             );
     }

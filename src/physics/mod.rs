@@ -35,6 +35,7 @@ impl Plugin for PhysicsPlugin {
                     PhysicsSet::Clear,
                     PhysicsSet::Emit,
                     PhysicsSet::Integrate,
+                    PhysicsSet::Resolve,
                 ).chain(),
             )
            .add_plugins(PhysicsCorePlugin)
@@ -47,8 +48,13 @@ impl Plugin for PhysicsPlugin {
                     player_intent_to_force,
                     rope_tension_system,
                     collision_info_to_impulse,
-                    resolve_penetration,
                 ).in_set(PhysicsSet::Emit).chain()
-            );
+           )
+           .add_systems(
+                Update,
+                (
+                    resolve_penetration,
+                ).in_set(PhysicsSet::Resolve).chain()
+           );
     }
 }

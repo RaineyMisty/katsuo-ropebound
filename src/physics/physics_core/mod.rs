@@ -34,6 +34,7 @@ impl Plugin for PhysicsCorePlugin {
                 PhysicsSet::Clear,
                 PhysicsSet::Emit,
                 PhysicsSet::Integrate,
+                PhysicsSet::Resolve,
             ).chain(),
         )
         .add_systems(

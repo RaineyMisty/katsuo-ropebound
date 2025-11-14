@@ -32,7 +32,7 @@ pub(super) fn collision_info_to_impulse (
                 continue;
             }
 
-            let relevent_velocity = velocity_b.0 - velocity_a.0; // If the positions of a and b are written backwards, the player's momentum will continuously increase.
+            let relevent_velocity = velocity_a.0 - velocity_b.0; // If the positions of a and b are written backwards, the player's momentum will continuously increase.
             let velocity_alone_normal = relevent_velocity.dot(normal);
             if velocity_alone_normal > 0.0 {
                 continue;
@@ -57,11 +57,13 @@ pub(super) fn collision_info_to_impulse (
             let impulse_total = impulse_normal + impulse_tangent;
 
             if inv_mass_a > 0.0 {
-                impulse_a.0 -= impulse_total;
+                impulse_a.0 += impulse_total;
             }
             if inv_mass_b > 0.0 {
-                impulse_b.0 += impulse_total;
+                impulse_b.0 -= impulse_total;
             }
+
+            info!("impulse to a is {}, impulse to b is {}", -impulse_total, impulse_total);
 
         } else {
             continue;
@@ -73,8 +75,8 @@ pub(super) fn resolve_penetration (
     mut events: EventReader<Collision2PhysicsInfo>,
     mut query: Query<(&mut Transform, &RigidBody)>,
 ) {
-    const PERCENT: f32 = 0.9;
-    const SLOP: f32 = 0.01;
+    const PERCENT: f32 = 1.0;
+    const SLOP: f32 = 0.0001;
 
     for event in events.read() {
         let ea = event.entity_a;
@@ -82,7 +84,11 @@ pub(super) fn resolve_penetration (
         if ea == eb {
             continue;
         }
-        let normal = event.normal;
+        let mut normal = event.normal;
+        if normal.length_squared() == 0.0 {
+            continue;
+        }
+        normal = normal.normalize();
         let mut penetration = event.penetration;
         if penetration <= SLOP {
             continue;

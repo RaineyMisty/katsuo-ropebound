@@ -9,4 +9,5 @@ pub(in crate::physics) enum PhysicsSet {
     Clear,
     Emit,
     Integrate,
+    Resolve,
 }

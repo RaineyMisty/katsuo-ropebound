@@ -7,6 +7,7 @@ use bevy::time::Fixed;
 
 mod physics_core;
 mod player;
+mod platform;
 mod control;
 mod collision;
 mod rope;
@@ -16,6 +17,7 @@ mod schedule;
 
 use self::physics_core::PhysicsCorePlugin;
 use self::player::player_insert_physics;
+use self::platform::platform_insert_physics;
 use self::rope::rope_insert_joint;
 use self::rope::rope_tension_system;
 use self::control::player_intent_to_force;
@@ -39,6 +41,7 @@ impl Plugin for PhysicsPlugin {
                 FixedUpdate,
                 (
                     player_insert_physics,
+                    platform_insert_physics,
                     rope_insert_joint,
                     player_intent_to_force,
                     rope_tension_system,

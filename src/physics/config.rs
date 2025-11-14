@@ -17,3 +17,6 @@ pub(super) const PLAYER_JUMP_IMPULSE: f32 = 500.0 * SCALE; // jump impulse in 60
 
 pub(super) const PLAYER_RESTITUTION: f32 = 0.2;
 pub(super) const PLAYER_FRICTION: f32 = 0.5;
+
+pub(super) const PLATFORM_RESTITUTION: f32 = 0.2;
+pub(super) const PLATFORM_FRICTION: f32 = 0.5;

@@ -19,7 +19,8 @@ impl Plugin for EventPlugin {
            .add_event::<Mapload2PlatformSpawn>()
            .add_event::<Mapload2CoinSpawn>()
            .add_event::<Entity2CollisionAttach>()
-           .add_event::<Collision2PhysicsInfo>();
+           .add_event::<Collision2PhysicsInfo>()
+           .add_event::<Platform2PhysicsAttach>();
     }
 }
 
@@ -126,6 +127,12 @@ pub struct Collision2PhysicsInfo {
     pub entity_b: Entity,
     pub normal: Vec2,
     pub penetration: f32,
+}
+
+#[derive(Event, Debug)]
+pub struct Platform2PhysicsAttach {
+    pub entity: Entity,
+    pub inv_mass: f32,
 }
 
 

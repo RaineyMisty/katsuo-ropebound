@@ -16,7 +16,7 @@ pub(super) mod component;
 use self::gravity::gravity_system;
 use self::clear::clean_force;
 use self::clear::clean_impulse;
-use self::integrate::netforce_to_momentum;
+use self::integrate::netforce_to_impulse;
 use self::integrate::impulse_to_momentum;
 use self::integrate::momentum_to_velocity;
 use self::integrate::velocity_to_transform;
@@ -53,7 +53,7 @@ impl Plugin for PhysicsCorePlugin {
         .add_systems(
             FixedUpdate, 
             (
-                netforce_to_momentum,
+                netforce_to_impulse,
                 impulse_to_momentum,
                 momentum_to_velocity,
                 velocity_to_transform,

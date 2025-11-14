@@ -5,13 +5,13 @@
 use bevy::prelude::*;
 use super::component::{Velocity, Momentum, Impulse, NetForce, Mass};
 
-pub(super) fn netforce_to_momentum(
+pub(super) fn netforce_to_impulse(
     time: Res<Time<Fixed>>,
-    mut query: Query<(&mut Momentum, &NetForce)>,
+    mut query: Query<(&mut Impulse, &NetForce)>,
 ) {
     let delta_seconds = time.delta_secs();
-    for (mut momentum, net_force) in query.iter_mut() {
-        momentum.0 += net_force.0 * delta_seconds;
+    for (mut impulse, net_force) in query.iter_mut() {
+        impulse.0 += net_force.0 * delta_seconds;
     }
 }
 

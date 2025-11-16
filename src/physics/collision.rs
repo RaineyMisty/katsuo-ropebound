@@ -20,7 +20,7 @@ pub(super) fn collision_info_to_impulse (
         }
         let normal = event.normal;
         let penetration = event.penetration;
-        info!("Entity {} and {} collide, on {} and {}.", ea, eb, normal, penetration);
+        // info!("Entity {} and {} collide, on {} and {}.", ea, eb, normal, penetration);
         if let Ok([(velocity_a, rb_a, mut impulse_a),
                 (velocity_b, rb_b, mut impulse_b)])
                 = query.get_many_mut([ea, eb])
@@ -63,7 +63,7 @@ pub(super) fn collision_info_to_impulse (
                 impulse_b.0 -= impulse_total;
             }
 
-            info!("impulse to a is {}, impulse to b is {}", -impulse_total, impulse_total);
+            // info!("impulse to a is {}, impulse to b is {}", -impulse_total, impulse_total);
 
         } else {
             continue;

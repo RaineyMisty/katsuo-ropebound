@@ -22,6 +22,7 @@ pub(super) fn on_ground_detect(
 ) {
     for event in events.read() {
         if let Ok(mut ground) = q_player.get_mut(event.entity_a){
+            info!("get a");
             if event.normal.y == -1.0 {
                 ground.0 = true;
             }

@@ -9,7 +9,7 @@ mod update_aabb;
 mod detect;
 mod ground;
 
-mod component;
+pub mod component;
 
 use self::binding::on_request_collision;
 use self::update_aabb::update_aabb;

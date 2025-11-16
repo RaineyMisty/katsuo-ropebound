@@ -33,6 +33,7 @@ pub(super) fn on_request_collision(
             },
         ));
         if req.is_player == true {
+            info!("attrched {}", req.entity);
             commands.entity(req.entity).insert(OnGround(false));
         }
     }

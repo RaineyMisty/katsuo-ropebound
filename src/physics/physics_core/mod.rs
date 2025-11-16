@@ -13,6 +13,7 @@ pub(super) mod bundle;
 pub(super) mod config;
 pub(super) mod component;
 
+use self::gravity::on_ground;
 use self::gravity::gravity_system;
 use self::clear::clean_force;
 use self::clear::clean_impulse;
@@ -47,8 +48,9 @@ impl Plugin for PhysicsCorePlugin {
         .add_systems(
             FixedUpdate, 
             (
+                on_ground,
                 gravity_system,
-            ).in_set(PhysicsSet::Emit)
+            ).in_set(PhysicsSet::Emit).chain()
         )
         .add_systems(
             FixedUpdate, 

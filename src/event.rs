@@ -119,6 +119,7 @@ pub struct Mapload2CoinSpawn {
 pub struct Entity2CollisionAttach {
     pub entity: Entity,
     pub size: Vec2,
+    pub is_player: bool,
 }
 
 #[derive(Event, Debug)]

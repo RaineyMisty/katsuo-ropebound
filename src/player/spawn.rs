@@ -44,6 +44,7 @@ pub(super) fn spawn_player(
         req_col.write(Entity2CollisionAttach {
             entity,
             size: PLAYER_SIZE,
+            is_player: true,
         });
 
         spawned.write(Player2LifetimeSpawned {

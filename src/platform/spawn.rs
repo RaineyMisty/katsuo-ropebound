@@ -37,6 +37,7 @@ pub(super) fn platform_spawn(
         req_col.write(Entity2CollisionAttach {
             entity: platform_id,
             size: event.size,
+            is_player: false,
         });
 
         req_phy.write(Platform2PhysicsAttach {

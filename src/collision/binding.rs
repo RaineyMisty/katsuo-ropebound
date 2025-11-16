@@ -4,7 +4,7 @@
 // Description: <Deal with Control Request>
 use bevy::prelude::*;
 
-use super::component::{Collider, Aabb2D};
+use super::component::{Collider, Aabb2D, OnGround};
 use crate::event::Entity2CollisionAttach;
 
 fn clean_collision(
@@ -13,7 +13,8 @@ fn clean_collision(
 ) {
     commands.entity(entity)
         .remove::<Collider>()
-        .remove::<Aabb2D>();
+        .remove::<Aabb2D>()
+        .remove::<OnGround>();
 }
 
 pub(super) fn on_request_collision(
@@ -31,5 +32,8 @@ pub(super) fn on_request_collision(
                 max: Vec2::ZERO,
             },
         ));
+        if req.is_player == true {
+            commands.entity(req.entity).insert(OnGround(false));
+        }
     }
 }
